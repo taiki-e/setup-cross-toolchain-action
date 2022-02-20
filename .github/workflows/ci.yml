@@ -69,6 +69,8 @@ jobs:
           - { target: mips64-unknown-linux-gnuabi64, os: ubuntu-20.04 }
           - { target: powerpc64-unknown-linux-gnu, os: ubuntu-20.04 }
           - { target: sparc64-unknown-linux-gnu, os: ubuntu-20.04 }
+          # Hang on ubuntu 18.04
+          - { target: riscv64gc-unknown-linux-gnu, os: ubuntu-18.04 }
           # Toolchains not available on ubuntu 18.04
           - { target: mipsisa32r6-unknown-linux-gnu, os: ubuntu-18.04 }
           - { target: mipsisa32r6el-unknown-linux-gnu, os: ubuntu-18.04 }

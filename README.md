@@ -90,7 +90,7 @@ jobs:
 | `powerpc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
 | `powerpc64-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] |
 | `powerpc64le-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `riscv64gc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
+| `riscv64gc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1] <!--, ubuntu-18.04 [2]--> |
 | `s390x-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
 | `sparc64-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] |
 | `thumbv7neon-unknown-linux-gnueabihf` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
