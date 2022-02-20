@@ -1,0 +1,112 @@
+name: CI
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - dev
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        # https://github.com/taiki-e/rust-cross-toolchain/blob/main/tools/target-list-shared.sh
+        target:
+          # Linux (GNU)
+          # rustup target list | grep -e '-linux-gnu'
+          # rustc --print target-list | grep -e '-linux-gnu'
+          - aarch64-unknown-linux-gnu
+          # - aarch64-unknown-linux-gnu_ilp32 # tier3
+          # - aarch64_be-unknown-linux-gnu # tier3, supported in rust-cross-toolchain but not ported to this action
+          # - aarch64_be-unknown-linux-gnu_ilp32 # tier3
+          - arm-unknown-linux-gnueabi
+          # - arm-unknown-linux-gnueabihf # supported in rust-cross-toolchain but not ported to this action
+          # - armv4t-unknown-linux-gnueabi # tier3, rustc generate code for armv5t (probably needs to pass +v4t to llvm)
+          - armv5te-unknown-linux-gnueabi
+          - armv7-unknown-linux-gnueabi
+          - armv7-unknown-linux-gnueabihf
+          - i586-unknown-linux-gnu
+          - i686-unknown-linux-gnu
+          # - m68k-unknown-linux-gnu # tier3, build fail: https://github.com/rust-lang/rust/issues/89498
+          - mips-unknown-linux-gnu
+          - mips64-unknown-linux-gnuabi64
+          - mips64el-unknown-linux-gnuabi64
+          - mipsel-unknown-linux-gnu
+          # - mipsisa32r6-unknown-linux-gnu # tier3
+          - mipsisa32r6el-unknown-linux-gnu # tier3
+          # - mipsisa64r6-unknown-linux-gnuabi64 # tier3
+          - mipsisa64r6el-unknown-linux-gnuabi64 # tier3
+          - powerpc-unknown-linux-gnu
+          # - powerpc-unknown-linux-gnuspe # tier3, fails to run test, and GCC 9 removed support for this target
+          - powerpc64-unknown-linux-gnu
+          - powerpc64le-unknown-linux-gnu
+          # - riscv32gc-unknown-linux-gnu # tier3, supported in rust-cross-toolchain but not ported to this action
+          - riscv64gc-unknown-linux-gnu
+          - s390x-unknown-linux-gnu
+          # - sparc-unknown-linux-gnu # tier3, supported in rust-cross-toolchain but not ported to this action
+          - sparc64-unknown-linux-gnu
+          - thumbv7neon-unknown-linux-gnueabihf
+          - x86_64-unknown-linux-gnu
+          # - x86_64-unknown-linux-gnux32 # tier3, run-fail
+        os:
+          - ubuntu-20.04
+          - ubuntu-18.04
+        exclude:
+          # Segmentation fault on ubuntu 20.04
+          - { target: mips-unknown-linux-gnu, os: ubuntu-20.04 }
+          - { target: mips64-unknown-linux-gnuabi64, os: ubuntu-20.04 }
+          - { target: powerpc64-unknown-linux-gnu, os: ubuntu-20.04 }
+          - { target: sparc64-unknown-linux-gnu, os: ubuntu-20.04 }
+          # Toolchains not available on ubuntu 18.04
+          - { target: mipsisa32r6-unknown-linux-gnu, os: ubuntu-18.04 }
+          - { target: mipsisa32r6el-unknown-linux-gnu, os: ubuntu-18.04 }
+          - { target: mipsisa64r6-unknown-linux-gnuabi64, os: ubuntu-18.04 }
+          - { target: mipsisa64r6el-unknown-linux-gnuabi64, os: ubuntu-18.04 }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - uses: taiki-e/github-actions/install-rust@main
+      - uses: ./
+        with:
+          target: ${{ matrix.target }}
+      - run: git clone https://github.com/taiki-e/rust-cross-toolchain.git
+      - run: cargo $BUILD_STD build --verbose --target ${{ matrix.target }}
+        working-directory: rust-cross-toolchain/docker/test/fixtures/rust
+      - run: cargo $BUILD_STD run --verbose --target ${{ matrix.target }}
+        working-directory: rust-cross-toolchain/docker/test/fixtures/rust
+        if: matrix.target != 'x86_64-unknown-linux-gnux32'
+      - run: cargo $BUILD_STD test --verbose --target ${{ matrix.target }}
+        working-directory: rust-cross-toolchain/docker/test/fixtures/rust
+        if: matrix.target != 'x86_64-unknown-linux-gnux32'
+
+  tidy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      - uses: taiki-e/install-action@shellcheck
+      - uses: taiki-e/install-action@shfmt
+      - run: npm install prettier
+      - run: shfmt -d $(git ls-files '*.sh')
+        if: always()
+      - run: npx prettier -c $(git ls-files '*.yml')
+        if: always()
+      - run: npx prettier -c $(git ls-files '*.js')
+        if: always()
+      - run: shellcheck $(git ls-files '*.sh')
+        if: always()

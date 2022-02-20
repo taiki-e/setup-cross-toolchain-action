@@ -1,0 +1,11 @@
+name: Setup toolchains for cross compilation and cross testing for Rust
+description: GitHub Action for setup toolchains for cross compilation and cross testing for Rust
+
+inputs:
+  target:
+    description: Target name
+    required: true
+
+runs:
+  using: node16
+  main: main.js
