@@ -7,7 +7,8 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
 - [Usage](#usage)
   - [Inputs](#inputs)
   - [Example workflow: Basic usage](#example-workflow-basic-usage)
-  - [Example workflow: Basic usage (multiple targets)](#example-workflow-basic-usage-multiple-targets)
+  - [Example workflow: Multiple targets](#example-workflow-multiple-targets)
+  - [Example workflow: Doctest](#example-workflow-doctest)
 - [Platform Support](#platform-support)
   - [Linux (GNU)](#linux-gnu)
 - [Related Projects](#related-projects)
@@ -40,7 +41,7 @@ jobs:
       - run: cargo test --verbose
 ```
 
-### Example workflow: Basic usage (multiple targets)
+### Example workflow: Multiple targets
 
 ```yaml
 jobs:
@@ -60,6 +61,23 @@ jobs:
         with:
           target: ${{ matrix.target }}
       - run: cargo test --verbose
+```
+
+### Example workflow: Doctest
+
+```yaml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Rust
+        run: rustup update nightly && rustup default nightly
+      - name: Install cross-compilation tools
+        uses: taiki-e/setup-cross-toolchain@v1
+        with:
+          target: aarch64-unknown-linux-gnu
+      - run: cargo test --verbose -Z doctest-xcompile
 ```
 
 ## Platform Support
