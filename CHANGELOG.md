@@ -10,6 +10,12 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support binfmt. This allows running the cross-compiled binaries directly. ([#3](https://github.com/taiki-e/setup-cross-toolchain/pull/3))
+
+- Set the `DOCTEST_XCOMPILE` environment variable to easily run cross-testing of doctest. ([#3](https://github.com/taiki-e/setup-cross-toolchain/pull/3))
+
+- Add `runner` input option. ([#3](https://github.com/taiki-e/setup-cross-toolchain/pull/3))
+
 ## [1.0.0] - 2022-02-20
 
 Initial release

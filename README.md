@@ -18,9 +18,10 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
 
 ### Inputs
 
-| Name     | Required | Description                                                                      | Type   | Default        |
-|----------|:--------:|----------------------------------------------------------------------------------|--------|----------------|
-| target   | **true** | Target triple                                                                    | String |                |
+| Name     | Required | Description   | Type   | Default        |
+|----------|:--------:|---------------|--------|----------------|
+| target   | **true** | Target triple | String |                |
+| runner   | false    | Test runner   | String |                |
 
 ### Example workflow: Basic usage
 
@@ -39,6 +40,10 @@ jobs:
       # setup-cross-toolchain sets the `CARGO_BUILD_TARGET` environment variable,
       # so there is no need for an explicit `--target` flag.
       - run: cargo test --verbose
+      # `cargo run` also works.
+      - run: cargo run --verbose
+      # You can also run the cross-compiled binaries directly.
+      - run: ./target/aarch64-unknown-linux-gnu/debug/my-app
 ```
 
 ### Example workflow: Multiple targets
@@ -80,51 +85,86 @@ jobs:
       - run: cargo test --verbose -Z doctest-xcompile
 ```
 
+Cross-testing of doctest is currently available only on nightly.
+If you want to use stable and nightly in the same matrix, you can use the `DOCTEST_XCOMPILE` environment variable set by this action to enable doctest only in nightly.
+
+```yaml
+jobs:
+  test:
+    strategy:
+      matrix:
+        rust:
+          - stable
+          - nightly
+        target:
+          - aarch64-unknown-linux-gnu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Rust
+        run: rustup update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
+      - name: Install cross-compilation tools
+        uses: taiki-e/setup-cross-toolchain@v1
+        with:
+          target: ${{ matrix.target }}
+      # On nightly and `-Z doctest-xcompile` is available,
+      # `$DOCTEST_XCOMPILE` is `-Z doctest-xcompile`.
+      #
+      # On stable, `$DOCTEST_XCOMPILE` is not set.
+      # Once `-Z doctest-xcompile` is stabilized, the corresponding flag
+      # will be set to `$DOCTEST_XCOMPILE` (if it is available).
+      - run: cargo test --verbose $DOCTEST_XCOMPILE
+```
+
 ## Platform Support
 
 ### Linux (GNU)
 
 | C++ | test |
 | --- | ---- |
-| ✓ (libstdc++) | ✓ (qemu) |
+| ✓ (libstdc++) | ✓ |
 
 **Supported targets**:
 
-| target | host  |
-| ------ | ----- |
-| `aarch64-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `arm-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `armv5te-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `armv7-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `armv7-unknown-linux-gnueabihf` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `i586-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `i686-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `mips-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] |
-| `mips64-unknown-linux-gnuabi64` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] |
-| `mips64el-unknown-linux-gnuabi64` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `mipsel-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `mipsisa32r6el-unknown-linux-gnu` (tier3) | ubuntu-latest/ubuntu-20.04 [1] |
-| `mipsisa64r6el-unknown-linux-gnuabi64` (tier3) | ubuntu-latest/ubuntu-20.04 [1] |
-| `powerpc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `powerpc64-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] |
-| `powerpc64le-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `riscv64gc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1] <!--, ubuntu-18.04 [2]--> |
-| `s390x-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `sparc64-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] |
-| `thumbv7neon-unknown-linux-gnueabihf` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
-| `x86_64-unknown-linux-gnu` [3] | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] |
+| target | host  | runner |
+| ------ | ----- | ------ |
+| `aarch64-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `arm-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `armv5te-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `armv7-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `armv7-unknown-linux-gnueabihf` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `i586-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | native (default), qemu-user |
+| `i686-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | native (default), qemu-user |
+| `mips-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] | qemu-user (default) |
+| `mips64-unknown-linux-gnuabi64` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] | qemu-user (default) |
+| `mips64el-unknown-linux-gnuabi64` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `mipsel-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `mipsisa32r6el-unknown-linux-gnu` (tier3) | ubuntu-latest/ubuntu-20.04 [1] | qemu-user (default) [3] |
+| `mipsisa64r6el-unknown-linux-gnuabi64` (tier3) | ubuntu-latest/ubuntu-20.04 [1] | qemu-user (default) |
+| `powerpc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `powerpc64-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] | qemu-user (default) |
+| `powerpc64le-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `riscv64gc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1] <!--, ubuntu-18.04 [2]--> | qemu-user (default) |
+| `s390x-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `sparc64-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] | qemu-user (default) |
+| `thumbv7neon-unknown-linux-gnueabihf` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `x86_64-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | native (default), qemu-user |
 
 [1] GCC 9, glibc 2.31<br>
 [2] GCC 7, glibc 2.27<br>
-[3] no-op<br>
+[3] binfmt doesn't work<br>
 
 ## Related Projects
 
 - [rust-cross-toolchain]: Toolchains for cross compilation and cross testing for Rust.
 - [install-action]: GitHub Action for installing development tools.
+- [create-gh-release-action]: GitHub Action for creating GitHub Releases based on changelog.
+- [upload-rust-binary-action]: GitHub Action for building and uploading Rust binary to GitHub Releases.
 
+[create-gh-release-action]: https://github.com/taiki-e/create-gh-release-action
 [install-action]: https://github.com/taiki-e/install-action
 [rust-cross-toolchain]: https://github.com/taiki-e/rust-cross-toolchain
+[upload-rust-binary-action]: https://github.com/taiki-e/upload-rust-binary-action
 
 ## License
 
