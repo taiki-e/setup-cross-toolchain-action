@@ -8,10 +8,21 @@ on:
   push:
     branches:
       - main
-      - dev
+      # - dev
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
+
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  CARGO_TERM_COLOR: always
+  QEMU_STRACE: 1
+  RUST_BACKTRACE: full
+  RUST_TEST_THREADS: 1
+  RUSTDOCFLAGS: -D warnings
+  RUSTFLAGS: -D warnings
+  RUSTUP_MAX_RETRIES: 10
 
 defaults:
   run:
@@ -90,10 +101,11 @@ jobs:
         working-directory: rust-cross-toolchain/docker/test/fixtures/rust
       - run: cargo $BUILD_STD run --verbose --target ${{ matrix.target }}
         working-directory: rust-cross-toolchain/docker/test/fixtures/rust
-        if: matrix.target != 'x86_64-unknown-linux-gnux32'
-      - run: cargo $BUILD_STD test --verbose --target ${{ matrix.target }}
+      - run: cargo $BUILD_STD test --verbose --target ${{ matrix.target }} $DOCTEST_XCOMPILE
         working-directory: rust-cross-toolchain/docker/test/fixtures/rust
-        if: matrix.target != 'x86_64-unknown-linux-gnux32'
+      - run: ./target/${{ matrix.target }}/debug/rust-test
+        working-directory: rust-cross-toolchain
+        if: matrix.target != 'mipsisa32r6el-unknown-linux-gnu'
 
   tidy:
     runs-on: ubuntu-latest

@@ -5,6 +5,9 @@ inputs:
   target:
     description: Target name
     required: true
+  runner:
+    description: Test runner
+    required: false
 
 runs:
   using: node16
