@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.1.0] - 2022-02-22
+
 - Support binfmt. This allows running the cross-compiled binaries directly. ([#3](https://github.com/taiki-e/setup-cross-toolchain/pull/3))
 
 - Set the `DOCTEST_XCOMPILE` environment variable to easily run cross-testing of doctest. ([#3](https://github.com/taiki-e/setup-cross-toolchain/pull/3))
@@ -20,5 +22,6 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/taiki-e/setup-cross-toolchain/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/taiki-e/setup-cross-toolchain/releases/tag/v1.0.0
