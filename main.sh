@@ -127,10 +127,11 @@ case "${host}" in
                     '')
                         case "${target}" in
                             # On x86, qemu-user is not used by default.
-                            x86_64-* | i*86-*) ;;
+                            x86_64-* | i686-*) ;;
                             *) use_qemu='1' ;;
                         esac
                         ;;
+                    native) ;;
                     qemu-user) use_qemu='1' ;;
                     *) bail "unrecognized runner '${runner}'" ;;
                 esac

@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Change default runner of i586 to qemu-user. ([#5](https://github.com/taiki-e/setup-cross-toolchain/pull/5))
+
 ## [1.1.1] - 2022-02-23
 
 - Fix the `DOCTEST_XCOMPILE` environment variable.
