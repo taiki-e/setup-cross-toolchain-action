@@ -243,14 +243,15 @@ esac
 
 if grep <<<"${rustup_target_list}" -Eq "^${target}( |$)"; then
     retry rustup target add "${target}" &>/dev/null
+    # Note: -Z doctest-xcompile doesn't compatible with -Z build-std yet.
+    if [[ "${rustc_version}" == *"nightly"* ]] || [[ "${rustc_version}" == *"dev"* ]]; then
+        if cargo -Z help | grep -Eq '\bZ doctest-xcompile\b'; then
+            echo "DOCTEST_XCOMPILE=-Zdoctest-xcompile" >>"${GITHUB_ENV}"
+        fi
+    fi
 else
     # for -Z build-std
     retry rustup component add rust-src &>/dev/null
-    echo "BUILD_STD=-Z build-std" >>"${GITHUB_ENV}"
+    echo "BUILD_STD=-Zbuild-std" >>"${GITHUB_ENV}"
 fi
 echo "CARGO_BUILD_TARGET=${target}" >>"${GITHUB_ENV}"
-if [[ "${rustc_version}" == *"nightly"* ]] || [[ "${rustc_version}" == *"dev"* ]]; then
-    if cargo -Z help | grep -Eq '\bZ doctest-xcompile\b'; then
-        echo "DOCTEST_XCOMPILE=-Z doctest-xcompile" >>"${GITHUB_ENV}"
-    fi
-fi
