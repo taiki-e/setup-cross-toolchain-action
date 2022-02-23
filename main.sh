@@ -250,7 +250,7 @@ else
 fi
 echo "CARGO_BUILD_TARGET=${target}" >>"${GITHUB_ENV}"
 if [[ "${rustc_version}" == *"nightly"* ]] || [[ "${rustc_version}" == *"dev"* ]]; then
-    if cargo -Z help | grep -Eq '-Z doctest-xcompile\b'; then
+    if cargo -Z help | grep -Eq '\bZ doctest-xcompile\b'; then
         echo "DOCTEST_XCOMPILE=-Z doctest-xcompile" >>"${GITHUB_ENV}"
     fi
 fi

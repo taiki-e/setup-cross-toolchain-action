@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Fix the `DOCTEST_XCOMPILE` environment variable.
+
 ## [1.1.0] - 2022-02-22
 
 - Support binfmt. This allows running the cross-compiled binaries directly. ([#3](https://github.com/taiki-e/setup-cross-toolchain/pull/3))
