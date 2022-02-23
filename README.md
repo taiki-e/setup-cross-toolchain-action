@@ -133,7 +133,7 @@ jobs:
 | `armv5te-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
 | `armv7-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
 | `armv7-unknown-linux-gnueabihf` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
-| `i586-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | native (default), qemu-user |
+| `i586-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default), native |
 | `i686-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | native (default), qemu-user |
 | `mips-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] | qemu-user (default) |
 | `mips64-unknown-linux-gnuabi64` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] | qemu-user (default) |
