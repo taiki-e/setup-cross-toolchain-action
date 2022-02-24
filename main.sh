@@ -226,11 +226,11 @@ case "${host}" in
             fi
             # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
             docker create --name qemu-user ghcr.io/taiki-e/qemu-user
-            mkdir -p .setup-cross-toolchain
-            docker cp qemu-user:/usr/bin .setup-cross-toolchain/qemu
+            mkdir -p .setup-cross-toolchain-action
+            docker cp qemu-user:/usr/bin .setup-cross-toolchain-action/qemu
             docker rm -f qemu-user >/dev/null
-            sudo mv .setup-cross-toolchain/qemu/qemu-* /usr/bin/
-            rm -rf ./.setup-cross-toolchain
+            sudo mv .setup-cross-toolchain-action/qemu/qemu-* /usr/bin/
+            rm -rf ./.setup-cross-toolchain-action
             x qemu-${qemu_arch} --version
             register_binfmt
         fi

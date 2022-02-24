@@ -1,6 +1,6 @@
-# setup-cross-toolchain
+# setup-cross-toolchain-action
 
-[![build status](https://img.shields.io/github/workflow/status/taiki-e/setup-cross-toolchain/CI/main?style=flat-square&logo=github)](https://github.com/taiki-e/setup-cross-toolchain/actions)
+[![build status](https://img.shields.io/github/workflow/status/taiki-e/setup-cross-toolchain-action/CI/main?style=flat-square&logo=github)](https://github.com/taiki-e/setup-cross-toolchain-action/actions)
 
 GitHub Action for setup toolchains for cross compilation and cross testing for Rust.
 
@@ -34,10 +34,10 @@ jobs:
       - name: Install Rust
         run: rustup update stable
       - name: Install cross-compilation tools
-        uses: taiki-e/setup-cross-toolchain@v1
+        uses: taiki-e/setup-cross-toolchain-action@v1
         with:
           target: aarch64-unknown-linux-gnu
-      # setup-cross-toolchain sets the `CARGO_BUILD_TARGET` environment variable,
+      # setup-cross-toolchain-action sets the `CARGO_BUILD_TARGET` environment variable,
       # so there is no need for an explicit `--target` flag.
       - run: cargo test --verbose
       # `cargo run` also works.
@@ -62,7 +62,7 @@ jobs:
       - name: Install Rust
         run: rustup update stable
       - name: Install cross-compilation tools
-        uses: taiki-e/setup-cross-toolchain@v1
+        uses: taiki-e/setup-cross-toolchain-action@v1
         with:
           target: ${{ matrix.target }}
       - run: cargo test --verbose
@@ -79,7 +79,7 @@ jobs:
       - name: Install Rust
         run: rustup update nightly && rustup default nightly
       - name: Install cross-compilation tools
-        uses: taiki-e/setup-cross-toolchain@v1
+        uses: taiki-e/setup-cross-toolchain-action@v1
         with:
           target: aarch64-unknown-linux-gnu
       - run: cargo test --verbose -Z doctest-xcompile
@@ -104,7 +104,7 @@ jobs:
       - name: Install Rust
         run: rustup update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
       - name: Install cross-compilation tools
-        uses: taiki-e/setup-cross-toolchain@v1
+        uses: taiki-e/setup-cross-toolchain-action@v1
         with:
           target: ${{ matrix.target }}
       # On nightly and `-Z doctest-xcompile` is available,
