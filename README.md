@@ -30,7 +30,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Rust
         run: rustup update stable
       - name: Install cross-compilation tools
@@ -58,7 +58,7 @@ jobs:
           - riscv64gc-unknown-linux-gnu
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Rust
         run: rustup update stable
       - name: Install cross-compilation tools
@@ -75,7 +75,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Rust
         run: rustup update nightly && rustup default nightly
       - name: Install cross-compilation tools
@@ -100,7 +100,7 @@ jobs:
           - aarch64-unknown-linux-gnu
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Rust
         run: rustup update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
       - name: Install cross-compilation tools
