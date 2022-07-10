@@ -10,7 +10,9 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
-- Support aarch64_be-unknown-linux-gnu and riscv32gc-unknown-linux-gnu.
+- Support aarch64_be-unknown-linux-gnu, riscv32gc-unknown-linux-gnu, mipsisa32r6-unknown-linux-gnu, and mipsisa64r6-unknown-linux-gnuabi64.
+
+- Document support status for ubuntu-22.04.
 
 ## [1.2.0] - 2022-02-23
 

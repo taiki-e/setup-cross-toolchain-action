@@ -126,37 +126,40 @@ jobs:
 
 **Supported targets**:
 
-| target | host  | runner |
-| ------ | ----- | ------ |
-| `aarch64-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
-| `aarch64_be-unknown-linux-gnu` | ubuntu-18.04 [4] | qemu-user (default) |
-| `arm-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
-| `armv5te-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
-| `armv7-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
-| `armv7-unknown-linux-gnueabihf` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
-| `i586-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default), native |
-| `i686-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | native (default), qemu-user |
-| `mips-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] | qemu-user (default) |
-| `mips64-unknown-linux-gnuabi64` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] | qemu-user (default) |
-| `mips64el-unknown-linux-gnuabi64` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
-| `mipsel-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
-| `mipsisa32r6el-unknown-linux-gnu` (tier3) | ubuntu-latest/ubuntu-20.04 [1] | qemu-user (default) [3] |
-| `mipsisa64r6el-unknown-linux-gnuabi64` (tier3) | ubuntu-latest/ubuntu-20.04 [1] | qemu-user (default) |
-| `powerpc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
-| `powerpc64-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] | qemu-user (default) |
-| `powerpc64le-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
-| `riscv32gc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04/ubuntu-18.04 [5] | qemu-user (default) |
-| `riscv64gc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1] <!--, ubuntu-18.04 [2]--> | qemu-user (default) |
-| `s390x-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
-| `sparc64-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] | qemu-user (default) |
-| `thumbv7neon-unknown-linux-gnueabihf` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
-| `x86_64-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | native (default), qemu-user |
+| target                                         | host                                                                       | runner                      |
+| ---------------------------------------------- | -------------------------------------------------------------------------- | --------------------------- |
+| `aarch64-unknown-linux-gnu`                    | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default)         |
+| `aarch64_be-unknown-linux-gnu` (tier3)         | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04/ubuntu-22.04 [4]      | qemu-user (default)         |
+| `arm-unknown-linux-gnueabi`                    | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default)         |
+| `armv5te-unknown-linux-gnueabi`                | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default)         |
+| `armv7-unknown-linux-gnueabi`                  | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default)         |
+| `armv7-unknown-linux-gnueabihf`                | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default)         |
+| `i586-unknown-linux-gnu`                       | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default), native |
+| `i686-unknown-linux-gnu`                       | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | native (default), qemu-user |
+| `mips-unknown-linux-gnu`                       | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2], ubuntu-22.04 [3] | qemu-user (default)         |
+| `mips64-unknown-linux-gnuabi64`                | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2], ubuntu-22.04 [3] | qemu-user (default)         |
+| `mips64el-unknown-linux-gnuabi64`              | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default)         |
+| `mipsel-unknown-linux-gnu`                     | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default)         |
+| `mipsisa32r6-unknown-linux-gnu` (tier3)        | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-22.04 [3]                   | qemu-user (default) [6]     |
+| `mipsisa32r6el-unknown-linux-gnu` (tier3)      | ubuntu-latest/ubuntu-20.04 [1], ubuntu-22.04 [3]                           | qemu-user (default) [6]     |
+| `mipsisa64r6-unknown-linux-gnuabi64` (tier3)   | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-22.04 [3]                   | qemu-user (default)         |
+| `mipsisa64r6el-unknown-linux-gnuabi64` (tier3) | ubuntu-latest/ubuntu-20.04 [1], ubuntu-22.04 [3]                           | qemu-user (default)         |
+| `powerpc-unknown-linux-gnu`                    | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default)         |
+| `powerpc64-unknown-linux-gnu`                  | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2], ubuntu-22.04 [3] | qemu-user (default)         |
+| `powerpc64le-unknown-linux-gnu`                | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default)         |
+| `riscv32gc-unknown-linux-gnu`                  | ubuntu-latest/ubuntu-20.04/ubuntu-18.04/ubuntu-22.04 [5]                   | qemu-user (default)         |
+| `riscv64gc-unknown-linux-gnu`                  | ubuntu-latest/ubuntu-20.04 [1] <!--, ubuntu-18.04 [2]-->, ubuntu-22.04 [3] | qemu-user (default)         |
+| `s390x-unknown-linux-gnu`                      | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default)         |
+| `sparc64-unknown-linux-gnu`                    | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2], ubuntu-22.04 [3] | qemu-user (default)         |
+| `thumbv7neon-unknown-linux-gnueabihf`          | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default)         |
+| `x86_64-unknown-linux-gnu`                     | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | native (default), qemu-user |
 
 [1] GCC 9, glibc 2.31<br>
 [2] GCC 7, glibc 2.27<br>
-[3] binfmt doesn't work<br>
+[3] GCC 11, glibc 2.35<br>
 [4] GCC 10, glibc 2.31<br>
 [5] GCC 11, glibc 2.33<br>
+[6] binfmt doesn't work<br>
 
 ## Related Projects
 
