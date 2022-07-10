@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support aarch64_be-unknown-linux-gnu and riscv32gc-unknown-linux-gnu.
+
 ## [1.2.0] - 2022-02-23
 
 - Change default runner of i586 to qemu-user. ([#5](https://github.com/taiki-e/setup-cross-toolchain-action/pull/5))

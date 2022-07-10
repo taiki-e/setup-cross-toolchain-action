@@ -108,7 +108,7 @@ jobs:
         with:
           target: ${{ matrix.target }}
       # On nightly and `-Z doctest-xcompile` is available,
-      # `$DOCTEST_XCOMPILE` is `-Z doctest-xcompile`.
+      # `$DOCTEST_XCOMPILE` is `-Zdoctest-xcompile`.
       #
       # On stable, `$DOCTEST_XCOMPILE` is not set.
       # Once `-Z doctest-xcompile` is stabilized, the corresponding flag
@@ -129,6 +129,7 @@ jobs:
 | target | host  | runner |
 | ------ | ----- | ------ |
 | `aarch64-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `aarch64_be-unknown-linux-gnu` | ubuntu-18.04 [4] | qemu-user (default) |
 | `arm-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
 | `armv5te-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
 | `armv7-unknown-linux-gnueabi` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
@@ -144,6 +145,7 @@ jobs:
 | `powerpc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
 | `powerpc64-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] | qemu-user (default) |
 | `powerpc64le-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
+| `riscv32gc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04/ubuntu-18.04 [5] | qemu-user (default) |
 | `riscv64gc-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1] <!--, ubuntu-18.04 [2]--> | qemu-user (default) |
 | `s390x-unknown-linux-gnu` | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2] | qemu-user (default) |
 | `sparc64-unknown-linux-gnu` | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2] | qemu-user (default) |
@@ -153,6 +155,8 @@ jobs:
 [1] GCC 9, glibc 2.31<br>
 [2] GCC 7, glibc 2.27<br>
 [3] binfmt doesn't work<br>
+[4] GCC 10, glibc 2.31<br>
+[5] GCC 11, glibc 2.33<br>
 
 ## Related Projects
 

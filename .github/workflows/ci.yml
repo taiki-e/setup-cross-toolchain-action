@@ -33,14 +33,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # https://github.com/taiki-e/rust-cross-toolchain/blob/main/tools/target-list-shared.sh
+        # https://github.com/taiki-e/rust-cross-toolchain/blob/HEAD/tools/target-list-shared.sh
         target:
           # Linux (GNU)
           # rustup target list | grep -e '-linux-gnu'
           # rustc --print target-list | grep -e '-linux-gnu'
           - aarch64-unknown-linux-gnu
           # - aarch64-unknown-linux-gnu_ilp32 # tier3
-          # - aarch64_be-unknown-linux-gnu # tier3, supported in rust-cross-toolchain but not ported to this action
+          - aarch64_be-unknown-linux-gnu # tier3
           # - aarch64_be-unknown-linux-gnu_ilp32 # tier3
           - arm-unknown-linux-gnueabi
           # - arm-unknown-linux-gnueabihf # supported in rust-cross-toolchain but not ported to this action
@@ -63,7 +63,7 @@ jobs:
           # - powerpc-unknown-linux-gnuspe # tier3, fails to run test, and GCC 9 removed support for this target
           - powerpc64-unknown-linux-gnu
           - powerpc64le-unknown-linux-gnu
-          # - riscv32gc-unknown-linux-gnu # tier3, supported in rust-cross-toolchain but not ported to this action
+          - riscv32gc-unknown-linux-gnu # tier3
           - riscv64gc-unknown-linux-gnu
           - s390x-unknown-linux-gnu
           # - sparc-unknown-linux-gnu # tier3, supported in rust-cross-toolchain but not ported to this action
@@ -76,6 +76,7 @@ jobs:
           - ubuntu-18.04
         exclude:
           # Segmentation fault on ubuntu 20.04
+          - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-20.04 }
           - { target: mips-unknown-linux-gnu, os: ubuntu-20.04 }
           - { target: mips64-unknown-linux-gnuabi64, os: ubuntu-20.04 }
           - { target: powerpc64-unknown-linux-gnu, os: ubuntu-20.04 }

@@ -68,32 +68,7 @@ case "${host}" in
         case "${target}" in
             x86_64-unknown-linux-gnu) ;;
             *-linux-gnu*)
-                # https://github.com/taiki-e/rust-cross-toolchain/blob/main/docker/linux-gnu.sh
-                case "${target}" in
-                    aarch64_be-unknown-linux-gnu)
-                        # (tier3) Toolchains for aarch64_be-linux-gnu is not available in APT.
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L40
-                        bail "target '${target}' not yet supported; consider using aarch64-unknown-linux-gnu for testing aarch64"
-                        ;;
-                    arm-unknown-linux-gnueabihf)
-                        # (tier2) Ubuntu's gcc-arm-linux-gnueabihf enables armv7 by default
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L55
-                        bail "target '${target}' not yet supported; consider using armv7-unknown-linux-gnueabihf for testing armhf"
-                        ;;
-                    riscv32gc-unknown-linux-gnu)
-                        # (tier3) Toolchains for riscv32-linux-gnu is not available in APT.
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L69
-                        # Suggest riscv64 because instructions available on riscv32 are also available on riscv64,
-                        # so testing in riscv64 may cover riscv32-related code.
-                        bail "target '${target}' not yet supported; consider using riscv64gc-unknown-linux-gnu for testing RISC-V"
-                        ;;
-                    sparc-unknown-linux-gnu)
-                        # (tier3) Setup is tricky, and fails to build test.
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.Dockerfile#L44
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/test.sh#L241
-                        bail "target '${target}' not yet supported"
-                        ;;
-                esac
+                # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh
                 case "${target}" in
                     arm*hf | thumbv7neon-*) cc_target=arm-linux-gnueabihf ;;
                     arm*) cc_target=arm-linux-gnueabi ;;
@@ -106,16 +81,55 @@ case "${host}" in
                     *) cc_target="${target/-unknown/}" ;;
                 esac
                 apt_target="${apt_target:-"${cc_target/i586/i686}"}"
-                # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
-                apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
-
-                # https://github.com/taiki-e/rust-cross-toolchain/blob/main/docker/test/entrypoint.sh
-                echo "CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc" >>"${GITHUB_ENV}"
-                echo "CC_${target_lower}=${apt_target}-gcc" >>"${GITHUB_ENV}"
-                echo "CXX_${target_lower}=${apt_target}-g++" >>"${GITHUB_ENV}"
-                echo "AR_${target_lower}=${apt_target}-ar" >>"${GITHUB_ENV}"
-                echo "STRIP=${apt_target}-strip" >>"${GITHUB_ENV}"
-                echo "OBJDUMP=${apt_target}-objdump" >>"${GITHUB_ENV}"
+                case "${target}" in
+                    # (tier3) Toolchains for aarch64_be-linux-gnu is not available in APT.
+                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L40
+                    # (tier3) Toolchains for riscv32-linux-gnu is not available in APT.
+                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L69
+                    aarch64_be-unknown-linux-gnu | riscv32gc-unknown-linux-gnu)
+                        # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
+                        docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}-dev"
+                        mkdir -p .setup-cross-toolchain-action
+                        docker cp "rust-cross-toolchain:/${target}" .setup-cross-toolchain-action/toolchain
+                        docker rm -f rust-cross-toolchain >/dev/null
+                        sudo cp -r .setup-cross-toolchain-action/toolchain/. /usr/local/
+                        rm -rf ./.setup-cross-toolchain-action
+                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh
+                        case "${target}" in
+                            aarch64_be-unknown-linux-gnu | arm-unknown-linux-gnueabihf) qemu_ld_prefix="/usr/local/${target}/libc" ;;
+                            riscv32gc-unknown-linux-gnu) qemu_ld_prefix="/usr/local/sysroot" ;;
+                        esac
+                        echo "CARGO_TARGET_${target_upper}_LINKER=${target}-gcc" >>"${GITHUB_ENV}"
+                        echo "CC_${target_lower}=${target}-gcc" >>"${GITHUB_ENV}"
+                        echo "CXX_${target_lower}=${target}-g++" >>"${GITHUB_ENV}"
+                        echo "AR_${target_lower}=${target}-ar" >>"${GITHUB_ENV}"
+                        echo "STRIP=${target}-strip" >>"${GITHUB_ENV}"
+                        echo "OBJDUMP=${target}-objdump" >>"${GITHUB_ENV}"
+                        ;;
+                    arm-unknown-linux-gnueabihf)
+                        # (tier2) Ubuntu's gcc-arm-linux-gnueabihf enables armv7 by default
+                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L55
+                        bail "target '${target}' not yet supported; consider using armv7-unknown-linux-gnueabihf for testing armhf"
+                        ;;
+                    sparc-unknown-linux-gnu)
+                        # (tier3) Setup is tricky, and fails to build test.
+                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.Dockerfile#L44
+                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/test.sh#L241
+                        bail "target '${target}' not yet supported"
+                        ;;
+                    *)
+                        # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
+                        apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
+                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh
+                        qemu_ld_prefix="/usr/${apt_target}"
+                        echo "CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc" >>"${GITHUB_ENV}"
+                        echo "CC_${target_lower}=${apt_target}-gcc" >>"${GITHUB_ENV}"
+                        echo "CXX_${target_lower}=${apt_target}-g++" >>"${GITHUB_ENV}"
+                        echo "AR_${target_lower}=${apt_target}-ar" >>"${GITHUB_ENV}"
+                        echo "STRIP=${apt_target}-strip" >>"${GITHUB_ENV}"
+                        echo "OBJDUMP=${apt_target}-objdump" >>"${GITHUB_ENV}"
+                        ;;
+                esac
                 ;;
             *) bail "unsupported target '${target}'" ;;
         esac
@@ -144,7 +158,7 @@ case "${host}" in
             # In some contexts, we want to test for a specific CPU,
             # so respect user-set QEMU_CPU.
             case "${target}" in
-                aarch64-* | aarch64_be-*)
+                aarch64* | arm64*)
                     qemu_arch="${target%%-*}"
                     qemu_cpu=a64fx
                     ;;
@@ -218,9 +232,6 @@ case "${host}" in
             if [[ -n "${qemu_cpu:-}" ]] && [[ -z "${QEMU_CPU:-}" ]]; then
                 echo "QEMU_CPU=${qemu_cpu}" >>"${GITHUB_ENV}"
             fi
-            case "${target}" in
-                *-linux-gnu*) qemu_ld_prefix="/usr/${apt_target}" ;;
-            esac
             if [[ -n "${qemu_ld_prefix:-}" ]] && [[ -z "${QEMU_LD_PREFIX:-}" ]]; then
                 echo "QEMU_LD_PREFIX=${qemu_ld_prefix}" >>"${GITHUB_ENV}"
             fi
