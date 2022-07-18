@@ -120,9 +120,9 @@ jobs:
 
 ### Linux (GNU)
 
-| C++ | test |
-| --- | ---- |
-| ✓ (libstdc++) | ✓ |
+| C++           | test |
+| ------------- | ---- |
+| ✓ (libstdc++) | ✓    |
 
 **Supported targets**:
 
