@@ -90,6 +90,7 @@ case "${host}" in
     x86_64-unknown-linux-gnu)
         case "${target}" in
             x86_64-unknown-linux-gnu) ;;
+            *-linux-musl*) install_rust_cross_toolchain ;;
             *-linux-gnu*)
                 # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh
                 case "${target}" in
@@ -242,7 +243,11 @@ if [[ -n "${use_qemu:-}" ]]; then
             ;;
         *) bail "unrecognized target '${target}'" ;;
     esac
-    echo "CARGO_TARGET_${target_upper}_RUNNER=qemu-${qemu_arch}" >>"${GITHUB_ENV}"
+    if type -P "${target}-runner"; then
+        echo "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
+    else
+        echo "CARGO_TARGET_${target_upper}_RUNNER=qemu-${qemu_arch}" >>"${GITHUB_ENV}"
+    fi
     if [[ -n "${qemu_cpu:-}" ]] && [[ -z "${QEMU_CPU:-}" ]]; then
         echo "QEMU_CPU=${qemu_cpu}" >>"${GITHUB_ENV}"
     fi

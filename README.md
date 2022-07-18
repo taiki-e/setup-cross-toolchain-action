@@ -120,9 +120,9 @@ jobs:
 
 ### Linux (GNU)
 
-| C++ | test |
-| --- | ---- |
-| ✓ (libstdc++) | ✓ |
+| C++           | test |
+| ------------- | ---- |
+| ✓ (libstdc++) | ✓    |
 
 **Supported targets**:
 
@@ -160,6 +160,39 @@ jobs:
 [4] GCC 10, glibc 2.31<br>
 [5] GCC 11, glibc 2.33<br>
 [6] binfmt doesn't work<br>
+
+### Linux (musl)
+
+| libc                | GCC   | C++           | test |
+| ------------------- | ----- | ------------- | ---- |
+| musl 1.1.24 [1] [2] | 9.4.0 | ✓ (libstdc++) | ✓    |
+
+**Supported targets**:
+
+| target                                         | host         | runner                      |
+| ---------------------------------------------- | ------------ | --------------------------- |
+| `aarch64-unknown-linux-musl`                   | x86_64 linux | qemu-user (default)         |
+| `arm-unknown-linux-musleabi`                   | x86_64 linux | qemu-user (default)         |
+| `arm-unknown-linux-musleabihf`                 | x86_64 linux | qemu-user (default)         |
+| `armv5te-unknown-linux-musleabi`               | x86_64 linux | qemu-user (default)         |
+| `armv7-unknown-linux-musleabi`                 | x86_64 linux | qemu-user (default)         |
+| `armv7-unknown-linux-musleabihf`               | x86_64 linux | qemu-user (default)         |
+| `i586-unknown-linux-musl`                      | x86_64 linux | qemu-user (default), native |
+| `i686-unknown-linux-musl`                      | x86_64 linux | native (default), qemu-user |
+| `mips-unknown-linux-musl`                      | x86_64 linux | qemu-user (default)         |
+| `mips64-unknown-linux-muslabi64`               | x86_64 linux | qemu-user (default)         |
+| `mips64el-unknown-linux-muslabi64`             | x86_64 linux | qemu-user (default)         |
+| `mipsel-unknown-linux-musl`                    | x86_64 linux | qemu-user (default)         |
+| `powerpc-unknown-linux-musl` (tier3)           | x86_64 linux | qemu-user (default)         |
+| `powerpc64le-unknown-linux-musl` (tier3)       | x86_64 linux | qemu-user (default)         |
+| `s390x-unknown-linux-musl` (tier3)             | x86_64 linux | qemu-user (default)         |
+| `thumbv7neon-unknown-linux-musleabihf` (tier3) | x86_64 linux | qemu-user (default)         |
+| `x86_64-unknown-linux-musl`                    | x86_64 linux | native (default), qemu-user |
+
+[1] See [libc#1848] for details<br>
+[2] With a patch that fixes CVE-2020-28928<br>
+
+[libc#1848]: https://github.com/rust-lang/libc/issues/1848
 
 ## Related Projects
 

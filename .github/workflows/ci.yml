@@ -9,6 +9,7 @@ on:
     branches:
       - main
       - dev
+      - musl
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
@@ -35,45 +36,70 @@ jobs:
       matrix:
         # https://github.com/taiki-e/rust-cross-toolchain/blob/HEAD/tools/target-list-shared.sh
         target:
-          # Linux (GNU)
-          # rustup target list | grep -e '-linux-gnu'
-          # rustc --print target-list | grep -e '-linux-gnu'
-          - aarch64-unknown-linux-gnu
-          # - aarch64-unknown-linux-gnu_ilp32 # tier3
-          - aarch64_be-unknown-linux-gnu # tier3
-          # - aarch64_be-unknown-linux-gnu_ilp32 # tier3
-          - arm-unknown-linux-gnueabi
-          # - arm-unknown-linux-gnueabihf # supported in rust-cross-toolchain but not ported to this action
-          # - armv4t-unknown-linux-gnueabi # tier3, rustc generate code for armv5t (probably needs to pass +v4t to llvm)
-          - armv5te-unknown-linux-gnueabi
-          - armv7-unknown-linux-gnueabi
-          - armv7-unknown-linux-gnueabihf
-          - i586-unknown-linux-gnu
-          - i686-unknown-linux-gnu
-          # - m68k-unknown-linux-gnu # tier3, build fail: https://github.com/rust-lang/rust/issues/89498
-          - mips-unknown-linux-gnu
-          - mips64-unknown-linux-gnuabi64
-          - mips64el-unknown-linux-gnuabi64
-          - mipsel-unknown-linux-gnu
-          - mipsisa32r6-unknown-linux-gnu # tier3
-          - mipsisa32r6el-unknown-linux-gnu # tier3
-          - mipsisa64r6-unknown-linux-gnuabi64 # tier3
-          - mipsisa64r6el-unknown-linux-gnuabi64 # tier3
-          - powerpc-unknown-linux-gnu
-          # - powerpc-unknown-linux-gnuspe # tier3, fails to run test, and GCC 9 removed support for this target
-          - powerpc64-unknown-linux-gnu
-          - powerpc64le-unknown-linux-gnu
-          - riscv32gc-unknown-linux-gnu # tier3
-          - riscv64gc-unknown-linux-gnu
-          - s390x-unknown-linux-gnu
-          # - sparc-unknown-linux-gnu # tier3, supported in rust-cross-toolchain but not ported to this action
-          - sparc64-unknown-linux-gnu
-          - thumbv7neon-unknown-linux-gnueabihf
-          - x86_64-unknown-linux-gnu
-          # - x86_64-unknown-linux-gnux32 # tier3, run-fail
+          # # Linux (GNU)
+          # # rustup target list | grep -e '-linux-gnu'
+          # # rustc --print target-list | grep -e '-linux-gnu'
+          # - aarch64-unknown-linux-gnu
+          # # - aarch64-unknown-linux-gnu_ilp32 # tier3
+          # - aarch64_be-unknown-linux-gnu # tier3
+          # # - aarch64_be-unknown-linux-gnu_ilp32 # tier3
+          # - arm-unknown-linux-gnueabi
+          # # - arm-unknown-linux-gnueabihf # supported in rust-cross-toolchain but not ported to this action
+          # # - armv4t-unknown-linux-gnueabi # tier3, rustc generate code for armv5t (probably needs to pass +v4t to llvm)
+          # - armv5te-unknown-linux-gnueabi
+          # - armv7-unknown-linux-gnueabi
+          # - armv7-unknown-linux-gnueabihf
+          # - i586-unknown-linux-gnu
+          # - i686-unknown-linux-gnu
+          # # - m68k-unknown-linux-gnu # tier3, build fail: https://github.com/rust-lang/rust/issues/89498
+          # - mips-unknown-linux-gnu
+          # - mips64-unknown-linux-gnuabi64
+          # - mips64el-unknown-linux-gnuabi64
+          # - mipsel-unknown-linux-gnu
+          # - mipsisa32r6-unknown-linux-gnu # tier3
+          # - mipsisa32r6el-unknown-linux-gnu # tier3
+          # - mipsisa64r6-unknown-linux-gnuabi64 # tier3
+          # - mipsisa64r6el-unknown-linux-gnuabi64 # tier3
+          # - powerpc-unknown-linux-gnu
+          # # - powerpc-unknown-linux-gnuspe # tier3, fails to run test, and GCC 9 removed support for this target
+          # - powerpc64-unknown-linux-gnu
+          # - powerpc64le-unknown-linux-gnu
+          # - riscv32gc-unknown-linux-gnu # tier3
+          # - riscv64gc-unknown-linux-gnu
+          # - s390x-unknown-linux-gnu
+          # # - sparc-unknown-linux-gnu # tier3, supported in rust-cross-toolchain but not ported to this action
+          # - sparc64-unknown-linux-gnu
+          # - thumbv7neon-unknown-linux-gnueabihf
+          # - x86_64-unknown-linux-gnu
+          # # - x86_64-unknown-linux-gnux32 # run-fail
+
+          # Linux (musl)
+          # rustup target list | grep -e '-linux-musl'
+          # rustc --print target-list | grep -e '-linux-musl'
+          - aarch64-unknown-linux-musl
+          - arm-unknown-linux-musleabi
+          - arm-unknown-linux-musleabihf
+          - armv5te-unknown-linux-musleabi
+          - armv7-unknown-linux-musleabi
+          - armv7-unknown-linux-musleabihf
+          # - hexagon-unknown-linux-musl # tier3, musl-cross-make doesn't support this target
+          - i586-unknown-linux-musl
+          - i686-unknown-linux-musl
+          - mips-unknown-linux-musl
+          - mips64-unknown-linux-muslabi64
+          - mips64el-unknown-linux-muslabi64
+          - mipsel-unknown-linux-musl
+          - powerpc-unknown-linux-musl # tier3
+          # - powerpc64-unknown-linux-musl # tier3, ABI version 1 is not compatible with ABI version 2 output
+          - powerpc64le-unknown-linux-musl # tier3
+          # - riscv32gc-unknown-linux-musl # tier3, musl-cross-make doesn't support this target
+          - riscv64gc-unknown-linux-musl # tier3
+          - s390x-unknown-linux-musl # tier3
+          - thumbv7neon-unknown-linux-musleabihf # tier3
+          - x86_64-unknown-linux-musl
         os:
-          - ubuntu-22.04
-          - ubuntu-20.04
+          # - ubuntu-22.04
+          # - ubuntu-20.04
           - ubuntu-18.04
         exclude:
           # Segmentation fault on ubuntu 20.04
