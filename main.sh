@@ -64,11 +64,11 @@ register_binfmt() {
 install_rust_cross_toolchain() {
     # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
     docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}-dev"
-    mkdir -p .setup-cross-toolchain-action
-    docker cp "rust-cross-toolchain:/${target}" .setup-cross-toolchain-action/toolchain
+    mkdir -p .setup-cross-toolchain-action-tmp
+    docker cp "rust-cross-toolchain:/${target}" .setup-cross-toolchain-action-tmp/toolchain
     docker rm -f rust-cross-toolchain >/dev/null
-    sudo cp -r .setup-cross-toolchain-action/toolchain/. /usr/local/
-    rm -rf ./.setup-cross-toolchain-action
+    sudo cp -r .setup-cross-toolchain-action-tmp/toolchain/. /usr/local/
+    rm -rf ./.setup-cross-toolchain-action-tmp
     # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh#L47
     case "${target}" in
         aarch64_be-unknown-linux-gnu | arm-unknown-linux-gnueabihf) qemu_ld_prefix="/usr/local/${target}/libc" ;;
@@ -251,11 +251,11 @@ if [[ -n "${use_qemu:-}" ]]; then
     fi
     # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
     docker create --name qemu-user ghcr.io/taiki-e/qemu-user
-    mkdir -p .setup-cross-toolchain-action
-    docker cp qemu-user:/usr/bin .setup-cross-toolchain-action/qemu
+    mkdir -p .setup-cross-toolchain-action-tmp
+    docker cp qemu-user:/usr/bin .setup-cross-toolchain-action-tmp/qemu
     docker rm -f qemu-user >/dev/null
-    sudo mv .setup-cross-toolchain-action/qemu/qemu-* /usr/bin/
-    rm -rf ./.setup-cross-toolchain-action
+    sudo mv .setup-cross-toolchain-action-tmp/qemu/qemu-* /usr/bin/
+    rm -rf ./.setup-cross-toolchain-action-tmp
     x qemu-${qemu_arch} --version
     register_binfmt
 fi
