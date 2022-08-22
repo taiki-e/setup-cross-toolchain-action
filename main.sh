@@ -52,10 +52,10 @@ register_binfmt() {
     # They confuse binfmt.
     sed -i 's/ mipsn32 mipsn32el / /' ./__qemu-binfmt-conf.sh
     chmod +x ./__qemu-binfmt-conf.sh
-    if [ ! -d /proc/sys/fs/binfmt_misc ]; then
+    if [[ ! -d /proc/sys/fs/binfmt_misc ]]; then
         bail "kernel does not support binfmt"
     fi
-    if [ ! -f /proc/sys/fs/binfmt_misc/register ]; then
+    if [[ ! -f /proc/sys/fs/binfmt_misc/register ]]; then
         sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
     fi
     sudo ./__qemu-binfmt-conf.sh --qemu-path /usr/bin --persistent yes
@@ -256,7 +256,7 @@ if [[ -n "${use_qemu:-}" ]]; then
     docker rm -f qemu-user >/dev/null
     sudo mv .setup-cross-toolchain-action-tmp/qemu/qemu-* /usr/bin/
     rm -rf ./.setup-cross-toolchain-action-tmp
-    x qemu-${qemu_arch} --version
+    x "qemu-${qemu_arch}" --version
     register_binfmt
 fi
 
