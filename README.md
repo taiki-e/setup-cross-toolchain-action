@@ -153,6 +153,7 @@ jobs:
 | `sparc64-unknown-linux-gnu`                    | <!-- ubuntu-latest/ubuntu-20.04 [1],--> ubuntu-18.04 [2], ubuntu-22.04 [3] | qemu-user (default)         |
 | `thumbv7neon-unknown-linux-gnueabihf`          | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | qemu-user (default)         |
 | `x86_64-unknown-linux-gnu`                     | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | native (default), qemu-user |
+| `x86_64-unknown-linux-musl`                    | ubuntu-latest/ubuntu-20.04 [1], ubuntu-18.04 [2], ubuntu-22.04 [3]         | native (default), qemu-user |
 
 [1] GCC 9, glibc 2.31<br>
 [2] GCC 7, glibc 2.27<br>

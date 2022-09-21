@@ -67,6 +67,10 @@ case "${host}" in
         apt_packages=()
         case "${target}" in
             x86_64-unknown-linux-gnu) ;;
+            x86_64-unknown-linux-musl)
+                apt_packages+=("musl-tools")
+                sudo ln -s /usr/bin/g++ /usr/bin/musl-g++
+                ;;
             *-linux-gnu*)
                 # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh
                 case "${target}" in
