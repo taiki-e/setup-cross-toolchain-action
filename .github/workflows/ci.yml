@@ -89,9 +89,6 @@ jobs:
         with:
           persist-credentials: false
       - uses: dtolnay/rust-toolchain@nightly
-      # nightly-2022-10-28 breaks aarch64_be linux codegen
-      - run: rustup toolchain add nightly-2022-10-27 && rustup default nightly-2022-10-27
-        if: matrix.target == 'aarch64_be-unknown-linux-gnu'
       - uses: ./
         with:
           target: ${{ matrix.target }}
