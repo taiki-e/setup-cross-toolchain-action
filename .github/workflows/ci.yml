@@ -74,6 +74,14 @@ jobs:
         os:
           - ubuntu-22.04
           - ubuntu-20.04
+        include:
+          # Windows (GNU)
+          # rustup target list | grep -e '-pc-windows-gnu'
+          # rustc --print target-list | grep -e '-pc-windows-gnu'
+          # - { target: i686-pc-windows-gnu, os: ubuntu-22.04 }
+          - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04 }
+          - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04, runner: wine@7.13 }
+          - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04, runner: wine@7.0.1 }
         exclude:
           # Segmentation fault on ubuntu 20.04
           - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-20.04 }
@@ -92,6 +100,7 @@ jobs:
       - uses: ./
         with:
           target: ${{ matrix.target }}
+          runner: ${{ matrix.runner }}
       - run: git clone https://github.com/taiki-e/rust-cross-toolchain.git
       - run: cargo $BUILD_STD build --verbose --target ${{ matrix.target }}
         working-directory: rust-cross-toolchain/docker/test/fixtures/rust
@@ -101,7 +110,7 @@ jobs:
         working-directory: rust-cross-toolchain/docker/test/fixtures/rust
       - run: ./target/${{ matrix.target }}/debug/rust-test
         working-directory: rust-cross-toolchain
-        if: matrix.target != 'mipsisa32r6-unknown-linux-gnu' && matrix.target != 'mipsisa32r6el-unknown-linux-gnu'
+        if: matrix.target != 'mipsisa32r6-unknown-linux-gnu' && matrix.target != 'mipsisa32r6el-unknown-linux-gnu' && !contains(matrix.target, '-windows-')
 
   tidy:
     runs-on: ubuntu-latest

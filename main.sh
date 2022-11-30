@@ -61,19 +61,28 @@ register_binfmt() {
     sudo ./__qemu-binfmt-conf.sh --qemu-path /usr/bin --persistent yes
     rm ./__qemu-binfmt-conf.sh
 }
+install_apt_packages() {
+    if [[ ${#apt_packages[@]} -gt 0 ]]; then
+        retry sudo apt-get -o Acquire::Retries=10 -qq update
+        retry sudo apt-get -o Acquire::Retries=10 -qq -o Dpkg::Use-Pty=0 install -y --no-install-recommends \
+            "${apt_packages[@]}"
+        apt_packages=()
+    fi
+}
 install_rust_cross_toolchain() {
+    local toolchain_dir=/usr/local
     # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
     docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}-dev"
     mkdir -p .setup-cross-toolchain-action-tmp
     docker cp "rust-cross-toolchain:/${target}" .setup-cross-toolchain-action-tmp/toolchain
     docker rm -f rust-cross-toolchain >/dev/null
-    sudo cp -r .setup-cross-toolchain-action-tmp/toolchain/. /usr/local/
+    sudo cp -r .setup-cross-toolchain-action-tmp/toolchain/. "${toolchain_dir}"/
     rm -rf ./.setup-cross-toolchain-action-tmp
     # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh#L47
     case "${target}" in
         aarch64_be-unknown-linux-gnu | arm-unknown-linux-gnueabihf) qemu_ld_prefix="/usr/local/${target}/libc" ;;
-        riscv32gc-unknown-linux-gnu) qemu_ld_prefix="/usr/local/sysroot" ;;
-        *) qemu_ld_prefix="/usr/local/${target}" ;;
+        riscv32gc-unknown-linux-gnu) qemu_ld_prefix="${toolchain_dir}/sysroot" ;;
+        *) qemu_ld_prefix="${toolchain_dir}/${target}" ;;
     esac
     cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${target}-gcc
@@ -85,186 +94,257 @@ OBJDUMP=${target}-objdump
 EOF
 }
 
-apt_packages=()
-case "${host}" in
-    x86_64-unknown-linux-gnu)
-        case "${target}" in
-            x86_64-unknown-linux-gnu) ;;
-            *-linux-gnu*)
-                # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh
-                case "${target}" in
-                    # (tier3) Toolchains for aarch64_be-linux-gnu is not available in APT.
-                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L40
-                    # (tier3) Toolchains for riscv32-linux-gnu is not available in APT.
-                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L69
-                    aarch64_be-unknown-linux-gnu | riscv32gc-unknown-linux-gnu) install_rust_cross_toolchain ;;
-                    arm-unknown-linux-gnueabihf)
-                        # (tier2) Ubuntu's gcc-arm-linux-gnueabihf enables armv7 by default
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L55
-                        bail "target '${target}' not yet supported; consider using armv7-unknown-linux-gnueabihf for testing armhf"
-                        ;;
-                    sparc-unknown-linux-gnu)
-                        # (tier3) Setup is tricky, and fails to build test.
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.Dockerfile#L44
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/test.sh#L241
-                        bail "target '${target}' not yet supported"
-                        ;;
-                    *)
-                        case "${target}" in
-                            arm*hf | thumbv7neon-*) cc_target=arm-linux-gnueabihf ;;
-                            arm*) cc_target=arm-linux-gnueabi ;;
-                            riscv32gc-* | riscv64gc-*) cc_target="${target/gc-unknown/}" ;;
-                            sparc-*)
-                                cc_target=sparc-linux-gnu
-                                apt_target=sparc64-linux-gnu
-                                multilib=1
-                                ;;
-                            *) cc_target="${target/-unknown/}" ;;
-                        esac
-                        apt_target="${apt_target:-"${cc_target/i586/i686}"}"
-                        # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
-                        apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh
-                        qemu_ld_prefix="/usr/${apt_target}"
-                        echo "CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc" >>"${GITHUB_ENV}"
-                        echo "CC_${target_lower}=${apt_target}-gcc" >>"${GITHUB_ENV}"
-                        echo "CXX_${target_lower}=${apt_target}-g++" >>"${GITHUB_ENV}"
-                        echo "AR_${target_lower}=${apt_target}-ar" >>"${GITHUB_ENV}"
-                        echo "STRIP=${apt_target}-strip" >>"${GITHUB_ENV}"
-                        echo "OBJDUMP=${apt_target}-objdump" >>"${GITHUB_ENV}"
-                        ;;
-                esac
-                ;;
-            *) bail "unsupported target '${target}'" ;;
-        esac
+setup_linux_host() {
+    apt_packages=()
+    case "${target}" in
+        x86_64-unknown-linux-gnu) ;;
+        *-linux-gnu*)
+            # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh
+            case "${target}" in
+                # (tier3) Toolchains for aarch64_be-linux-gnu is not available in APT.
+                # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L40
+                # (tier3) Toolchains for riscv32-linux-gnu is not available in APT.
+                # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L69
+                aarch64_be-unknown-linux-gnu | riscv32gc-unknown-linux-gnu) install_rust_cross_toolchain ;;
+                arm-unknown-linux-gnueabihf)
+                    # (tier2) Ubuntu's gcc-arm-linux-gnueabihf enables armv7 by default
+                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L55
+                    bail "target '${target}' not yet supported; consider using armv7-unknown-linux-gnueabihf for testing armhf"
+                    ;;
+                sparc-unknown-linux-gnu)
+                    # (tier3) Setup is tricky, and fails to build test.
+                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.Dockerfile#L44
+                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/test.sh#L241
+                    bail "target '${target}' not yet supported"
+                    ;;
+                *)
+                    case "${target}" in
+                        arm*hf | thumbv7neon-*) cc_target=arm-linux-gnueabihf ;;
+                        arm*) cc_target=arm-linux-gnueabi ;;
+                        riscv32gc-* | riscv64gc-*) cc_target="${target/gc-unknown/}" ;;
+                        sparc-*)
+                            cc_target=sparc-linux-gnu
+                            apt_target=sparc64-linux-gnu
+                            multilib=1
+                            ;;
+                        *) cc_target="${target/-unknown/}" ;;
+                    esac
+                    apt_target="${apt_target:-"${cc_target/i586/i686}"}"
+                    # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
+                    apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
+                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh
+                    qemu_ld_prefix="/usr/${apt_target}"
+                    cat >>"${GITHUB_ENV}" <<EOF
+CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc
+CC_${target_lower}=${apt_target}-gcc
+CXX_${target_lower}=${apt_target}-g++
+AR_${target_lower}=${apt_target}-ar
+STRIP=${apt_target}-strip
+OBJDUMP=${apt_target}-objdump
+EOF
+                    ;;
+            esac
+            ;;
+        x86_64-pc-windows-gnu)
+            arch="${target%%-*}"
+            apt_target="${arch}-w64-mingw32"
+            apt_packages+=("g++-mingw-w64-${arch/_/-}")
 
+            # https://wiki.winehq.org/Ubuntu
+            # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
+            sudo dpkg --add-architecture i386
+            codename="$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')"
+            sudo mkdir -pm755 /etc/apt/keyrings
+            sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+            sudo wget -NP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/${codename}/winehq-${codename}.sources"
+            case "${runner}" in
+                '')
+                    # Use winehq-devel 7.13 as default because mio/wepoll needs wine 7.13+.
+                    # https://github.com/tokio-rs/mio/issues/1444
+                    wine_version=7.13
+                    wine_branch=devel
+                    ;;
+                wine@*)
+                    wine_version="${runner#*@}"
+                    if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                        wine_branch=stable
+                    elif [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+                        wine_branch=devel
+                    else
+                        bail "unrecognized runner '${runner}'"
+                    fi
+                    ;;
+                *) bail "unrecognized runner '${runner}'" ;;
+            esac
+            # The suffix is 1 in most cases, rarely 2.
+            # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
+            # https://dl.winehq.org/wine-builds/ubuntu/dists/focal/main/binary-amd64
+            wine_build_suffix=1
+            apt_packages+=(
+                "winehq-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
+                "wine-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
+                "wine-${wine_branch}-amd64=${wine_version}~${codename}-${wine_build_suffix}"
+                "wine-${wine_branch}-i386=${wine_version}~${codename}-${wine_build_suffix}"
+                "wine-${wine_branch}-dev=${wine_version}~${codename}-${wine_build_suffix}"
+            )
+            install_apt_packages
+
+            gcc_lib="$(basename "$(ls -d "/usr/lib/gcc/${apt_target}"/*posix)")"
+            # Adapted from https://github.com/cross-rs/cross/blob/16a64e7028d90a3fdf285cfd642cdde9443c0645/docker/windows-entry.sh
+            cat >"/usr/local/bin/${target}-runner" <<EOF
+#!/bin/sh
+set -eu
+export HOME=/tmp/home
+mkdir -p "\${HOME}"
+export WINEPREFIX=/tmp/wine
+mkdir -p "\${WINEPREFIX}"
+if [ ! -e /tmp/WINEBOOT ]; then
+    wineboot &>/dev/null
+    touch /tmp/WINEBOOT
+fi
+export WINEPATH="/usr/lib/gcc/${apt_target}/${gcc_lib};/usr/${apt_target}/lib;\${WINEPATH:-}"
+exec wine "\$@"
+EOF
+            chmod +x "/usr/local/bin/${target}-runner"
+
+            cat >>"${GITHUB_ENV}" <<EOF
+CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc
+CARGO_TARGET_${target_upper}_RUNNER=${target}-runner
+CC_${target_lower}=${apt_target}-gcc
+CXX_${target_lower}=${apt_target}-g++
+AR_${target_lower}=${apt_target}-ar
+STRIP=${apt_target}-strip
+OBJDUMP=${apt_target}-objdump
+EOF
+            ;;
+        *) bail "unsupported target '${target}'" ;;
+    esac
+
+    case "${target}" in
+        *-unknown-linux-*)
+            case "${runner}" in
+                '')
+                    case "${target}" in
+                        # On x86, qemu-user is not used by default.
+                        x86_64-* | i686-*) ;;
+                        *) use_qemu='1' ;;
+                    esac
+                    ;;
+                native) ;;
+                qemu-user) use_qemu='1' ;;
+                *) bail "unrecognized runner '${runner}'" ;;
+            esac
+            ;;
+    esac
+    if [[ -n "${use_qemu:-}" ]]; then
+        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh#L251
+        # We basically set the newer and more powerful CPU as the
+        # default QEMU_CPU so that we can test more CPU features.
+        # In some contexts, we want to test for a specific CPU,
+        # so respect user-set QEMU_CPU.
         case "${target}" in
-            *-unknown-linux-*)
-                case "${runner}" in
-                    '')
-                        case "${target}" in
-                            # On x86, qemu-user is not used by default.
-                            x86_64-* | i686-*) ;;
-                            *) use_qemu='1' ;;
-                        esac
-                        ;;
-                    native) ;;
-                    qemu-user) use_qemu='1' ;;
-                    *) bail "unrecognized runner '${runner}'" ;;
+            aarch64* | arm64*)
+                qemu_arch="${target%%-*}"
+                case "${target}" in
+                    arm64*be*) qemu_arch=aarch64_be ;;
+                    arm64*) qemu_arch=aarch64 ;;
+                esac
+                qemu_cpu=a64fx
+                ;;
+            arm* | thumb*)
+                case "${target}" in
+                    armeb* | thumbeb*) qemu_arch=armeb ;;
+                    *) qemu_arch=arm ;;
+                esac
+                case "${target}" in
+                    # ARMv6: https://en.wikipedia.org/wiki/ARM11
+                    arm-* | armv6-*) qemu_cpu=arm11mpcore ;;
+                    # ARMv4: https://en.wikipedia.org/wiki/StrongARM
+                    armv4t-*) qemu_cpu=sa1110 ;;
+                    # ARMv5TE
+                    armv5te-*) qemu_cpu=arm1026 ;;
+                    # ARMv7-A+NEONv2
+                    armv7-* | thumbv7neon-*) qemu_cpu=cortex-a15 ;;
+                    *) bail "unrecognized target '${target}'" ;;
                 esac
                 ;;
+            i*86-*) qemu_arch=i386 ;;
+            hexagon-*) qemu_arch=hexagon ;;
+            m68k-*) qemu_arch=m68k ;;
+            mips-* | mipsel-*) qemu_arch="${target%%-*}" ;;
+            mips64-* | mips64el-*)
+                qemu_arch="${target%%-*}"
+                # As of qemu 6.1, only Loongson-3A4000 supports MSA instructions with mips64r5.
+                qemu_cpu=Loongson-3A4000
+                ;;
+            mipsisa32r6-* | mipsisa32r6el-*)
+                qemu_arch="${target%%-*}"
+                qemu_arch="${qemu_arch/isa32r6/}"
+                qemu_cpu=mips32r6-generic
+                ;;
+            mipsisa64r6-* | mipsisa64r6el-*)
+                qemu_arch="${target%%-*}"
+                qemu_arch="${qemu_arch/isa64r6/64}"
+                qemu_cpu=I6400
+                ;;
+            powerpc-*spe)
+                qemu_arch=ppc
+                qemu_cpu=e500v2
+                ;;
+            powerpc-*)
+                qemu_arch=ppc
+                qemu_cpu=Vger
+                ;;
+            powerpc64-*)
+                qemu_arch=ppc64
+                qemu_cpu=power10
+                ;;
+            powerpc64le-*)
+                qemu_arch=ppc64le
+                qemu_cpu=power10
+                ;;
+            riscv32gc-* | riscv64gc-*) qemu_arch="${target%%gc-*}" ;;
+            s390x-*) qemu_arch=s390x ;;
+            sparc-*) qemu_arch=sparc32plus ;;
+            sparc64-*) qemu_arch=sparc64 ;;
+            x86_64-*)
+                qemu_arch=x86_64
+                # qemu does not seem to support emulating x86_64 CPU features on x86_64 hosts.
+                # > qemu-x86_64: warning: TCG doesn't support requested feature
+                #
+                # A way that works well for emulating x86_64 CPU features on x86_64 hosts is to use Intel SDE.
+                # https://www.intel.com/content/www/us/en/developer/articles/tool/software-development-emulator.html
+                # It is not OSS, but it is licensed under Intel Simplified Software License and redistribution is allowed.
+                # https://www.intel.com/content/www/us/en/developer/articles/license/pre-release-license-agreement-for-software-development-emulator.html
+                # https://www.intel.com/content/www/us/en/developer/articles/license/onemkl-license-faq.html
+                ;;
+            *) bail "unrecognized target '${target}'" ;;
         esac
-        ;;
+        echo "CARGO_TARGET_${target_upper}_RUNNER=qemu-${qemu_arch}" >>"${GITHUB_ENV}"
+        if [[ -n "${qemu_cpu:-}" ]] && [[ -z "${QEMU_CPU:-}" ]]; then
+            echo "QEMU_CPU=${qemu_cpu}" >>"${GITHUB_ENV}"
+        fi
+        if [[ -n "${qemu_ld_prefix:-}" ]] && [[ -z "${QEMU_LD_PREFIX:-}" ]]; then
+            echo "QEMU_LD_PREFIX=${qemu_ld_prefix}" >>"${GITHUB_ENV}"
+        fi
+        # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
+        docker create --name qemu-user ghcr.io/taiki-e/qemu-user
+        mkdir -p .setup-cross-toolchain-action-tmp
+        docker cp qemu-user:/usr/bin .setup-cross-toolchain-action-tmp/qemu
+        docker rm -f qemu-user >/dev/null
+        sudo mv .setup-cross-toolchain-action-tmp/qemu/qemu-* /usr/bin/
+        rm -rf ./.setup-cross-toolchain-action-tmp
+        x "qemu-${qemu_arch}" --version
+        register_binfmt
+    fi
+
+    install_apt_packages
+}
+
+case "${host}" in
+    *-linux-gnu*) setup_linux_host ;;
     *) bail "unsupported host '${host}'" ;;
 esac
-
-if [[ -n "${use_qemu:-}" ]]; then
-    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh#L251
-    # We basically set the newer and more powerful CPU as the
-    # default QEMU_CPU so that we can test more CPU features.
-    # In some contexts, we want to test for a specific CPU,
-    # so respect user-set QEMU_CPU.
-    case "${target}" in
-        aarch64* | arm64*)
-            qemu_arch="${target%%-*}"
-            case "${target}" in
-                arm64*be*) qemu_arch=aarch64_be ;;
-                arm64*) qemu_arch=aarch64 ;;
-            esac
-            qemu_cpu=a64fx
-            ;;
-        arm* | thumb*)
-            case "${target}" in
-                armeb* | thumbeb*) qemu_arch=armeb ;;
-                *) qemu_arch=arm ;;
-            esac
-            case "${target}" in
-                # ARMv6: https://en.wikipedia.org/wiki/ARM11
-                arm-* | armv6-*) qemu_cpu=arm11mpcore ;;
-                # ARMv4: https://en.wikipedia.org/wiki/StrongARM
-                armv4t-*) qemu_cpu=sa1110 ;;
-                # ARMv5TE
-                armv5te-*) qemu_cpu=arm1026 ;;
-                # ARMv7-A+NEONv2
-                armv7-* | thumbv7neon-*) qemu_cpu=cortex-a15 ;;
-                *) bail "unrecognized target '${target}'" ;;
-            esac
-            ;;
-        i*86-*) qemu_arch=i386 ;;
-        hexagon-*) qemu_arch=hexagon ;;
-        m68k-*) qemu_arch=m68k ;;
-        mips-* | mipsel-*) qemu_arch="${target%%-*}" ;;
-        mips64-* | mips64el-*)
-            qemu_arch="${target%%-*}"
-            # As of qemu 6.1, only Loongson-3A4000 supports MSA instructions with mips64r5.
-            qemu_cpu=Loongson-3A4000
-            ;;
-        mipsisa32r6-* | mipsisa32r6el-*)
-            qemu_arch="${target%%-*}"
-            qemu_arch="${qemu_arch/isa32r6/}"
-            qemu_cpu=mips32r6-generic
-            ;;
-        mipsisa64r6-* | mipsisa64r6el-*)
-            qemu_arch="${target%%-*}"
-            qemu_arch="${qemu_arch/isa64r6/64}"
-            qemu_cpu=I6400
-            ;;
-        powerpc-*spe)
-            qemu_arch=ppc
-            qemu_cpu=e500v2
-            ;;
-        powerpc-*)
-            qemu_arch=ppc
-            qemu_cpu=Vger
-            ;;
-        powerpc64-*)
-            qemu_arch=ppc64
-            qemu_cpu=power10
-            ;;
-        powerpc64le-*)
-            qemu_arch=ppc64le
-            qemu_cpu=power10
-            ;;
-        riscv32gc-* | riscv64gc-*) qemu_arch="${target%%gc-*}" ;;
-        s390x-*) qemu_arch=s390x ;;
-        sparc-*) qemu_arch=sparc32plus ;;
-        sparc64-*) qemu_arch=sparc64 ;;
-        x86_64-*)
-            qemu_arch=x86_64
-            # qemu does not seem to support emulating x86_64 CPU features on x86_64 hosts.
-            # > qemu-x86_64: warning: TCG doesn't support requested feature
-            #
-            # A way that works well for emulating x86_64 CPU features on x86_64 hosts is to use Intel SDE.
-            # https://www.intel.com/content/www/us/en/developer/articles/tool/software-development-emulator.html
-            # It is not OSS, but it is licensed under Intel Simplified Software License and redistribution is allowed.
-            # https://www.intel.com/content/www/us/en/developer/articles/license/pre-release-license-agreement-for-software-development-emulator.html
-            # https://www.intel.com/content/www/us/en/developer/articles/license/onemkl-license-faq.html
-            ;;
-        *) bail "unrecognized target '${target}'" ;;
-    esac
-    echo "CARGO_TARGET_${target_upper}_RUNNER=qemu-${qemu_arch}" >>"${GITHUB_ENV}"
-    if [[ -n "${qemu_cpu:-}" ]] && [[ -z "${QEMU_CPU:-}" ]]; then
-        echo "QEMU_CPU=${qemu_cpu}" >>"${GITHUB_ENV}"
-    fi
-    if [[ -n "${qemu_ld_prefix:-}" ]] && [[ -z "${QEMU_LD_PREFIX:-}" ]]; then
-        echo "QEMU_LD_PREFIX=${qemu_ld_prefix}" >>"${GITHUB_ENV}"
-    fi
-    # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
-    docker create --name qemu-user ghcr.io/taiki-e/qemu-user
-    mkdir -p .setup-cross-toolchain-action-tmp
-    docker cp qemu-user:/usr/bin .setup-cross-toolchain-action-tmp/qemu
-    docker rm -f qemu-user >/dev/null
-    sudo mv .setup-cross-toolchain-action-tmp/qemu/qemu-* /usr/bin/
-    rm -rf ./.setup-cross-toolchain-action-tmp
-    x "qemu-${qemu_arch}" --version
-    register_binfmt
-fi
-
-if [[ ${#apt_packages[@]} -gt 0 ]]; then
-    retry sudo apt-get -o Acquire::Retries=10 -qq update
-    retry sudo apt-get -o Acquire::Retries=10 -qq -o Dpkg::Use-Pty=0 install -y --no-install-recommends \
-        "${apt_packages[@]}"
-fi
 
 if grep <<<"${rustup_target_list}" -Eq "^${target}( |$)"; then
     retry rustup target add "${target}" &>/dev/null
