@@ -208,10 +208,10 @@ EOF
             chmod +x "/usr/local/bin/${target}-runner"
 
             cat >>"${GITHUB_ENV}" <<EOF
-CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc
+CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc-posix
 CARGO_TARGET_${target_upper}_RUNNER=${target}-runner
-CC_${target_lower}=${apt_target}-gcc
-CXX_${target_lower}=${apt_target}-g++
+CC_${target_lower}=${apt_target}-gcc-posix
+CXX_${target_lower}=${apt_target}-g++-posix
 AR_${target_lower}=${apt_target}-ar
 STRIP=${apt_target}-strip
 OBJDUMP=${apt_target}-objdump

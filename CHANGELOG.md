@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Use MinGW GCC with pthread support.
+
 ## [1.4.0] - 2022-11-30
 
 - Support x86_64-pc-windows-gnu on Linux host.
