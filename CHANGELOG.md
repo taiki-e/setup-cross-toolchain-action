@@ -10,7 +10,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
-- Use MinGW GCC with pthread support.
+- Improve support for C/C++ dependencies on windows-gnu targets.
 
 ## [1.4.0] - 2022-11-30
 
