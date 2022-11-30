@@ -174,8 +174,8 @@ jobs:
 | ------ | ---- | ------ | ---- |
 | `x86_64-pc-windows-gnu` | Ubuntu (<!-- 20.04 [1], -->22.04 [2]) | wine (default) [3] |
 
-<!-- [1] [GCC 9](https://packages.ubuntu.com/en/focal/gcc-mingw-w64-base), [Mingw-w64 7](https://packages.ubuntu.com/en/focal/mingw-w64-x86-64-dev)<br> -->
-[2] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [Mingw-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev)<br>
+<!-- [1] [GCC 9](https://packages.ubuntu.com/en/focal/gcc-mingw-w64-base), [MinGW-w64 7](https://packages.ubuntu.com/en/focal/mingw-w64-x86-64-dev)<br> -->
+[2] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev)<br>
 [3] binfmt doesn't work<br>
 
 The current default version of Wine is 7.13.
