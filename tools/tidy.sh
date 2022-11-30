@@ -40,21 +40,19 @@ EOF
     exit 1
 fi
 
-prettier=prettier
-if type -P npm &>/dev/null && type -P "$(npm bin)/prettier" &>/dev/null; then
-    prettier="$(npm bin)/prettier"
-fi
-
 if type -P shfmt &>/dev/null; then
     x shfmt -l -w $(git ls-files '*.sh')
 else
     warn "'shfmt' is not installed"
 fi
-if type -P "${prettier}" &>/dev/null; then
-    x "${prettier}" -l -w $(git ls-files '*.yml')
-    x "${prettier}" -l -w $(git ls-files '*.js')
+if type -P npm &>/dev/null; then
+    if ! npx prettier --version &>/dev/null; then
+        npm install prettier
+    fi
+    x npx prettier -l -w $(git ls-files '*.yml')
+    x npx prettier -l -w $(git ls-files '*.js')
 else
-    warn "'prettier' is not installed"
+    warn "'npm' is not installed"
 fi
 if type -P shellcheck &>/dev/null; then
     x shellcheck $(git ls-files '*.sh')

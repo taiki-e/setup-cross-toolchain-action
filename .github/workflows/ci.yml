@@ -74,6 +74,7 @@ jobs:
         os:
           - ubuntu-22.04
           - ubuntu-20.04
+        # prettier-ignore
         include:
           # Windows (GNU)
           # rustup target list | grep -e '-pc-windows-gnu'
