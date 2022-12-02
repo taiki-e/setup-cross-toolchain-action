@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support wasm32-wasi.
+
 ## [1.4.1] - 2022-11-30
 
 - Improve support for C/C++ dependencies on windows-gnu targets.

@@ -72,7 +72,7 @@ install_apt_packages() {
 install_rust_cross_toolchain() {
     local toolchain_dir=/usr/local
     # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
-    docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}-dev"
+    docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}-dev-amd64"
     mkdir -p .setup-cross-toolchain-action-tmp
     docker cp "rust-cross-toolchain:/${target}" .setup-cross-toolchain-action-tmp/toolchain
     docker rm -f rust-cross-toolchain >/dev/null
@@ -84,7 +84,23 @@ install_rust_cross_toolchain() {
         riscv32gc-unknown-linux-gnu) qemu_ld_prefix="${toolchain_dir}/sysroot" ;;
         *) qemu_ld_prefix="${toolchain_dir}/${target}" ;;
     esac
-    cat >>"${GITHUB_ENV}" <<EOF
+    case "${target}" in
+        *-wasi)
+            cat >>"${GITHUB_ENV}" <<EOF
+CARGO_TARGET_${target_upper}_LINKER=${target}-clang
+CC_${target_lower}=${target}-clang
+CXX_${target_lower}=${target}-clang++
+AR_${target_lower}=llvm-ar
+AR=llvm-ar
+NM=llvm-nm
+STRIP=llvm-strip
+OBJCOPY=llvm-objcopy
+OBJDUMP=llvm-objdump
+READELF=llvm-readelf
+EOF
+            ;;
+        *)
+            cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${target}-gcc
 CC_${target_lower}=${target}-gcc
 CXX_${target_lower}=${target}-g++
@@ -92,6 +108,8 @@ AR_${target_lower}=${target}-ar
 STRIP=${target}-strip
 OBJDUMP=${target}-objdump
 EOF
+            ;;
+    esac
 }
 
 setup_linux_host() {
@@ -188,6 +206,7 @@ EOF
                 "wine-${wine_branch}-dev=${wine_version}~${codename}-${wine_build_suffix}"
             )
             install_apt_packages
+            x wine --version
 
             gcc_lib="$(basename "$(ls -d "/usr/lib/gcc/${apt_target}"/*posix)")"
             # Adapted from https://github.com/cross-rs/cross/blob/16a64e7028d90a3fdf285cfd642cdde9443c0645/docker/windows-entry.sh
@@ -209,13 +228,22 @@ EOF
 
             cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc-posix
-CARGO_TARGET_${target_upper}_RUNNER=${target}-runner
 CC_${target_lower}=${apt_target}-gcc-posix
 CXX_${target_lower}=${apt_target}-g++-posix
 AR_${target_lower}=${apt_target}-ar
 STRIP=${apt_target}-strip
 OBJDUMP=${apt_target}-objdump
 EOF
+            ;;
+        *-wasi)
+            install_rust_cross_toolchain
+            case "${runner}" in
+                '' | 'wasmtime') ;;
+                *) bail "unrecognized runner '${runner}'" ;;
+            esac
+            x wasmtime --version
+            # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/test/entrypoint.sh#L142-L146
+            echo "CXXSTDLIB=c++" >>"${GITHUB_ENV}"
             ;;
         *) bail "unsupported target '${target}'" ;;
     esac
@@ -336,6 +364,8 @@ EOF
         rm -rf ./.setup-cross-toolchain-action-tmp
         x "qemu-${qemu_arch}" --version
         register_binfmt
+    elif type -P "${target}-runner" &>/dev/null; then
+        echo "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
     fi
 
     install_apt_packages

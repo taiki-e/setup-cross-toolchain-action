@@ -12,6 +12,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
 - [Platform Support](#platform-support)
   - [Linux (GNU)](#linux-gnu)
   - [Windows (GNU)](#windows-gnu)
+  - [WASI](#wasi)
 - [Related Projects](#related-projects)
 - [License](#license)
 
@@ -187,6 +188,25 @@ with:
   target: x86_64-pc-windows-gnu
   runner: wine@7.13
 ```
+
+### WASI
+
+| C++ | test |
+| --- | ---- |
+| ? (libc++) | ✓ |
+
+**Supported targets**:
+
+| target | host | runner | note |
+| ------ | ---- | ------ | ---- |
+| `wasm32-wasi` | Ubuntu (20.04, 22.04) [1] | wasmtime (default) [2] |
+
+<!--
+clang version and wasi-libc hash can be found here: https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-16/src
+-->
+
+[1] clang 14, wasi-sdk 16 (wasi-libc 30094b6)<br>
+[2] binfmt doesn't work<br>
 
 ## Related Projects
 
