@@ -29,6 +29,9 @@ defaults:
     shell: bash
 
 jobs:
+  tidy:
+    uses: taiki-e/workflows/.github/workflows/tidy-no-rust.yml@main
+
   test:
     strategy:
       fail-fast: false
@@ -102,7 +105,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           persist-credentials: false
-      - uses: dtolnay/rust-toolchain@nightly
+      - name: Install Rust
+        run: rustup toolchain add nightly --no-self-update && rustup default nightly
       - uses: ./
         with:
           target: ${{ matrix.target }}
@@ -120,14 +124,3 @@ jobs:
       - run: ./target/${{ matrix.target }}/debug/rust-test
         working-directory: rust-cross-toolchain
         if: matrix.target != 'mipsisa32r6-unknown-linux-gnu' && matrix.target != 'mipsisa32r6el-unknown-linux-gnu' && !contains(matrix.target, '-windows-') && !contains(matrix.target, '-wasi')
-
-  tidy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-      - uses: taiki-e/install-action@shellcheck
-      - uses: taiki-e/install-action@shfmt
-      - run: tools/tidy.sh
-        if: always()
