@@ -183,10 +183,10 @@ The current default version of Wine is 7.13.
 You can select/pin the version by using `runner` input option. For example:
 
 ```yaml
-uses: taiki-e/setup-cross-toolchain-action@v1
-with:
-  target: x86_64-pc-windows-gnu
-  runner: wine@7.13
+- uses: taiki-e/setup-cross-toolchain-action@v1
+  with:
+    target: x86_64-pc-windows-gnu
+    runner: wine@7.13
 ```
 
 ### WASI

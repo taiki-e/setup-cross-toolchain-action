@@ -227,6 +227,7 @@ EOF
             chmod +x "/usr/local/bin/${target}-runner"
 
             cat >>"${GITHUB_ENV}" <<EOF
+CARGO_TARGET_${target_upper}_RUNNER=${target}-runner
 CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc-posix
 CC_${target_lower}=${apt_target}-gcc-posix
 CXX_${target_lower}=${apt_target}-g++-posix
@@ -241,6 +242,7 @@ EOF
                 '' | 'wasmtime') ;;
                 *) bail "unrecognized runner '${runner}'" ;;
             esac
+            echo "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
             x wasmtime --version
             # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/test/entrypoint.sh#L142-L146
             echo "CXXSTDLIB=c++" >>"${GITHUB_ENV}"
@@ -364,8 +366,6 @@ EOF
         rm -rf ./.setup-cross-toolchain-action-tmp
         x "qemu-${qemu_arch}" --version
         register_binfmt
-    elif type -P "${target}-runner" &>/dev/null; then
-        echo "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
     fi
 
     install_apt_packages

@@ -112,15 +112,10 @@ jobs:
           target: ${{ matrix.target }}
           runner: ${{ matrix.runner }}
       - run: git clone https://github.com/taiki-e/rust-cross-toolchain.git
-      # Disable C++ build for WASI
-      - run: echo "FLAGS=--no-default-features" >>"${GITHUB_ENV}"
-        if: contains(matrix.target, '-wasi')
-      - run: cargo $BUILD_STD build --verbose --target ${{ matrix.target }} $FLAGS
-        working-directory: rust-cross-toolchain/docker/test/fixtures/rust
-      - run: cargo $BUILD_STD run --verbose --target ${{ matrix.target }} $FLAGS
-        working-directory: rust-cross-toolchain/docker/test/fixtures/rust
-      - run: cargo $BUILD_STD test --verbose --target ${{ matrix.target }} $FLAGS $DOCTEST_XCOMPILE
-        working-directory: rust-cross-toolchain/docker/test/fixtures/rust
-      - run: ./target/${{ matrix.target }}/debug/rust-test
-        working-directory: rust-cross-toolchain
-        if: matrix.target != 'mipsisa32r6-unknown-linux-gnu' && matrix.target != 'mipsisa32r6el-unknown-linux-gnu' && !contains(matrix.target, '-windows-') && !contains(matrix.target, '-wasi')
+      - run: ci/test.sh ${{ matrix.target }} rust-cross-toolchain/docker/test/fixtures/rust
+        id: test
+      # For debugging
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.target }}-${{ matrix.os }}
+          path: /tmp/artifacts/
