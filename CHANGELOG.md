@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.6.0] - 2022-12-04
+
 - Support x86_64-unknown-freebsd and i686-unknown-freebsd. (build-only)
 
 - Fix bug in handling of `runner` input option.
@@ -52,7 +54,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.3.0...v1.4.0
