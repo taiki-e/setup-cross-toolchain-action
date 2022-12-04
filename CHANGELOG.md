@@ -10,6 +10,10 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support x86_64-unknown-freebsd and i686-unknown-freebsd. (build-only)
+
+- Fix bug in handling of `runner` input option.
+
 ## [1.5.0] - 2022-12-02
 
 - Support wasm32-wasi.
