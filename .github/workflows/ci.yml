@@ -75,6 +75,19 @@ jobs:
           - x86_64-unknown-linux-gnu
           # - x86_64-unknown-linux-gnux32 # tier3, run-fail
 
+          # FreeBSD
+          # rustup target list | grep -e '-freebsd'
+          # rustc --print target-list | grep -e '-freebsd'
+          # - aarch64-unknown-freebsd # tier3
+          # - armv6-unknown-freebsd # tier3
+          # - armv7-unknown-freebsd # tier3
+          - i686-unknown-freebsd
+          # - powerpc-unknown-freebsd     # tier3
+          # - powerpc64-unknown-freebsd   # tier3
+          # - powerpc64le-unknown-freebsd # tier3
+          # - riscv64gc-unknown-freebsd   # tier3
+          - x86_64-unknown-freebsd
+
           # WASI
           # rustup target list | grep -e '-wasi'
           # rustc --print target-list | grep -e '-wasi'
@@ -82,6 +95,9 @@ jobs:
         os:
           - ubuntu-22.04
           - ubuntu-20.04
+          # GHA regularly brownout ubuntu-18.04, so we don't enable it by default.
+          # https://github.com/actions/runner-images/issues/6002
+          # - ubuntu-18.04
         # prettier-ignore
         include:
           # Windows (GNU)

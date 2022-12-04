@@ -11,6 +11,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
   - [Example workflow: Doctest](#example-workflow-doctest)
 - [Platform Support](#platform-support)
   - [Linux (GNU)](#linux-gnu)
+  - [FreeBSD](#freebsd)
   - [Windows (GNU)](#windows-gnu)
   - [WASI](#wasi)
 - [Related Projects](#related-projects)
@@ -162,6 +163,22 @@ jobs:
 [4] GCC 10, glibc 2.31<br>
 [5] GCC 11, glibc 2.33<br>
 [6] binfmt doesn't work<br>
+
+### FreeBSD
+
+| C++ | test |
+| --- | ---- |
+| ✓ (libc++) | |
+
+**Supported targets**:
+
+| target | version | host | note |
+| ------ | ------- | ---- | ---- |
+| `i686-unknown-freebsd` | 12.3 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) | |
+| `x86_64-unknown-freebsd` | 12.3 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) | |
+
+[1] Clang 13<br>
+[2] Clang 15<br>
 
 ### Windows (GNU)
 

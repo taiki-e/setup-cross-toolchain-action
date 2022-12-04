@@ -17,15 +17,21 @@ cargo_build() {
     cargo ${BUILD_STD:-} build -v --target "${target}" ${cargo_options[@]+"${cargo_options[@]}"}
 }
 cargo_run() {
-    cargo ${BUILD_STD:-} run -v --target "${target}" ${cargo_options[@]+"${cargo_options[@]}"}
+    case "${target}" in
+        *-freebsd*) ;;
+        *) cargo ${BUILD_STD:-} run -v --target "${target}" ${cargo_options[@]+"${cargo_options[@]}"} ;;
+    esac
 }
 cargo_test() {
-    cargo ${BUILD_STD:-} test -v --target "${target}" ${DOCTEST_XCOMPILE:-} ${cargo_options[@]+"${cargo_options[@]}"}
+    case "${target}" in
+        *-freebsd*) cargo ${BUILD_STD:-} test --no-run -v --target "${target}" ${DOCTEST_XCOMPILE:-} ${cargo_options[@]+"${cargo_options[@]}"} ;;
+        *) cargo ${BUILD_STD:-} test -v --target "${target}" ${DOCTEST_XCOMPILE:-} ${cargo_options[@]+"${cargo_options[@]}"} ;;
+    esac
 }
 run_native() {
     case "${target}" in
-        mipsisa32r6* | *-windows* | *-wasi) ;;
-   *) "${target_dir}/${target}/debug/rust-test${exe:-}";;
+        mipsisa32r6* | *-windows* | *-wasi | *-freebsd*) ;;
+        *) "${target_dir}/${target}/debug/rust-test${exe:-}" ;;
     esac
 }
 

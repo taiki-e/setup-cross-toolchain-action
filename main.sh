@@ -69,6 +69,32 @@ install_apt_packages() {
         apt_packages=()
     fi
 }
+install_llvm() {
+    codename="$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')"
+    case "${codename}" in
+        bionic) LLVM_VERSION=13 ;;
+        *) LLVM_VERSION=15 ;;
+    esac
+    echo "deb http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${LLVM_VERSION} main" \
+        | sudo tee "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${LLVM_VERSION}.list" >/dev/null
+    curl https://apt.llvm.org/llvm-snapshot.gpg.key \
+        | gpg --dearmor \
+        | sudo tee /etc/apt/trusted.gpg.d/llvm-snapshot.gpg >/dev/null
+    apt_packages+=(
+        clang-"${LLVM_VERSION}"
+        libc++-"${LLVM_VERSION}"-dev
+        libc++abi-"${LLVM_VERSION}"-dev
+        libclang-"${LLVM_VERSION}"-dev
+        lld-"${LLVM_VERSION}"
+        llvm-"${LLVM_VERSION}"
+        llvm-"${LLVM_VERSION}"-dev
+    )
+    install_apt_packages
+    for tool in /usr/bin/clang*-"${LLVM_VERSION}" /usr/bin/llvm-*-"${LLVM_VERSION}" /usr/bin/*lld*-"${LLVM_VERSION}" /usr/bin/wasm-ld-"${LLVM_VERSION}"; do
+        local link="${tool%"-${LLVM_VERSION}"}"
+        sudo update-alternatives --install "${link}" "${link##*/}" "${tool}" 10
+    done
+}
 install_rust_cross_toolchain() {
     local toolchain_dir=/usr/local
     # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
@@ -85,7 +111,7 @@ install_rust_cross_toolchain() {
         *) qemu_ld_prefix="${toolchain_dir}/${target}" ;;
     esac
     case "${target}" in
-        *-wasi)
+        *-freebsd | *-wasi)
             cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${target}-clang
 CC_${target_lower}=${target}-clang
@@ -162,6 +188,10 @@ OBJDUMP=${apt_target}-objdump
 EOF
                     ;;
             esac
+            ;;
+        *-freebsd*)
+            install_rust_cross_toolchain
+            install_llvm
             ;;
         x86_64-pc-windows-gnu)
             arch="${target%%-*}"
@@ -262,6 +292,15 @@ EOF
                     ;;
                 native) ;;
                 qemu-user) use_qemu='1' ;;
+                *) bail "unrecognized runner '${runner}'" ;;
+            esac
+            ;;
+        *-freebsd*)
+            # FreeBSD runner is not supported yet.
+            # We are currently testing the uploaded artifacts manually with Cirrus CI.
+            # https://cirrus-ci.org/guide/FreeBSD
+            case "${runner}" in
+                '') ;;
                 *) bail "unrecognized runner '${runner}'" ;;
             esac
             ;;
