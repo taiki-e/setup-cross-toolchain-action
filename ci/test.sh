@@ -40,7 +40,7 @@ run_native() {
 
 cd "${wd}"
 mkdir -p /tmp/artifacts/
-target_dir=$(cargo metadata --format-version=1 --no-deps | jq -r '."target_directory"')
+target_dir=$(cargo metadata --format-version=1 --no-deps | jq -r '.target_directory')
 
 cargo_options=()
 # Disable C++ build for WASI
