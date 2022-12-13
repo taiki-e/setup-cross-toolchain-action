@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Improve robustness for temporary network failures.
+
 ## [1.6.0] - 2022-12-04
 
 - Support x86_64-unknown-freebsd and i686-unknown-freebsd. (build-only)
