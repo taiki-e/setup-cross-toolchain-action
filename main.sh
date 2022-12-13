@@ -29,6 +29,7 @@ warn() {
 }
 
 export DEBIAN_FRONTEND=noninteractive
+export CARGO_NET_RETRY="${CARGO_NET_RETRY:-10}"
 export RUSTUP_MAX_RETRIES="${RUSTUP_MAX_RETRIES:-10}"
 
 if [[ $# -gt 0 ]]; then
@@ -77,7 +78,7 @@ install_llvm() {
     esac
     echo "deb http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${LLVM_VERSION} main" \
         | sudo tee "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${LLVM_VERSION}.list" >/dev/null
-    curl https://apt.llvm.org/llvm-snapshot.gpg.key \
+    retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://apt.llvm.org/llvm-snapshot.gpg.key \
         | gpg --dearmor \
         | sudo tee /etc/apt/trusted.gpg.d/llvm-snapshot.gpg >/dev/null
     apt_packages+=(
@@ -98,7 +99,7 @@ install_llvm() {
 install_rust_cross_toolchain() {
     local toolchain_dir=/usr/local
     # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
-    docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}-dev-amd64"
+    retry docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}-dev-amd64"
     mkdir -p .setup-cross-toolchain-action-tmp
     docker cp "rust-cross-toolchain:/${target}" .setup-cross-toolchain-action-tmp/toolchain
     docker rm -f rust-cross-toolchain >/dev/null
@@ -203,8 +204,8 @@ EOF
             sudo dpkg --add-architecture i386
             codename="$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')"
             sudo mkdir -pm755 /etc/apt/keyrings
-            sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-            sudo wget -NP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/${codename}/winehq-${codename}.sources"
+            retry sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+            retry sudo wget -NP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/${codename}/winehq-${codename}.sources"
             case "${runner}" in
                 '')
                     # Use winehq-devel 7.13 as default because mio/wepoll needs wine 7.13+.
@@ -397,7 +398,7 @@ EOF
             echo "QEMU_LD_PREFIX=${qemu_ld_prefix}" >>"${GITHUB_ENV}"
         fi
         # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
-        docker create --name qemu-user ghcr.io/taiki-e/qemu-user
+        retry docker create --name qemu-user ghcr.io/taiki-e/qemu-user
         mkdir -p .setup-cross-toolchain-action-tmp
         docker cp qemu-user:/usr/bin .setup-cross-toolchain-action-tmp/qemu
         docker rm -f qemu-user >/dev/null
