@@ -1,6 +1,6 @@
 # setup-cross-toolchain-action
 
-[![build status](https://img.shields.io/github/workflow/status/taiki-e/setup-cross-toolchain-action/CI/main?style=flat-square&logo=github)](https://github.com/taiki-e/setup-cross-toolchain-action/actions)
+[![build status](https://img.shields.io/github/actions/workflow/status/taiki-e/setup-cross-toolchain-action/ci.yml?branch=main&style=flat-square&logo=github)](https://github.com/taiki-e/setup-cross-toolchain-action/actions)
 
 GitHub Action for setup toolchains for cross compilation and cross testing for Rust.
 
