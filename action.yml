@@ -10,5 +10,7 @@ inputs:
     required: false
 
 runs:
-  using: node16
-  main: main.js
+  using: composite
+  steps:
+    - run: ${{ github.action_path }}/main.sh
+      shell: bash
