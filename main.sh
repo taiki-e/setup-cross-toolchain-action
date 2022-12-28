@@ -42,8 +42,8 @@ runner="${INPUT_RUNNER:-}"
 target_lower="${target//-/_}"
 target_lower="${target_lower//./_}"
 target_upper="$(tr '[:lower:]' '[:upper:]' <<<"${target_lower}")"
-host=$(rustc -Vv | grep host | sed 's/host: //')
-rustc_version=$(rustc -Vv | grep 'release: ' | sed 's/release: //')
+host=$(rustc -Vv | grep 'host: ' | cut -c 7-)
+rustc_version=$(rustc -Vv | grep 'release: ' | cut -c 10-)
 rustup_target_list=$(rustup target list)
 
 # Refs: https://github.com/multiarch/qemu-user-static.
