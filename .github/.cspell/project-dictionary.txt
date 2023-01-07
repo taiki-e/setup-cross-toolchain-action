@@ -13,7 +13,6 @@ objcopy
 objdump
 readelf
 sysroot
-toolchains
 Vger
 wasmtime
 wepoll
