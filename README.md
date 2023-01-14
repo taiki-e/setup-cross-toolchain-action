@@ -229,10 +229,12 @@ clang version and wasi-libc hash can be found here: https://github.com/WebAssemb
 ## Related Projects
 
 - [rust-cross-toolchain]: Toolchains for cross compilation and cross testing for Rust.
-- [install-action]: GitHub Action for installing development tools.
+- [install-action]: GitHub Action for installing development tools (mainly from GitHub Releases).
+- [cache-cargo-install-action]: GitHub Action for `cargo install` with cache.
 - [create-gh-release-action]: GitHub Action for creating GitHub Releases based on changelog.
 - [upload-rust-binary-action]: GitHub Action for building and uploading Rust binary to GitHub Releases.
 
+[cache-cargo-install-action]: https://github.com/taiki-e/cache-cargo-install-action
 [create-gh-release-action]: https://github.com/taiki-e/create-gh-release-action
 [install-action]: https://github.com/taiki-e/install-action
 [rust-cross-toolchain]: https://github.com/taiki-e/rust-cross-toolchain
