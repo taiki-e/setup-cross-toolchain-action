@@ -11,7 +11,7 @@ x() {
     )
 }
 retry() {
-    for i in {1..5}; do
+    for i in {1..10}; do
         if "$@"; then
             return 0
         else
@@ -29,8 +29,8 @@ warn() {
 }
 
 export DEBIAN_FRONTEND=noninteractive
-export CARGO_NET_RETRY="${CARGO_NET_RETRY:-10}"
-export RUSTUP_MAX_RETRIES="${RUSTUP_MAX_RETRIES:-10}"
+export CARGO_NET_RETRY=10
+export RUSTUP_MAX_RETRIES=10
 
 if [[ $# -gt 0 ]]; then
     bail "invalid argument '$1'"
