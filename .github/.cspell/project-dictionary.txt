@@ -10,9 +10,6 @@ mipsn
 mpcore
 multilib
 objcopy
-objdump
-readelf
-sysroot
 Vger
 wasmtime
 wepoll
