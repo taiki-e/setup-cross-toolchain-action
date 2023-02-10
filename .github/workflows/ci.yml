@@ -92,7 +92,17 @@ jobs:
           # WASI
           # rustup target list | grep -e '-wasi'
           # rustc --print target-list | grep -e '-wasi'
-          - wasm32-wasi
+          # TODO(wasi):
+          # = note: clang-15: error: unsupported option '--export'
+          #         clang-15: error: unsupported option '--stack-first'
+          #         clang-15: error: unsupported option '--allow-undefined'
+          #         clang-15: error: unsupported option '--fatal-warnings'
+          #         clang-15: error: unsupported option '--no-demangle'
+          #         clang-15: error: unsupported option '--gc-sections'
+          #         clang-15: error: unknown argument: '-flavor'
+          #         clang-15: error: no such file or directory: 'wasm'
+          #         clang-15: error: no such file or directory: '__main_void'
+          # - wasm32-wasi
         os:
           - ubuntu-22.04
           - ubuntu-20.04

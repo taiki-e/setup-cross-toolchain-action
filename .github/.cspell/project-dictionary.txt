@@ -1,6 +1,7 @@
 armhf
 binfmt
 CXXSTDLIB
+demangle
 devel
 libc
 libclang
