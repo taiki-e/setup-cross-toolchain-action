@@ -338,7 +338,14 @@ EOF
                     *) bail "unrecognized target '${target}'" ;;
                 esac
                 ;;
-            i*86-*) qemu_arch=i386 ;;
+            i*86-*)
+                qemu_arch=i386
+                case "${target}" in
+                    # https://github.com/rust-lang/rust/blob/1.67.0/compiler/rustc_target/src/spec/i586_unknown_linux_gnu.rs#L5
+                    # https://github.com/rust-lang/rust/blob/1.67.0/compiler/rustc_target/src/spec/i586_unknown_linux_musl.rs#L5
+                    i586-*) qemu_cpu=pentium ;;
+                esac
+                ;;
             hexagon-*) qemu_arch=hexagon ;;
             m68k-*) qemu_arch=m68k ;;
             mips-* | mipsel-*) qemu_arch="${target%%-*}" ;;
