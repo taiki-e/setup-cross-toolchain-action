@@ -287,7 +287,7 @@ EOF
                 '')
                     case "${target}" in
                         # On x86, qemu-user is not used by default.
-                        x86_64-* | i686-*) ;;
+                        x86_64* | i686-*) ;;
                         *) use_qemu='1' ;;
                     esac
                     ;;
@@ -377,7 +377,7 @@ EOF
             s390x-*) qemu_arch=s390x ;;
             sparc-*) qemu_arch=sparc32plus ;;
             sparc64-*) qemu_arch=sparc64 ;;
-            x86_64-*)
+            x86_64*)
                 qemu_arch=x86_64
                 # qemu does not seem to support emulating x86_64 CPU features on x86_64 hosts.
                 # > qemu-x86_64: warning: TCG doesn't support requested feature
