@@ -10,6 +10,10 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- setup-cross-toolchain-action no longer set QEMU_CPU for 32-bit ARM targets.
+
+  It was causing problems when running tests that create many threads.
+
 ## [1.6.2] - 2023-03-12
 
 - Fix linker error for wasm32-wasi on Rust 1.68+.

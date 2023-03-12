@@ -340,17 +340,6 @@ EOF
                     armeb* | thumbeb*) qemu_arch=armeb ;;
                     *) qemu_arch=arm ;;
                 esac
-                case "${target}" in
-                    # ARMv6: https://en.wikipedia.org/wiki/ARM11
-                    arm-* | armv6-*) qemu_cpu=arm11mpcore ;;
-                    # ARMv4: https://en.wikipedia.org/wiki/StrongARM
-                    armv4t-*) qemu_cpu=sa1110 ;;
-                    # ARMv5TE
-                    armv5te-*) qemu_cpu=arm1026 ;;
-                    # ARMv7-A+NEONv2
-                    armv7-* | thumbv7neon-*) qemu_cpu=cortex-a15 ;;
-                    *) bail "unrecognized target '${target}'" ;;
-                esac
                 ;;
             i*86-*) qemu_arch=i386 ;;
             hexagon-*) qemu_arch=hexagon ;;
