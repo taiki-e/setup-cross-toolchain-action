@@ -10,7 +10,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
-- setup-cross-toolchain-action no longer set QEMU_CPU for 32-bit ARM targets.
+- setup-cross-toolchain-action no longer sets QEMU_CPU for 32-bit ARM targets by default.
 
   It was causing problems when running tests that create many threads.
 
