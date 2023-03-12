@@ -112,11 +112,25 @@ install_rust_cross_toolchain() {
         *) qemu_ld_prefix="${toolchain_dir}/${target}" ;;
     esac
     case "${target}" in
-        *-freebsd | *-wasi)
+        *-freebsd)
             cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${target}-clang
 CC_${target_lower}=${target}-clang
 CXX_${target_lower}=${target}-clang++
+AR_${target_lower}=llvm-ar
+AR=llvm-ar
+NM=llvm-nm
+STRIP=llvm-strip
+OBJCOPY=llvm-objcopy
+OBJDUMP=llvm-objdump
+READELF=llvm-readelf
+EOF
+            ;;
+        *-wasi)
+            cat >>"${GITHUB_ENV}" <<EOF
+CARGO_TARGET_${target_upper}_LINKER=clang
+CC_${target_lower}=clang
+CXX_${target_lower}=clang++
 AR_${target_lower}=llvm-ar
 AR=llvm-ar
 NM=llvm-nm
