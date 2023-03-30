@@ -20,6 +20,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 - Fix linker error for wasm32-wasi on Rust 1.68+.
 
+- Switch to composite action.
+
 ## [1.6.1] - 2022-12-13
 
 - Improve robustness for temporary network failures.
