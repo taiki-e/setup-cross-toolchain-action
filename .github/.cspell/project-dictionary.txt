@@ -1,4 +1,3 @@
-armhf
 binfmt
 CXXSTDLIB
 demangle
