@@ -1,13 +1,11 @@
 binfmt
 CXXSTDLIB
-demangle
 devel
 libc
 libclang
 libstdc
 Loongson
 mipsn
-mpcore
 multilib
 objcopy
 Vger
