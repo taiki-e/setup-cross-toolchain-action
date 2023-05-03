@@ -44,7 +44,7 @@ target_lower="${target_lower//./_}"
 target_upper="$(tr '[:lower:]' '[:upper:]' <<<"${target_lower}")"
 host=$(rustc -Vv | grep 'host: ' | cut -c 7-)
 rustc_version=$(rustc -Vv | grep 'release: ' | cut -c 10-)
-rustup_target_list=$(rustup target list)
+rustup_target_list=$(rustup target list | sed 's/ .*//g')
 
 # Refs: https://github.com/multiarch/qemu-user-static.
 register_binfmt() {
@@ -127,7 +127,7 @@ OBJDUMP=llvm-objdump
 READELF=llvm-readelf
 EOF
             ;;
-        *-wasi)
+        *-wasi*)
             cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=clang
 CC_${target_lower}=clang
@@ -286,7 +286,7 @@ STRIP=${apt_target}-strip
 OBJDUMP=${apt_target}-objdump
 EOF
             ;;
-        *-wasi)
+        *-wasi*)
             install_rust_cross_toolchain
             case "${runner}" in
                 '' | 'wasmtime') ;;
@@ -424,7 +424,7 @@ case "${host}" in
     *) bail "unsupported host '${host}'" ;;
 esac
 
-if grep <<<"${rustup_target_list}" -Eq "^${target}( |$)"; then
+if grep <<<"${rustup_target_list}" -Eq "^${target}$"; then
     retry rustup target add "${target}" &>/dev/null
     # Note: -Z doctest-xcompile doesn't compatible with -Z build-std yet.
     if [[ "${rustc_version}" == *"nightly"* ]] || [[ "${rustc_version}" == *"dev"* ]]; then

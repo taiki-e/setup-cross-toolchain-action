@@ -33,7 +33,7 @@ cargo_test() {
 }
 run_native() {
     case "${target}" in
-        mipsisa32r6* | *-windows* | *-wasi | *-freebsd*) ;;
+        mipsisa32r6* | *-windows* | *-wasi* | *-freebsd*) ;;
         *) "${target_dir}/${target}/debug/rust-test${exe:-}" ;;
     esac
 }
@@ -45,7 +45,7 @@ target_dir=$(cargo metadata --format-version=1 --no-deps | jq -r '.target_direct
 cargo_options=()
 # Disable C++ build for WASI
 case "${target}" in
-    *-wasi) cargo_options=(--no-default-features) ;;
+    *-wasi*) cargo_options=(--no-default-features) ;;
 esac
 cargo_build
 cargo_run
