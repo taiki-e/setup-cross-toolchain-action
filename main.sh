@@ -171,7 +171,7 @@ setup_linux_host() {
                 arm-unknown-linux-gnueabihf)
                     # (tier2) Ubuntu's gcc-arm-linux-gnueabihf enables armv7 by default
                     # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L55
-                    bail "target '${target}' not yet supported; consider using armv7-unknown-linux-gnueabihf for testing armhf"
+                    bail "target '${target}' not yet supported; consider using armv7-unknown-linux-gnueabihf for testing armhf or arm-unknown-linux-gnueabi for testing armv6"
                     ;;
                 sparc-unknown-linux-gnu)
                     # (tier3) Setup is tricky, and fails to build test.
