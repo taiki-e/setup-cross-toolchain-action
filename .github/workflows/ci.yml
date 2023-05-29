@@ -105,14 +105,15 @@ jobs:
           # https://github.com/actions/runner-images/issues/6002
           # - ubuntu-18.04
         # prettier-ignore
-        include:
-          # Windows (GNU)
-          # rustup target list | grep -e '-pc-windows-gnu'
-          # rustc --print target-list | grep -e '-pc-windows-gnu'
-          # - { target: i686-pc-windows-gnu, os: ubuntu-22.04 }
-          - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04 }
-          - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04, runner: wine@7.13 }
-          - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04, runner: wine@7.0.1 }
+        # TODO: https://github.com/taiki-e/setup-cross-toolchain-action/issues/9
+        # include:
+        #   # Windows (GNU)
+        #   # rustup target list | grep -e '-pc-windows-gnu'
+        #   # rustc --print target-list | grep -e '-pc-windows-gnu'
+        #   # - { target: i686-pc-windows-gnu, os: ubuntu-22.04 }
+        #   - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04 }
+        #   - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04, runner: wine@7.13 }
+        #   - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04, runner: wine@7.0.1 }
         exclude:
           # Segmentation fault on ubuntu 20.04
           - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-20.04 }
