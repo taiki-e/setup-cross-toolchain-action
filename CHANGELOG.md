@@ -24,7 +24,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [1.6.2] - 2023-03-12
 
-- Fix linker error for wasm32-wasi on Rust 1.68+.
+- Fix linker error for wasm32-wasi on Rust 1.68+. This was due to rustc regression and has been [fixed](https://github.com/rust-lang/rust/pull/109156) in 1.68.2.
 
 - Switch to composite action.
 
