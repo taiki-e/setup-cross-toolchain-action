@@ -40,6 +40,14 @@ fi
 target="${INPUT_TARGET:?}"
 runner="${INPUT_RUNNER:-}"
 
+if [[ "${target}" == *"@"* ]]; then
+    case "${target}" in
+        *-freebsd* | *-netbsd*) ;;
+        *) bail "versioned target triple is currently only supported on BSDs" ;;
+    esac
+    sys_version="${target#*@}"
+    target="${target%@*}"
+fi
 target_lower="${target//-/_}"
 target_lower="${target_lower//./_}"
 target_upper="$(tr '[:lower:]' '[:upper:]' <<<"${target_lower}")"
@@ -74,33 +82,33 @@ install_apt_packages() {
 install_llvm() {
     codename="$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')"
     case "${codename}" in
-        bionic) LLVM_VERSION=13 ;;
-        *) LLVM_VERSION=15 ;;
+        bionic) llvm_version=13 ;;
+        *) llvm_version=15 ;;
     esac
-    echo "deb http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${LLVM_VERSION} main" \
-        | sudo tee "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${LLVM_VERSION}.list" >/dev/null
+    echo "deb http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${llvm_version} main" \
+        | sudo tee "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${llvm_version}.list" >/dev/null
     retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://apt.llvm.org/llvm-snapshot.gpg.key \
         | gpg --dearmor \
         | sudo tee /etc/apt/trusted.gpg.d/llvm-snapshot.gpg >/dev/null
     apt_packages+=(
-        clang-"${LLVM_VERSION}"
-        libc++-"${LLVM_VERSION}"-dev
-        libc++abi-"${LLVM_VERSION}"-dev
-        libclang-"${LLVM_VERSION}"-dev
-        lld-"${LLVM_VERSION}"
-        llvm-"${LLVM_VERSION}"
-        llvm-"${LLVM_VERSION}"-dev
+        clang-"${llvm_version}"
+        libc++-"${llvm_version}"-dev
+        libc++abi-"${llvm_version}"-dev
+        libclang-"${llvm_version}"-dev
+        lld-"${llvm_version}"
+        llvm-"${llvm_version}"
+        llvm-"${llvm_version}"-dev
     )
     install_apt_packages
-    for tool in /usr/bin/clang*-"${LLVM_VERSION}" /usr/bin/llvm-*-"${LLVM_VERSION}" /usr/bin/*lld*-"${LLVM_VERSION}" /usr/bin/wasm-ld-"${LLVM_VERSION}"; do
-        local link="${tool%"-${LLVM_VERSION}"}"
-        sudo update-alternatives --install "${link}" "${link##*/}" "${tool}" 10
+    for tool in /usr/bin/clang*-"${llvm_version}" /usr/bin/llvm-*-"${llvm_version}" /usr/bin/*lld*-"${llvm_version}" /usr/bin/wasm-ld-"${llvm_version}"; do
+        local link="${tool%"-${llvm_version}"}"
+        sudo update-alternatives --install "${link}" "${link##*/}" "${tool}" 100
     done
 }
 install_rust_cross_toolchain() {
     local toolchain_dir=/usr/local
     # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
-    retry docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}-dev-amd64"
+    retry docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}${sys_version:-}-dev-amd64"
     mkdir -p .setup-cross-toolchain-action-tmp
     docker cp "rust-cross-toolchain:/${target}" .setup-cross-toolchain-action-tmp/toolchain
     docker rm -f rust-cross-toolchain >/dev/null
@@ -108,12 +116,12 @@ install_rust_cross_toolchain() {
     rm -rf ./.setup-cross-toolchain-action-tmp
     # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh#L47
     case "${target}" in
-        aarch64_be-unknown-linux-gnu | arm-unknown-linux-gnueabihf) qemu_ld_prefix="/usr/local/${target}/libc" ;;
+        aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | arm-unknown-linux-gnueabihf) qemu_ld_prefix="/usr/local/${target}/libc" ;;
         riscv32gc-unknown-linux-gnu) qemu_ld_prefix="${toolchain_dir}/sysroot" ;;
         *) qemu_ld_prefix="${toolchain_dir}/${target}" ;;
     esac
     case "${target}" in
-        *-freebsd)
+        *-freebsd*)
             cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${target}-clang
 CC_${target_lower}=${target}-clang
@@ -164,11 +172,9 @@ setup_linux_host() {
         *-linux-gnu*)
             # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh
             case "${target}" in
-                # (tier3) Toolchains for aarch64_be-linux-gnu is not available in APT.
-                # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L40
-                # (tier3) Toolchains for riscv32-linux-gnu is not available in APT.
-                # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L69
-                aarch64_be-unknown-linux-gnu | riscv32gc-unknown-linux-gnu) install_rust_cross_toolchain ;;
+                # (tier3) Toolchains for aarch64_be-linux-gnu/armeb-linux-gnueabi/riscv32-linux-gnu is not available in APT.
+                # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L17
+                aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | riscv32gc-unknown-linux-gnu) install_rust_cross_toolchain ;;
                 arm-unknown-linux-gnueabihf)
                     # (tier2) Ubuntu's gcc-arm-linux-gnueabihf enables armv7 by default
                     # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L55
@@ -212,6 +218,9 @@ EOF
         *-freebsd*)
             install_rust_cross_toolchain
             install_llvm
+            ;;
+        *-netbsd*)
+            install_rust_cross_toolchain
             ;;
         x86_64-pc-windows-gnu)
             arch="${target%%-*}"
@@ -316,9 +325,9 @@ EOF
                 *) bail "unrecognized runner '${runner}'" ;;
             esac
             ;;
-        *-freebsd*)
-            # FreeBSD runner is not supported yet.
-            # We are currently testing the uploaded artifacts manually with Cirrus CI.
+        *-freebsd* | *-netbsd*)
+            # Runners for BSDs are not supported yet.
+            # We are currently testing the uploaded artifacts manually with Cirrus CI and local VM.
             # https://cirrus-ci.org/guide/FreeBSD
             case "${runner}" in
                 '') ;;

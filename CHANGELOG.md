@@ -10,6 +10,29 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support more targets:
+  - Linux (GNU)
+    - armeb-unknown-linux-gnueabi
+  - FreeBSD
+    - aarch64-unknown-freebsd (build-only)
+  - NetBSD
+    - aarch64-unknown-netbsd (build-only)
+    - x86_64-unknown-netbsd (build-only)
+
+- Support specifying OS version for FreeBSD/NetBSD.
+
+  ```yaml
+  - uses: taiki-e/setup-cross-toolchain-action@v1
+    with:
+      target: x86_64-unknown-freebsd@13
+  ```
+
+  ```yaml
+  - uses: taiki-e/setup-cross-toolchain-action@v1
+    with:
+      target: x86_64-unknown-netbsd@9
+  ```
+
 ## [1.8.0] - 2023-05-30
 
 - setup-cross-toolchain-action now sets `RANLIB_<target>` environment variable.

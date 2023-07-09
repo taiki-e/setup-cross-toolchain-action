@@ -13,6 +13,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
 - [Platform Support](#platform-support)
   - [Linux (GNU)](#linux-gnu)
   - [FreeBSD](#freebsd)
+  - [NetBSD](#netbsd)
   - [Windows (GNU)](#windows-gnu)
   - [WASI](#wasi)
 - [Related Projects](#related-projects)
@@ -134,6 +135,7 @@ jobs:
 | ------ | ---- | ------ | ---- |
 | `aarch64-unknown-linux-gnu`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `aarch64_be-unknown-linux-gnu`         | Ubuntu (<!-- 20.04,--> 18.04, 22.04) [4]         | qemu-user (default)         | tier3 |
+| `armeb-unknown-linux-gnueabi`          | Ubuntu (<!-- 20.04,--> 18.04, 22.04) [7]         | qemu-user (default)         | tier3 |
 | `arm-unknown-linux-gnueabi`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `armv5te-unknown-linux-gnueabi`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `armv7-unknown-linux-gnueabi`          | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
@@ -164,6 +166,7 @@ jobs:
 [4] GCC 10, glibc 2.31<br>
 [5] GCC 11, glibc 2.33<br>
 [6] binfmt doesn't work<br>
+[7] GCC 7, glibc 2.25<br>
 
 ### FreeBSD
 
@@ -175,11 +178,51 @@ jobs:
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
+| `aarch64-unknown-freebsd`   | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) | tier3 |
 | `i686-unknown-freebsd`      | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) |       |
 | `x86_64-unknown-freebsd`    | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) |       |
 
 [1] Clang 13<br>
 [2] Clang 15<br>
+
+(Other FreeBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#freebsd) also may work, although this action's CI has not tested them.)
+
+You can select/pin the OS version by using `@` syntax in `target` option. For example:
+
+```yaml
+- uses: taiki-e/setup-cross-toolchain-action@v1
+  with:
+    target: x86_64-unknown-freebsd@13
+```
+
+Only specifying a major version is supported.
+
+### NetBSD
+
+| C++ | test |
+| --- | ---- |
+| ✓ (libstdc++) | |
+
+**Supported targets**:
+
+| target | version | host | note |
+| ------ | ------- | ---- | ---- |
+| `aarch64-unknown-netbsd` | 9.2                | Ubuntu (18.04, 20.04, 22.04) [1] | tier3 |
+| `x86_64-unknown-netbsd`  | 8.2 (default), 9.2 | Ubuntu (18.04, 20.04, 22.04) [1] |       |
+
+[1] GCC 7<br>
+
+(Other NetBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#netbsd) also may work, although this action's CI has not tested them.)
+
+You can select/pin the OS version by using `@` syntax in `target` option. For example:
+
+```yaml
+- uses: taiki-e/setup-cross-toolchain-action@v1
+  with:
+    target: x86_64-unknown-netbsd@9
+```
+
+Only specifying a major version is supported.
 
 ### Windows (GNU)
 
@@ -198,7 +241,7 @@ jobs:
 [3] binfmt doesn't work<br>
 
 The current default version of Wine is 7.13.
-You can select/pin the version by using `runner` input option. For example:
+You can select/pin the version by using `@` syntax in `runner` input option. For example:
 
 ```yaml
 - uses: taiki-e/setup-cross-toolchain-action@v1
