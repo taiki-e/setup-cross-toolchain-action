@@ -140,10 +140,10 @@ jobs:
 | `armv7-unknown-linux-gnueabihf`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `i586-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default), native |       |
 | `i686-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | native (default), qemu-user |       |
-| `mips-unknown-linux-gnu`               | Ubuntu (<!-- 20.04 [1],--> 18.04 [2], 22.04 [3]) | qemu-user (default)         |       |
-| `mips64-unknown-linux-gnuabi64`        | Ubuntu (<!-- 20.04 [1],--> 18.04 [2], 22.04 [3]) | qemu-user (default)         |       |
-| `mips64el-unknown-linux-gnuabi64`      | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
-| `mipsel-unknown-linux-gnu`             | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
+| `mips-unknown-linux-gnu`               | Ubuntu (<!-- 20.04 [1],--> 18.04 [2], 22.04 [3]) | qemu-user (default)         | tier3 |
+| `mips64-unknown-linux-gnuabi64`        | Ubuntu (<!-- 20.04 [1],--> 18.04 [2], 22.04 [3]) | qemu-user (default)         | tier3 |
+| `mips64el-unknown-linux-gnuabi64`      | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         | tier3 |
+| `mipsel-unknown-linux-gnu`             | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         | tier3 |
 | `mipsisa32r6-unknown-linux-gnu`        | Ubuntu (<!-- 20.04 [1],--> 22.04 [3])            | qemu-user (default) [6]     | tier3 |
 | `mipsisa32r6el-unknown-linux-gnu`      | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user (default) [6]     | tier3 |
 | `mipsisa64r6-unknown-linux-gnuabi64`   | Ubuntu (<!-- 20.04 [1],--> 22.04 [3])            | qemu-user (default)         | tier3 |
@@ -175,8 +175,8 @@ jobs:
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `i686-unknown-freebsd` | 12.3 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) | |
-| `x86_64-unknown-freebsd` | 12.3 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) | |
+| `i686-unknown-freebsd`      | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) |       |
+| `x86_64-unknown-freebsd`    | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) |       |
 
 [1] Clang 13<br>
 [2] Clang 15<br>
