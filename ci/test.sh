@@ -16,6 +16,10 @@ case "${target}" in
     *-windows*) exe=".exe" ;;
     wasm*) exe=".wasm" ;;
 esac
+# TODO: Print glibc version
+case "${target}" in
+    *-freebsd*) freebsd-version ;;
+esac
 
 cargo_build() {
     cargo ${BUILD_STD:-} build -v --target "${target}" ${cargo_options[@]+"${cargo_options[@]}"}
