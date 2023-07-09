@@ -135,8 +135,8 @@ jobs:
 | ------ | ---- | ------ | ---- |
 | `aarch64-unknown-linux-gnu`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `aarch64_be-unknown-linux-gnu`         | Ubuntu (<!-- 20.04,--> 18.04, 22.04) [4]         | qemu-user (default)         | tier3 |
-| `armeb-unknown-linux-gnueabi`          | Ubuntu (<!-- 20.04,--> 18.04, 22.04) [7]         | qemu-user (default)         | tier3 |
 | `arm-unknown-linux-gnueabi`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
+| `armeb-unknown-linux-gnueabi`          | Ubuntu (<!-- 20.04,--> 18.04, 22.04) [7]         | qemu-user (default)         | tier3 |
 | `armv5te-unknown-linux-gnueabi`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `armv7-unknown-linux-gnueabi`          | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `armv7-unknown-linux-gnueabihf`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
