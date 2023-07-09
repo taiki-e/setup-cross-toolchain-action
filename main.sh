@@ -409,6 +409,8 @@ EOF
             *) bail "unrecognized target '${target}'" ;;
         esac
         echo "CARGO_TARGET_${target_upper}_RUNNER=qemu-${qemu_arch}" >>"${GITHUB_ENV}"
+        # QEMU's multi-threading support is incomplete and slow.
+        echo "RUST_TEST_THREADS=1" >>"${GITHUB_ENV}"
         if [[ -n "${qemu_cpu:-}" ]] && [[ -z "${QEMU_CPU:-}" ]]; then
             echo "QEMU_CPU=${qemu_cpu}" >>"${GITHUB_ENV}"
         fi

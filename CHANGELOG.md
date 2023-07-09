@@ -33,6 +33,10 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
       target: x86_64-unknown-netbsd@9
   ```
 
+- Set `RUST_TEST_THREADS=1` environment variable when QEMU is used as a runner.
+
+  QEMU's multi-threading support is incomplete and slow.
+
 ## [1.8.0] - 2023-05-30
 
 - setup-cross-toolchain-action now sets `RANLIB_<target>` environment variable.
