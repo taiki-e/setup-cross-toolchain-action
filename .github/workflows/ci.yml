@@ -51,6 +51,7 @@ jobs:
           # TODO: compiler-builtins bug https://github.com/rust-lang/compiler-builtins/pull/539
           # - aarch64_be-unknown-linux-gnu # tier3
           # - aarch64_be-unknown-linux-gnu_ilp32 # tier3
+          - armeb-unknown-linux-gnueabi # tier3
           - arm-unknown-linux-gnueabi
           # - arm-unknown-linux-gnueabihf # supported in rust-cross-toolchain but not ported to this action
           # - armv4t-unknown-linux-gnueabi # tier3, rustc generate code for armv5t (probably needs to pass +v4t to llvm)
@@ -84,15 +85,39 @@ jobs:
           # FreeBSD
           # rustup target list | grep -e '-freebsd'
           # rustc --print target-list | grep -e '-freebsd'
-          # - aarch64-unknown-freebsd # tier3
+          - aarch64-unknown-freebsd # tier3
           # - armv6-unknown-freebsd # tier3
           # - armv7-unknown-freebsd # tier3
           - i686-unknown-freebsd
-          # - powerpc-unknown-freebsd     # tier3
-          # - powerpc64-unknown-freebsd   # tier3
+          # - powerpc-unknown-freebsd # tier3
+          # - powerpc64-unknown-freebsd # tier3
           # - powerpc64le-unknown-freebsd # tier3
-          # - riscv64gc-unknown-freebsd   # tier3
+          # - riscv64gc-unknown-freebsd # tier3
           - x86_64-unknown-freebsd
+
+          # NetBSD
+          # rustup target list | grep -e '-netbsd'
+          # rustc --print target-list | grep -e '-netbsd'
+          - aarch64-unknown-netbsd # tier3
+          # - aarch64_be-unknown-netbsd # tier3
+          # - armv6-unknown-netbsd-eabihf # tier3
+          # - armv7-unknown-netbsd-eabihf # tier3
+          # - i686-unknown-netbsd # tier3
+          # - powerpc-unknown-netbsd # tier3
+          # - riscv64gc-unknown-netbsd # tier3
+          # - sparc64-unknown-netbsd # tier3
+          - x86_64-unknown-netbsd
+
+          # OpenBSD
+          # rustc --print target-list | grep -e '-openbsd'
+          # - aarch64-unknown-openbsd # tier3
+          # - i686-unknown-openbsd # tier3
+          # - powerpc-unknown-openbsd # tier3
+          # - powerpc64-unknown-openbsd # tier3
+          # - riscv64gc-unknown-openbsd # tier3
+          # - sparc64-unknown-openbsd # tier3
+          - x86_64-unknown-openbsd@7.2 # tier3
+          - x86_64-unknown-openbsd@7.3 # tier3
 
           # WASI
           # rustup target list | grep -e '-wasi'
@@ -117,6 +142,7 @@ jobs:
         exclude:
           # Segmentation fault on ubuntu 20.04
           - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-20.04 }
+          - { target: armeb-unknown-linux-gnueabi, os: ubuntu-20.04 }
           - { target: mips-unknown-linux-gnu, os: ubuntu-20.04 }
           - { target: mips64-unknown-linux-gnuabi64, os: ubuntu-20.04 }
           - { target: mipsisa32r6-unknown-linux-gnu, os: ubuntu-20.04 }

@@ -11,6 +11,7 @@ trap 's=$?; echo >&2 "$0: error on line "${LINENO}": ${BASH_COMMAND}"; exit ${s}
 set -x
 
 target="$1"
+target="${target%@*}"
 wd="$2"
 case "${target}" in
     *-windows*) exe=".exe" ;;
@@ -26,19 +27,20 @@ cargo_build() {
 }
 cargo_run() {
     case "${target}" in
-        *-freebsd*) ;;
+        *-freebsd* | *-netbsd* | *-openbsd*) ;;
         *) cargo ${BUILD_STD:-} run -v --target "${target}" ${cargo_options[@]+"${cargo_options[@]}"} ;;
     esac
 }
 cargo_test() {
     case "${target}" in
-        *-freebsd*) cargo ${BUILD_STD:-} test --no-run -v --target "${target}" ${DOCTEST_XCOMPILE:-} ${cargo_options[@]+"${cargo_options[@]}"} ;;
+        *-freebsd* | *-netbsd* | *-openbsd*) cargo ${BUILD_STD:-} test --no-run -v --target "${target}" ${DOCTEST_XCOMPILE:-} ${cargo_options[@]+"${cargo_options[@]}"} ;;
         *) cargo ${BUILD_STD:-} test -v --target "${target}" ${DOCTEST_XCOMPILE:-} ${cargo_options[@]+"${cargo_options[@]}"} ;;
     esac
 }
 run_native() {
+    # Run only on targets that binfmt work.
     case "${target}" in
-        mipsisa32r6* | *-windows* | *-wasi* | *-freebsd*) ;;
+        mipsisa32r6* | *-windows* | *-wasi* | *-freebsd* | *-netbsd* | *-openbsd*) ;;
         *) "${target_dir}/${target}/debug/rust-test${exe:-}" ;;
     esac
 }
@@ -48,9 +50,9 @@ mkdir -p /tmp/artifacts/
 target_dir=$(cargo metadata --format-version=1 --no-deps | jq -r '.target_directory')
 
 cargo_options=()
-# Disable C++ build for WASI
+# Disable C++ build for aarch64 OpenBSD/WASI
 case "${target}" in
-    *-wasi*) cargo_options=(--no-default-features) ;;
+    aarch64-unknown-openbsd | *-wasi*) cargo_options=(--no-default-features) ;;
 esac
 cargo_build
 cargo_run
