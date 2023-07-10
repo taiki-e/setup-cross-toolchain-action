@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.10.0] - 2023-07-10
+
 - Support linux-musl targets ([#12](https://github.com/taiki-e/setup-cross-toolchain-action/pull/12))
 
   All tier 1 or 2 linux-musl targets are now supported:
@@ -129,7 +131,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.9.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.10.0...HEAD
+[1.10.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.6.2...v1.7.0
