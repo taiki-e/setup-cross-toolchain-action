@@ -10,6 +10,26 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support linux-musl targets ([#12](https://github.com/taiki-e/setup-cross-toolchain-action/pull/12))
+
+  All tier 1 or 2 linux-musl targets are now supported:
+
+  - aarch64-unknown-linux-musl
+  - arm-unknown-linux-musleabi
+  - arm-unknown-linux-musleabihf
+  - armv5te-unknown-linux-musleabi
+  - armv7-unknown-linux-musleabi
+  - armv7-unknown-linux-musleabihf
+  - i586-unknown-linux-musl
+  - i686-unknown-linux-musl
+  - mips-unknown-linux-musl
+  - mips64-unknown-linux-muslabi64
+  - mips64el-unknown-linux-muslabi64
+  - mipsel-unknown-linux-musl
+  - x86_64-unknown-linux-musl
+
+  (Other linux-musl targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#linux-musl) also may work, although this action's CI has not tested them.)
+
 - Set `PKG_CONFIG_ALLOW_CROSS=1` environment variable when the target triple and host triple is different.
 
 ## [1.9.0] - 2023-07-09

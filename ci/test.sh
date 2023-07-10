@@ -13,6 +13,7 @@ set -x
 target="$1"
 target="${target%@*}"
 wd="$2"
+base_rustflags="${RUSTFLAGS:-}"
 case "${target}" in
     *-windows*) exe=".exe" ;;
     wasm*) exe=".wasm" ;;
@@ -44,37 +45,59 @@ run_native() {
         *) "${target_dir}/${target}/${profile}/rust-test${exe:-}" ;;
     esac
 }
+run_tests() {
+    case "${target}" in
+        # TODO: LLVM bug: Undefined temporary symbol error when building std.
+        mips-unknown-linux-gnu | mipsel-unknown-linux-gnu) ;;
+        *)
+            profile=debug
+            cargo_build
+            cargo_run
+            cargo_test
+            run_native
+            ls "${target_dir}/${target}/${profile}"
+            cp "${target_dir}/${target}/${profile}/rust-test${exe:-}" "/tmp/artifacts/rust-test1-${profile}${exe:-}"
+            ;;
+    esac
+
+    profile=release
+    cargo_build --release
+    cargo_run --release
+    cargo_test --release
+    run_native
+    ls "${target_dir}/${target}/${profile}"
+    cp "${target_dir}/${target}/${profile}/rust-test${exe:-}" "/tmp/artifacts/rust-test${test_id}-${profile}${exe:-}"
+    ((test_id++))
+    cargo clean
+}
 
 cd "${wd}"
 mkdir -p /tmp/artifacts/
 target_dir=$(cargo metadata --format-version=1 --no-deps | jq -r '.target_directory')
+test_id=1
 
 cargo_options=()
 case "${target}" in
-    # Disable C++ build for WASI
-    *-wasi*) cargo_options+=(--no-default-features) ;;
+    # Disable C++ build for musl with static linking and WASI
+    *-linux-musl* | *-wasi*) cargo_options+=(--no-default-features) ;;
 esac
-
 case "${target}" in
-    # TODO: LLVM bug: Undefined temporary symbol error when building std.
-    mips-unknown-linux-gnu | mipsel-unknown-linux-gnu) ;;
-    *)
-        profile=debug
-        cargo_build
-        cargo_run
-        cargo_test
-        run_native
-        ls "${target_dir}/${target}/${profile}"
-        cp "${target_dir}/${target}/${profile}/rust-test${exe:-}" "/tmp/artifacts/rust-test1-${profile}${exe:-}"
+    # With static linking (default for target other than mips{,el}-unknown-linux-musl/mips64-openwrt-linux-musl)
+    *-linux-musl*) export RUSTFLAGS="${base_rustflags} -C target-feature=+crt-static -C link-self-contained=yes" ;;
+esac
+run_tests
+
+cargo_options=()
+case "${target}" in
+    *-linux-musl*)
+        # With dynamic linking (default for mips{,el}-unknown-linux-musl/mips64-openwrt-linux-musl)
+        case "${target}" in
+            # TODO: No such file or directory
+            i586-* | i686-* | x86_64-*) ;;
+            *)
+                export RUSTFLAGS="${base_rustflags} -C target-feature=-crt-static"
+                run_tests
+                ;;
+        esac
         ;;
 esac
-
-profile=release
-cargo_build --release
-cargo_run --release
-cargo_test --release
-run_native
-ls "${target_dir}/${target}/${profile}"
-cp "${target_dir}/${target}/${profile}/rust-test${exe:-}" "/tmp/artifacts/rust-test1-${profile}${exe:-}"
-
-cargo clean

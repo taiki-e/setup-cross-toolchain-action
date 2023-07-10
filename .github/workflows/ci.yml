@@ -81,6 +81,32 @@ jobs:
           - x86_64-unknown-linux-gnu
           # - x86_64-unknown-linux-gnux32 # tier3, run-fail
 
+          # Linux (musl)
+          # rustup target list | grep -e '-linux-musl'
+          # rustc --print target-list | grep -e '-linux-musl'
+          - aarch64-unknown-linux-musl
+          - arm-unknown-linux-musleabi
+          - arm-unknown-linux-musleabihf
+          - armv5te-unknown-linux-musleabi
+          - armv7-unknown-linux-musleabi
+          - armv7-unknown-linux-musleabihf
+          # - hexagon-unknown-linux-musl # tier3
+          - i586-unknown-linux-musl
+          - i686-unknown-linux-musl
+          - mips-unknown-linux-musl
+          # - mips64-openwrt-linux-musl # tier3
+          - mips64-unknown-linux-muslabi64
+          - mips64el-unknown-linux-muslabi64
+          - mipsel-unknown-linux-musl
+          # - powerpc-unknown-linux-musl # tier3
+          # - powerpc64-unknown-linux-musl # tier3
+          # - powerpc64le-unknown-linux-musl # tier3
+          # - riscv32gc-unknown-linux-musl # tier3
+          # - riscv64gc-unknown-linux-musl # tier3
+          # - s390x-unknown-linux-musl # tier3
+          # - thumbv7neon-unknown-linux-musleabihf # tier3
+          - x86_64-unknown-linux-musl
+
           # FreeBSD
           # rustup target list | grep -e '-freebsd'
           # rustc --print target-list | grep -e '-freebsd'

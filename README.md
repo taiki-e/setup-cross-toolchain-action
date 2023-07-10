@@ -12,6 +12,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
   - [Example workflow: Doctest](#example-workflow-doctest)
 - [Platform Support](#platform-support)
   - [Linux (GNU)](#linux-gnu)
+  - [Linux (musl)](#linux-musl)
   - [FreeBSD](#freebsd)
   - [NetBSD](#netbsd)
   - [Windows (GNU)](#windows-gnu)
@@ -168,6 +169,48 @@ jobs:
 [6] binfmt doesn't work<br>
 [7] GCC 7, glibc 2.25<br>
 [8] [Since nightly-2023-07-05](https://github.com/rust-lang/compiler-team/issues/648), mips{,el}-unknown-linux-gnu requires release mode for building std<br>
+
+### Linux (musl)
+
+| libc | GCC | C++ | test |
+| ---- | --- | --- | ---- |
+| musl 1.2.3 / 1.1.24 [1] | 9.4.0 | ? (libstdc++) | ✓ |
+
+[1]: [1.2 on Rust 1.71+](https://github.com/rust-lang/rust/pull/107129), otherwise 1.1. 1.1 toolchain is with a patch that fixes CVE-2020-28928.
+
+**Supported targets**:
+
+| target | host | runner | note |
+| ------ | ---- | ------ | ---- |
+| `aarch64-unknown-linux-musl`           | x86_64 linux | qemu-user (default)         |       |
+| `arm-unknown-linux-musleabi`           | x86_64 linux | qemu-user (default)         |       |
+| `arm-unknown-linux-musleabihf`         | x86_64 linux | qemu-user (default)         |       |
+| `armv5te-unknown-linux-musleabi`       | x86_64 linux | qemu-user (default)         |       |
+| `armv7-unknown-linux-musleabi`         | x86_64 linux | qemu-user (default)         |       |
+| `armv7-unknown-linux-musleabihf`       | x86_64 linux | qemu-user (default)         |       |
+| `i586-unknown-linux-musl`              | x86_64 linux | qemu-user (default), native |       |
+| `i686-unknown-linux-musl`              | x86_64 linux | native (default), qemu-user |       |
+| `mips-unknown-linux-musl`              | x86_64 linux | qemu-user (default)         |       |
+| `mips64-unknown-linux-muslabi64`       | x86_64 linux | qemu-user (default)         |       |
+| `mips64el-unknown-linux-muslabi64`     | x86_64 linux | qemu-user (default)         |       |
+| `mipsel-unknown-linux-musl`            | x86_64 linux | qemu-user (default)         |       |
+| `x86_64-unknown-linux-musl`            | x86_64 linux | native (default), qemu-user |       |
+
+(Other linux-musl targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#linux-musl) also may work, although this action's CI has not tested them.)
+
+`mips{,el}-unknown-linux-musl` are dynamically linked by default. To compile in the same way as other musl targets, you need to set `-C target-feature=+crt-static` and `-C link-self-contained=yes`. For example:
+
+```yaml
+- uses: taiki-e/setup-cross-toolchain-action@v1
+  with:
+    target: mips-unknown-linux-musl
+- run: cargo build
+  env:
+    # `-C target-feature=+crt-static` to enable static linking.
+    # `-C link-self-contained=yes` to link with libraries and objects shipped with Rust.
+    # `${{ env.RUSTFLAGS }}` is needed if you want to inherit existing rustflags.
+    RUSTFLAGS: ${{ env.RUSTFLAGS }} -C target-feature=+crt-static -C link-self-contained=yes
+```
 
 ### FreeBSD
 
