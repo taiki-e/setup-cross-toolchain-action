@@ -53,6 +53,8 @@ target_lower="${target_lower//./_}"
 target_upper="$(tr '[:lower:]' '[:upper:]' <<<"${target_lower}")"
 host=$(rustc -Vv | grep 'host: ' | cut -c 7-)
 rustc_version=$(rustc -Vv | grep 'release: ' | cut -c 10-)
+rustc_minor_version="${rustc_version#*.}"
+rustc_minor_version="${rustc_minor_version%%.*}"
 rustup_target_list=$(rustup target list | sed 's/ .*//g')
 
 install_apt_packages() {
@@ -157,6 +159,15 @@ setup_linux_host() {
     apt_packages=()
     case "${target}" in
         x86_64-unknown-linux-gnu) ;;
+        *-linux-musl*)
+            # https://github.com/rust-lang/rust/pull/107129
+            if [[ "${rustc_minor_version}" -lt 71 ]]; then
+                sys_version=1.1
+            else
+                sys_version=1.2
+            fi
+            install_rust_cross_toolchain
+            ;;
         *-linux-gnu*)
             # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh
             case "${target}" in
