@@ -181,29 +181,29 @@ jobs:
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
 | `aarch64-unknown-linux-gnu`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
-| `aarch64_be-unknown-linux-gnu`         | Ubuntu (<!-- 20.04,--> 18.04, 22.04) [4]         | qemu-user (default)         | tier3 |
+| `aarch64_be-unknown-linux-gnu`         | Ubuntu (<!-- 20.04, -->18.04, 22.04) [4]         | qemu-user (default)         | tier3 |
 | `arm-unknown-linux-gnueabi`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
-| `armeb-unknown-linux-gnueabi`          | Ubuntu (<!-- 20.04,--> 18.04, 22.04) [7]         | qemu-user (default)         | tier3 |
+| `armeb-unknown-linux-gnueabi`          | Ubuntu (<!-- 20.04, -->18.04, 22.04) [7]         | qemu-user (default)         | tier3 |
 | `armv5te-unknown-linux-gnueabi`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `armv7-unknown-linux-gnueabi`          | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `armv7-unknown-linux-gnueabihf`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `i586-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default), native |       |
 | `i686-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | native (default), qemu-user |       |
-| `mips-unknown-linux-gnu`               | Ubuntu (<!-- 20.04 [1],--> 18.04 [2], 22.04 [3]) | qemu-user (default)         | tier3 [8] |
-| `mips64-unknown-linux-gnuabi64`        | Ubuntu (<!-- 20.04 [1],--> 18.04 [2], 22.04 [3]) | qemu-user (default)         | tier3 |
+| `mips-unknown-linux-gnu`               | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user (default)         | tier3 [8] |
+| `mips64-unknown-linux-gnuabi64`        | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user (default)         | tier3 |
 | `mips64el-unknown-linux-gnuabi64`      | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         | tier3 |
 | `mipsel-unknown-linux-gnu`             | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         | tier3 [8] |
-| `mipsisa32r6-unknown-linux-gnu`        | Ubuntu (<!-- 20.04 [1],--> 22.04 [3])            | qemu-user (default) [6]     | tier3 |
+| `mipsisa32r6-unknown-linux-gnu`        | Ubuntu (<!-- 20.04 [1], -->22.04 [3])            | qemu-user (default) [6]     | tier3 |
 | `mipsisa32r6el-unknown-linux-gnu`      | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user (default) [6]     | tier3 |
-| `mipsisa64r6-unknown-linux-gnuabi64`   | Ubuntu (<!-- 20.04 [1],--> 22.04 [3])            | qemu-user (default)         | tier3 |
+| `mipsisa64r6-unknown-linux-gnuabi64`   | Ubuntu (<!-- 20.04 [1], -->22.04 [3])            | qemu-user (default)         | tier3 |
 | `mipsisa64r6el-unknown-linux-gnuabi64` | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user (default)         | tier3 |
 | `powerpc-unknown-linux-gnu`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
-| `powerpc64-unknown-linux-gnu`          | Ubuntu (<!-- 20.04 [1],--> 18.04 [2], 22.04 [3]) | qemu-user (default)         |       |
+| `powerpc64-unknown-linux-gnu`          | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user (default)         |       |
 | `powerpc64le-unknown-linux-gnu`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `riscv32gc-unknown-linux-gnu`          | Ubuntu (20.04, 18.04, 22.04) [5]                 | qemu-user (default)         |       |
-| `riscv64gc-unknown-linux-gnu`          | ubuntu (20.04 [1], <!-- 18.04 [2],--> 22.04 [3]) | qemu-user (default)         |       |
+| `riscv64gc-unknown-linux-gnu`          | ubuntu (20.04 [1], <!-- 18.04 [2], -->22.04 [3]) | qemu-user (default)         |       |
 | `s390x-unknown-linux-gnu`              | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
-| `sparc64-unknown-linux-gnu`            | Ubuntu (<!-- 20.04 [1],--> 18.04 [2], 22.04 [3]) | qemu-user (default)         |       |
+| `sparc64-unknown-linux-gnu`            | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user (default)         |       |
 | `thumbv7neon-unknown-linux-gnueabihf`  | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `x86_64-unknown-linux-gnu`             | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | native (default), qemu-user |       |
 
