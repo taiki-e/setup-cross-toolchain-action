@@ -142,10 +142,10 @@ jobs:
 | `armv7-unknown-linux-gnueabihf`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
 | `i586-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default), native |       |
 | `i686-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | native (default), qemu-user |       |
-| `mips-unknown-linux-gnu`               | Ubuntu (<!-- 20.04 [1],--> 18.04 [2], 22.04 [3]) | qemu-user (default)         | tier3 |
+| `mips-unknown-linux-gnu`               | Ubuntu (<!-- 20.04 [1],--> 18.04 [2], 22.04 [3]) | qemu-user (default)         | tier3 [8] |
 | `mips64-unknown-linux-gnuabi64`        | Ubuntu (<!-- 20.04 [1],--> 18.04 [2], 22.04 [3]) | qemu-user (default)         | tier3 |
 | `mips64el-unknown-linux-gnuabi64`      | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         | tier3 |
-| `mipsel-unknown-linux-gnu`             | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         | tier3 |
+| `mipsel-unknown-linux-gnu`             | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         | tier3 [8] |
 | `mipsisa32r6-unknown-linux-gnu`        | Ubuntu (<!-- 20.04 [1],--> 22.04 [3])            | qemu-user (default) [6]     | tier3 |
 | `mipsisa32r6el-unknown-linux-gnu`      | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user (default) [6]     | tier3 |
 | `mipsisa64r6-unknown-linux-gnuabi64`   | Ubuntu (<!-- 20.04 [1],--> 22.04 [3])            | qemu-user (default)         | tier3 |
@@ -167,6 +167,7 @@ jobs:
 [5] GCC 11, glibc 2.33<br>
 [6] binfmt doesn't work<br>
 [7] GCC 7, glibc 2.25<br>
+[8] [Since nightly-2023-07-05](https://github.com/rust-lang/compiler-team/issues/648), mips{,el}-unknown-linux-gnu requires release mode for building std<br>
 
 ### FreeBSD
 
