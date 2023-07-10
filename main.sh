@@ -455,3 +455,6 @@ else
     echo "BUILD_STD=-Zbuild-std" >>"${GITHUB_ENV}"
 fi
 echo "CARGO_BUILD_TARGET=${target}" >>"${GITHUB_ENV}"
+if [[ "${host}" != "${target}" ]]; then
+    echo "PKG_CONFIG_ALLOW_CROSS=1" >>"${GITHUB_ENV}"
+fi

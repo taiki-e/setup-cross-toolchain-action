@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Set `PKG_CONFIG_ALLOW_CROSS=1` environment variable when the target triple and host triple is different.
+
 ## [1.9.0] - 2023-07-09
 
 - Support more targets:
