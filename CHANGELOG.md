@@ -30,6 +30,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
   (Other linux-musl targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#linux-musl) also may work, although this action's CI has not tested them.)
 
+- Add [document about cross-compilation of tier 3 targets](https://github.com/taiki-e/setup-cross-toolchain-action#example-workflow-tier-3-targets).
+
 - Set `PKG_CONFIG_ALLOW_CROSS=1` environment variable when the target triple and host triple is different.
 
 ## [1.9.0] - 2023-07-09

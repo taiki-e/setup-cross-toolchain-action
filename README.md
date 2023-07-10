@@ -10,6 +10,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
   - [Example workflow: Basic usage](#example-workflow-basic-usage)
   - [Example workflow: Multiple targets](#example-workflow-multiple-targets)
   - [Example workflow: Doctest](#example-workflow-doctest)
+  - [Example workflow: Tier 3 targets](#example-workflow-tier-3-targets)
 - [Platform Support](#platform-support)
   - [Linux (GNU)](#linux-gnu)
   - [Linux (musl)](#linux-musl)
@@ -120,6 +121,51 @@ jobs:
       # Once `-Z doctest-xcompile` is stabilized, the corresponding flag
       # will be set to `$DOCTEST_XCOMPILE` (if it is available).
       - run: cargo test --verbose $DOCTEST_XCOMPILE
+```
+
+### Example workflow: Tier 3 targets
+
+```yaml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust
+        run: rustup update nightly && rustup default nightly
+      - name: Install cross-compilation tools
+        uses: taiki-e/setup-cross-toolchain-action@v1
+        with:
+          target: aarch64_be-unknown-linux-gnu
+      - run: cargo test --verbose -Z build-std
+```
+
+Cross-compilation of tier 3 targets currently requires nightly to build std.
+If you want to use tier 1/2 and tier 3 in the same matrix, you can use the `BUILD_STD` environment variable set by this action to use `-Z build-std` only for tier 3 targets.
+
+```yaml
+jobs:
+  test:
+    strategy:
+      matrix:
+        target:
+          - aarch64-unknown-linux-gnu
+          - aarch64_be-unknown-linux-gnu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Rust
+        run: rustup update nightly && rustup default nightly
+      - name: Install cross-compilation tools
+        uses: taiki-e/setup-cross-toolchain-action@v1
+        with:
+          target: ${{ matrix.target }}
+      # If target is tier 3, `$BUILD_STD` is `-Zbuild-std`.
+      # Otherwise, `$BUILD_STD` is not set.
+      #
+      # Once `Z build-std` is stabilized, the corresponding flag
+      # will be set to `$BUILD_STD` (if it is available).
+      - run: cargo test --verbose $BUILD_STD
 ```
 
 ## Platform Support
