@@ -55,22 +55,6 @@ host=$(rustc -Vv | grep 'host: ' | cut -c 7-)
 rustc_version=$(rustc -Vv | grep 'release: ' | cut -c 10-)
 rustup_target_list=$(rustup target list | sed 's/ .*//g')
 
-# Refs: https://github.com/multiarch/qemu-user-static.
-register_binfmt() {
-    local url=https://raw.githubusercontent.com/qemu/qemu/44f28df24767cf9dca1ddc9b23157737c4cbb645/scripts/qemu-binfmt-conf.sh
-    retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -o __qemu-binfmt-conf.sh "${url}"
-    # They confuse binfmt.
-    sed -i 's/ mipsn32 mipsn32el / /' ./__qemu-binfmt-conf.sh
-    chmod +x ./__qemu-binfmt-conf.sh
-    if [[ ! -d /proc/sys/fs/binfmt_misc ]]; then
-        bail "kernel does not support binfmt"
-    fi
-    if [[ ! -f /proc/sys/fs/binfmt_misc/register ]]; then
-        sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
-    fi
-    sudo ./__qemu-binfmt-conf.sh --qemu-path /usr/bin --persistent yes
-    rm ./__qemu-binfmt-conf.sh
-}
 install_apt_packages() {
     if [[ ${#apt_packages[@]} -gt 0 ]]; then
         retry sudo apt-get -o Acquire::Retries=10 -qq update
@@ -80,6 +64,7 @@ install_apt_packages() {
     fi
 }
 install_llvm() {
+    echo "::group::Install LLVM"
     codename="$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')"
     case "${codename}" in
         bionic) llvm_version=13 ;;
@@ -104,8 +89,10 @@ install_llvm() {
         local link="${tool%"-${llvm_version}"}"
         sudo update-alternatives --install "${link}" "${link##*/}" "${tool}" 100
     done
+    echo "::endgroup::"
 }
 install_rust_cross_toolchain() {
+    echo "::group::Install toolchain"
     local toolchain_dir=/usr/local
     # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
     retry docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}${sys_version:-}-dev-amd64"
@@ -163,6 +150,7 @@ OBJDUMP=${target}-objdump
 EOF
             ;;
     esac
+    echo "::endgroup::"
 }
 
 setup_linux_host() {
@@ -336,6 +324,7 @@ EOF
             ;;
     esac
     if [[ -n "${use_qemu:-}" ]]; then
+        echo "::group::Instal QEMU"
         # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh#L251
         # We basically set the newer and more powerful CPU as the
         # default QEMU_CPU so that we can test more CPU features.
@@ -424,8 +413,24 @@ EOF
         docker rm -f qemu-user >/dev/null
         sudo mv .setup-cross-toolchain-action-tmp/qemu/qemu-* /usr/bin/
         rm -rf ./.setup-cross-toolchain-action-tmp
+        echo "::endgroup::"
         x "qemu-${qemu_arch}" --version
-        register_binfmt
+        echo "::group::Register binfmt"
+        # Refs: https://github.com/multiarch/qemu-user-static.
+        local url=https://raw.githubusercontent.com/qemu/qemu/44f28df24767cf9dca1ddc9b23157737c4cbb645/scripts/qemu-binfmt-conf.sh
+        retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -o __qemu-binfmt-conf.sh "${url}"
+        # They confuse binfmt.
+        sed -i 's/ mipsn32 mipsn32el / /' ./__qemu-binfmt-conf.sh
+        chmod +x ./__qemu-binfmt-conf.sh
+        if [[ ! -d /proc/sys/fs/binfmt_misc ]]; then
+            bail "kernel does not support binfmt"
+        fi
+        if [[ ! -f /proc/sys/fs/binfmt_misc/register ]]; then
+            sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+        fi
+        sudo ./__qemu-binfmt-conf.sh --qemu-path /usr/bin --persistent yes
+        rm ./__qemu-binfmt-conf.sh
+        echo "::endgroup::"
     fi
 
     install_apt_packages
