@@ -10,6 +10,10 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Set `PKG_CONFIG_PATH` for most linux-gnu targets.
+
+- This action no longer sets `PKG_CONFIG_ALLOW_CROSS=1` environment variable if `PKG_CONFIG_ALLOW_CROSS` environment variable is already set.
+
 ## [1.10.0] - 2023-07-10
 
 - Support linux-musl targets ([#12](https://github.com/taiki-e/setup-cross-toolchain-action/pull/12))

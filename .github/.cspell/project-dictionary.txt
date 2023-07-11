@@ -9,6 +9,7 @@ Loongson
 mipsn
 multilib
 objcopy
+pkgconfig
 Vger
 wasmtime
 wepoll

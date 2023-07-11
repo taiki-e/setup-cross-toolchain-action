@@ -210,6 +210,7 @@ AR_${target_lower}=${apt_target}-ar
 RANLIB_${target_lower}=${apt_target}-ranlib
 STRIP=${apt_target}-strip
 OBJDUMP=${apt_target}-objdump
+PKG_CONFIG_PATH=/usr/lib/${apt_target}/pkgconfig:${PKG_CONFIG_PATH:-}
 EOF
                     ;;
             esac
@@ -466,6 +467,6 @@ else
     echo "BUILD_STD=-Zbuild-std" >>"${GITHUB_ENV}"
 fi
 echo "CARGO_BUILD_TARGET=${target}" >>"${GITHUB_ENV}"
-if [[ "${host}" != "${target}" ]]; then
+if [[ "${host}" != "${target}" ]] && [[ -z "${PKG_CONFIG_ALLOW_CROSS:-}" ]]; then
     echo "PKG_CONFIG_ALLOW_CROSS=1" >>"${GITHUB_ENV}"
 fi
