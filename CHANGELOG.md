@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.11.1] - 2023-07-11
+
 - Only set `PKG_CONFIG_ALLOW_CROSS=1` environment variable when `PKG_CONFIG_PATH` environment variable is set by this action or users. This fixes a regression introduced in 1.10.0.
 
 ## [1.11.0] - 2023-07-11
@@ -149,7 +151,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.11.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.11.1...HEAD
+[1.11.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.8.0...v1.9.0
