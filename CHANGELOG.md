@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Only set `PKG_CONFIG_ALLOW_CROSS=1` environment variable when `PKG_CONFIG_PATH` environment variable is set. This fixes a regression introduced in 1.10.0.
+
 ## [1.11.0] - 2023-07-11
 
 - Support macOS targets on macOS host.

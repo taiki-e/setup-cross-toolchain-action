@@ -206,6 +206,7 @@ STRIP=${apt_target}-strip
 OBJDUMP=${apt_target}-objdump
 PKG_CONFIG_PATH=/usr/lib/${apt_target}/pkgconfig:${PKG_CONFIG_PATH:-}
 EOF
+                        set_pkg_config_allow_cross=1
                         ;;
                 esac
                 ;;
@@ -482,6 +483,6 @@ else
     echo "BUILD_STD=-Zbuild-std" >>"${GITHUB_ENV}"
 fi
 echo "CARGO_BUILD_TARGET=${target}" >>"${GITHUB_ENV}"
-if [[ "${host}" != "${target}" ]] && [[ -z "${PKG_CONFIG_ALLOW_CROSS:-}" ]]; then
+if [[ "${host}" != "${target}" ]] && [[ -n "${set_pkg_config_allow_cross:-"${PKG_CONFIG_PATH:-}"}" ]] && [[ -z "${PKG_CONFIG_ALLOW_CROSS:-}" ]]; then
     echo "PKG_CONFIG_ALLOW_CROSS=1" >>"${GITHUB_ENV}"
 fi
