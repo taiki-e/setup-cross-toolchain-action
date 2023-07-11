@@ -13,6 +13,7 @@ set -x
 target="$1"
 target="${target%@*}"
 wd="$2"
+host=$(rustc -Vv | grep 'host: ' | cut -c 7-)
 base_rustflags="${RUSTFLAGS:-}"
 case "${target}" in
     *-windows*) exe=".exe" ;;
@@ -23,27 +24,42 @@ case "${target}" in
     *-freebsd*) freebsd-version ;;
 esac
 
-cargo_build() {
-    cargo ${BUILD_STD:-} build -v --target "${target}" ${cargo_options[@]+"${cargo_options[@]}"} "$@"
+skip_run() {
+    case "${target}" in
+        # x86_64h-apple-darwin is also x86_64 but build-only due to the CPU of GitHub-provided macOS runners is older than haswell.
+        *-freebsd* | *-netbsd* | x86_64h-apple-darwin | aarch64*-darwin* | aarch64*-windows*) return 0 ;;
+        *) return 1 ;;
+    esac
 }
 cargo_run() {
-    case "${target}" in
-        *-freebsd* | *-netbsd*) ;;
-        *) cargo ${BUILD_STD:-} run -v --target "${target}" ${cargo_options[@]+"${cargo_options[@]}"} "$@" ;;
-    esac
+    if skip_run; then
+        cargo ${BUILD_STD:-} build -v --target "${target}" ${cargo_options[@]+"${cargo_options[@]}"} "$@"
+    else
+        cargo ${BUILD_STD:-} run -v --target "${target}" ${cargo_options[@]+"${cargo_options[@]}"} "$@"
+    fi
 }
 cargo_test() {
-    case "${target}" in
-        *-freebsd* | *-netbsd*) cargo ${BUILD_STD:-} test --no-run -v --target "${target}" ${DOCTEST_XCOMPILE:-} ${cargo_options[@]+"${cargo_options[@]}"} "$@" ;;
-        *) cargo ${BUILD_STD:-} test -v --target "${target}" ${DOCTEST_XCOMPILE:-} ${cargo_options[@]+"${cargo_options[@]}"} "$@" ;;
-    esac
+    if skip_run; then
+        cargo ${BUILD_STD:-} test --no-run -v --target "${target}" ${DOCTEST_XCOMPILE:-} ${cargo_options[@]+"${cargo_options[@]}"} "$@"
+    else
+        cargo ${BUILD_STD:-} test -v --target "${target}" ${DOCTEST_XCOMPILE:-} ${cargo_options[@]+"${cargo_options[@]}"} "$@"
+    fi
 }
 run_native() {
+    if skip_run; then
+        return
+    fi
     # Run only on targets that binfmt work.
     case "${target}" in
-        mipsisa32r6* | *-windows* | *-wasi* | *-freebsd* | *-netbsd*) ;;
-        *) "${target_dir}/${target}/${profile}/rust-test${exe:-}" ;;
+        mipsisa32r6* | *-wasi*) return ;;
+        *-windows*)
+            case "${host}" in
+                *-windows*) ;;
+                *) return ;;
+            esac
+            ;;
     esac
+    "${target_dir}/${target}/${profile}/rust-test${exe:-}"
 }
 run_tests() {
     case "${target}" in
@@ -51,7 +67,6 @@ run_tests() {
         mips-unknown-linux-gnu | mipsel-unknown-linux-gnu) ;;
         *)
             profile=debug
-            cargo_build
             cargo_run
             cargo_test
             run_native
@@ -61,7 +76,6 @@ run_tests() {
     esac
 
     profile=release
-    cargo_build --release
     cargo_run --release
     cargo_test --release
     run_native
@@ -93,7 +107,7 @@ case "${target}" in
         # With dynamic linking (default for mips{,el}-unknown-linux-musl/mips64-openwrt-linux-musl)
         case "${target}" in
             # TODO: No such file or directory
-            i586-* | i686-* | x86_64-*) ;;
+            i586-* | i686-* | x86_64*) ;;
             *)
                 export RUSTFLAGS="${base_rustflags} -C target-feature=-crt-static"
                 run_tests

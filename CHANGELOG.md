@@ -10,6 +10,16 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support macOS targets on macOS host.
+
+  - aarch64-apple-darwin (build-only)
+  - x86_64-apple-darwin
+  - x86_64h-apple-darwin (build-only due to the CPU of GitHub-provided macOS runners is older than haswell. If you use a large runner, you may be able to run the test.)
+
+  GitHub-provided macOS runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
+
+  (Other macOS targets also may work, although this action's CI has not tested them.)
+
 - Set `PKG_CONFIG_PATH` for most linux-gnu targets.
 
 - This action no longer sets `PKG_CONFIG_ALLOW_CROSS=1` environment variable if `PKG_CONFIG_ALLOW_CROSS` environment variable is already set.
@@ -83,7 +93,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [1.6.2] - 2023-03-12
 
-- Fix linker error for wasm32-wasi on Rust 1.68+. This was due to rustc regression and has been [fixed](https://github.com/rust-lang/rust/pull/109156) in 1.68.2.
+- Fix linker error for wasm32-wasi on Rust 1.68.0. This was due to rustc regression and has been [fixed](https://github.com/rust-lang/rust/pull/109156) in 1.68.1.
 
 - Switch to composite action.
 

@@ -2,6 +2,7 @@ binfmt
 CXXSTDLIB
 devel
 endgroup
+haswell
 libc
 libclang
 libstdc

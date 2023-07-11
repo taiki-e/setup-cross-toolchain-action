@@ -16,8 +16,9 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
   - [Linux (musl)](#linux-musl)
   - [FreeBSD](#freebsd)
   - [NetBSD](#netbsd)
-  - [Windows (GNU)](#windows-gnu)
   - [WASI](#wasi)
+  - [Windows (GNU)](#windows-gnu)
+  - [macOS](#macos)
 - [Related Projects](#related-projects)
 - [License](#license)
 
@@ -180,31 +181,31 @@ jobs:
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-unknown-linux-gnu`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
-| `aarch64_be-unknown-linux-gnu`         | Ubuntu (<!-- 20.04, -->18.04, 22.04) [4]         | qemu-user (default)         | tier3 |
-| `arm-unknown-linux-gnueabi`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
-| `armeb-unknown-linux-gnueabi`          | Ubuntu (<!-- 20.04, -->18.04, 22.04) [7]         | qemu-user (default)         | tier3 |
-| `armv5te-unknown-linux-gnueabi`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
-| `armv7-unknown-linux-gnueabi`          | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
-| `armv7-unknown-linux-gnueabihf`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
+| `aarch64-unknown-linux-gnu`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
+| `aarch64_be-unknown-linux-gnu`         | Ubuntu (<!-- 20.04, -->18.04, 22.04) [4]         | qemu-user                   | tier3 |
+| `arm-unknown-linux-gnueabi`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
+| `armeb-unknown-linux-gnueabi`          | Ubuntu (<!-- 20.04, -->18.04, 22.04) [7]         | qemu-user                   | tier3 |
+| `armv5te-unknown-linux-gnueabi`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
+| `armv7-unknown-linux-gnueabi`          | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
+| `armv7-unknown-linux-gnueabihf`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
 | `i586-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default), native |       |
 | `i686-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | native (default), qemu-user |       |
-| `mips-unknown-linux-gnu`               | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user (default)         | tier3 [8] |
-| `mips64-unknown-linux-gnuabi64`        | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user (default)         | tier3 |
-| `mips64el-unknown-linux-gnuabi64`      | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         | tier3 |
-| `mipsel-unknown-linux-gnu`             | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         | tier3 [8] |
-| `mipsisa32r6-unknown-linux-gnu`        | Ubuntu (<!-- 20.04 [1], -->22.04 [3])            | qemu-user (default) [6]     | tier3 |
-| `mipsisa32r6el-unknown-linux-gnu`      | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user (default) [6]     | tier3 |
-| `mipsisa64r6-unknown-linux-gnuabi64`   | Ubuntu (<!-- 20.04 [1], -->22.04 [3])            | qemu-user (default)         | tier3 |
-| `mipsisa64r6el-unknown-linux-gnuabi64` | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user (default)         | tier3 |
-| `powerpc-unknown-linux-gnu`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
-| `powerpc64-unknown-linux-gnu`          | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user (default)         |       |
-| `powerpc64le-unknown-linux-gnu`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
-| `riscv32gc-unknown-linux-gnu`          | Ubuntu (20.04, 18.04, 22.04) [5]                 | qemu-user (default)         |       |
-| `riscv64gc-unknown-linux-gnu`          | ubuntu (20.04 [1], <!-- 18.04 [2], -->22.04 [3]) | qemu-user (default)         |       |
-| `s390x-unknown-linux-gnu`              | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
-| `sparc64-unknown-linux-gnu`            | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user (default)         |       |
-| `thumbv7neon-unknown-linux-gnueabihf`  | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default)         |       |
+| `mips-unknown-linux-gnu`               | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   | tier3 [8] |
+| `mips64-unknown-linux-gnuabi64`        | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   | tier3 |
+| `mips64el-unknown-linux-gnuabi64`      | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   | tier3 |
+| `mipsel-unknown-linux-gnu`             | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   | tier3 [8] |
+| `mipsisa32r6-unknown-linux-gnu`        | Ubuntu (<!-- 20.04 [1], -->22.04 [3])            | qemu-user [6]               | tier3 |
+| `mipsisa32r6el-unknown-linux-gnu`      | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user [6]               | tier3 |
+| `mipsisa64r6-unknown-linux-gnuabi64`   | Ubuntu (<!-- 20.04 [1], -->22.04 [3])            | qemu-user                   | tier3 |
+| `mipsisa64r6el-unknown-linux-gnuabi64` | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user                   | tier3 |
+| `powerpc-unknown-linux-gnu`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
+| `powerpc64-unknown-linux-gnu`          | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   |       |
+| `powerpc64le-unknown-linux-gnu`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
+| `riscv32gc-unknown-linux-gnu`          | Ubuntu (20.04, 18.04, 22.04) [5]                 | qemu-user                   |       |
+| `riscv64gc-unknown-linux-gnu`          | ubuntu (20.04 [1], <!-- 18.04 [2], -->22.04 [3]) | qemu-user                   |       |
+| `s390x-unknown-linux-gnu`              | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
+| `sparc64-unknown-linux-gnu`            | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   |       |
+| `thumbv7neon-unknown-linux-gnueabihf`  | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
 | `x86_64-unknown-linux-gnu`             | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | native (default), qemu-user |       |
 
 [1] [GCC 9](https://packages.ubuntu.com/en/focal/gcc), [glibc 2.31](https://packages.ubuntu.com/en/focal/libc6-dev)<br>
@@ -228,19 +229,19 @@ jobs:
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-unknown-linux-musl`           | x86_64 linux | qemu-user (default)         |       |
-| `arm-unknown-linux-musleabi`           | x86_64 linux | qemu-user (default)         |       |
-| `arm-unknown-linux-musleabihf`         | x86_64 linux | qemu-user (default)         |       |
-| `armv5te-unknown-linux-musleabi`       | x86_64 linux | qemu-user (default)         |       |
-| `armv7-unknown-linux-musleabi`         | x86_64 linux | qemu-user (default)         |       |
-| `armv7-unknown-linux-musleabihf`       | x86_64 linux | qemu-user (default)         |       |
-| `i586-unknown-linux-musl`              | x86_64 linux | qemu-user (default), native |       |
-| `i686-unknown-linux-musl`              | x86_64 linux | native (default), qemu-user |       |
-| `mips-unknown-linux-musl`              | x86_64 linux | qemu-user (default)         |       |
-| `mips64-unknown-linux-muslabi64`       | x86_64 linux | qemu-user (default)         |       |
-| `mips64el-unknown-linux-muslabi64`     | x86_64 linux | qemu-user (default)         |       |
-| `mipsel-unknown-linux-musl`            | x86_64 linux | qemu-user (default)         |       |
-| `x86_64-unknown-linux-musl`            | x86_64 linux | native (default), qemu-user |       |
+| `aarch64-unknown-linux-musl`       | x86_64 Linux | qemu-user                   |       |
+| `arm-unknown-linux-musleabi`       | x86_64 Linux | qemu-user                   |       |
+| `arm-unknown-linux-musleabihf`     | x86_64 Linux | qemu-user                   |       |
+| `armv5te-unknown-linux-musleabi`   | x86_64 Linux | qemu-user                   |       |
+| `armv7-unknown-linux-musleabi`     | x86_64 Linux | qemu-user                   |       |
+| `armv7-unknown-linux-musleabihf`   | x86_64 Linux | qemu-user                   |       |
+| `i586-unknown-linux-musl`          | x86_64 Linux | qemu-user (default), native |       |
+| `i686-unknown-linux-musl`          | x86_64 Linux | native (default), qemu-user |       |
+| `mips-unknown-linux-musl`          | x86_64 Linux | qemu-user                   |       |
+| `mips64-unknown-linux-muslabi64`   | x86_64 Linux | qemu-user                   |       |
+| `mips64el-unknown-linux-muslabi64` | x86_64 Linux | qemu-user                   |       |
+| `mipsel-unknown-linux-musl`        | x86_64 Linux | qemu-user                   |       |
+| `x86_64-unknown-linux-musl`        | x86_64 Linux | native (default), qemu-user |       |
 
 (Other linux-musl targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#linux-musl) also may work, although this action's CI has not tested them.)
 
@@ -268,9 +269,9 @@ jobs:
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-freebsd`   | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) | tier3 |
-| `i686-unknown-freebsd`      | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) |       |
-| `x86_64-unknown-freebsd`    | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) |       |
+| `aarch64-unknown-freebsd` | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) | tier3 |
+| `i686-unknown-freebsd`    | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) |       |
+| `x86_64-unknown-freebsd`  | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) |       |
 
 [1] Clang 13<br>
 [2] Clang 15<br>
@@ -297,8 +298,8 @@ Only specifying a major version is supported.
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-netbsd` | 9.2                | Ubuntu (18.04, 20.04, 22.04) [1] | tier3 |
-| `x86_64-unknown-netbsd`  | 8.2 (default), 9.2 | Ubuntu (18.04, 20.04, 22.04) [1] |       |
+| `aarch64-unknown-netbsd` | 9.2                | x86_64 Linux [1] | tier3 |
+| `x86_64-unknown-netbsd`  | 8.2 (default), 9.2 | x86_64 Linux [1] |       |
 
 [1] GCC 7<br>
 
@@ -314,6 +315,25 @@ You can select/pin the OS version by using `@` syntax in `target` option. For ex
 
 Only specifying a major version is supported.
 
+### WASI
+
+| C++ | test |
+| --- | ---- |
+| ? (libc++) | ✓ |
+
+**Supported targets**:
+
+| target | host | runner | note |
+| ------ | ---- | ------ | ---- |
+| `wasm32-wasi` | Ubuntu (20.04, 22.04) [1] | wasmtime [2] |  |
+
+<!--
+clang version and wasi-libc hash can be found here: https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-16/src
+-->
+
+[1] clang 14, wasi-sdk 16 (wasi-libc 30094b6)<br>
+[2] binfmt doesn't work<br>
+
 ### Windows (GNU)
 
 | C++ | test |
@@ -324,7 +344,7 @@ Only specifying a major version is supported.
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `x86_64-pc-windows-gnu` | Ubuntu (<!-- 20.04 [1], -->22.04 [2]) | wine (default) [3] |
+| `x86_64-pc-windows-gnu` | Ubuntu (<!-- 20.04 [1], -->22.04 [2]) | wine [3] |  |
 
 <!-- [1] [GCC 9](https://packages.ubuntu.com/en/focal/gcc-mingw-w64-base), [MinGW-w64 7](https://packages.ubuntu.com/en/focal/mingw-w64-x86-64-dev)<br> -->
 [2] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev)<br>
@@ -340,24 +360,25 @@ You can select/pin the version by using `@` syntax in `runner` input option. For
     runner: wine@7.13
 ```
 
-### WASI
+### macOS
 
 | C++ | test |
 | --- | ---- |
-| ? (libc++) | ✓ |
+| ✓ | ✓ [1] |
+
+[1] Only x86_64-apple-darwin. (x86_64h-apple-darwin is also x86_64 but build-only due to the CPU of GitHub-provided macOS runners is older than haswell. If you use a large runner, you may be able to run the test.)
 
 **Supported targets**:
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `wasm32-wasi` | Ubuntu (20.04, 22.04) [1] | wasmtime (default) [2] |
+| `aarch64-apple-darwin` | *macOS* |        |       |
+| `x86_64-apple-darwin`  | *macOS* | native |       |
+| `x86_64h-apple-darwin` | *macOS* | native | tier3 |
 
-<!--
-clang version and wasi-libc hash can be found here: https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-16/src
--->
+GitHub-provided macOS runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 
-[1] clang 14, wasi-sdk 16 (wasi-libc 30094b6)<br>
-[2] binfmt doesn't work<br>
+(Other macOS targets also may work, although this action's CI has not tested them.)
 
 ## Related Projects
 

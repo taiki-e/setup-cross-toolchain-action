@@ -66,10 +66,12 @@ install_apt_packages() {
     fi
 }
 install_llvm() {
+    # https://github.com/taiki-e/dockerfiles/blob/998a9ad25ae76314d9439681de4d5fe70bb25430/build-base/apt.Dockerfile#L68
     echo "::group::Install LLVM"
     codename="$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')"
     case "${codename}" in
         bionic) llvm_version=13 ;;
+        # TODO: update to 16
         *) llvm_version=15 ;;
     esac
     echo "deb http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${llvm_version} main" \
@@ -126,6 +128,7 @@ READELF=llvm-readelf
 EOF
             ;;
         *-wasi*)
+            # Do not use prefixed clang for wasi due to rustc 1.68.0 bug: https://github.com/rust-lang/rust/pull/109156
             cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=clang
 CC_${target_lower}=clang
@@ -157,52 +160,43 @@ EOF
 
 setup_linux_host() {
     apt_packages=()
-    case "${target}" in
-        x86_64-unknown-linux-gnu) ;;
-        *-linux-musl*)
-            # https://github.com/rust-lang/rust/pull/107129
-            if [[ "${rustc_minor_version}" -lt 71 ]]; then
-                sys_version=1.1
-            else
-                sys_version=1.2
-            fi
-            install_rust_cross_toolchain
-            ;;
-        *-linux-gnu*)
-            # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh
-            case "${target}" in
-                # (tier3) Toolchains for aarch64_be-linux-gnu/armeb-linux-gnueabi/riscv32-linux-gnu is not available in APT.
-                # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L17
-                aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | riscv32gc-unknown-linux-gnu) install_rust_cross_toolchain ;;
-                arm-unknown-linux-gnueabihf)
-                    # (tier2) Ubuntu's gcc-arm-linux-gnueabihf enables armv7 by default
-                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L55
-                    bail "target '${target}' not yet supported; consider using armv7-unknown-linux-gnueabihf for testing armhf or arm-unknown-linux-gnueabi for testing armv6"
-                    ;;
-                sparc-unknown-linux-gnu)
-                    # (tier3) Setup is tricky, and fails to build test.
-                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.Dockerfile#L44
-                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/test.sh#L241
-                    bail "target '${target}' not yet supported"
-                    ;;
-                *)
-                    case "${target}" in
-                        arm*hf | thumbv7neon-*) cc_target=arm-linux-gnueabihf ;;
-                        arm*) cc_target=arm-linux-gnueabi ;;
-                        riscv32gc-* | riscv64gc-*) cc_target="${target/gc-unknown/}" ;;
-                        sparc-*)
-                            cc_target=sparc-linux-gnu
-                            apt_target=sparc64-linux-gnu
-                            multilib=1
-                            ;;
-                        *) cc_target="${target/-unknown/}" ;;
-                    esac
-                    apt_target="${apt_target:-"${cc_target/i586/i686}"}"
-                    # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
-                    apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
-                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh
-                    qemu_ld_prefix="/usr/${apt_target}"
-                    cat >>"${GITHUB_ENV}" <<EOF
+    if [[ "${host}" != "${target}" ]]; then
+        case "${target}" in
+            *-linux-gnu*)
+                # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh
+                case "${target}" in
+                    # (tier3) Toolchains for aarch64_be-linux-gnu/armeb-linux-gnueabi/riscv32-linux-gnu is not available in APT.
+                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L17
+                    aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | riscv32gc-unknown-linux-gnu) install_rust_cross_toolchain ;;
+                    arm-unknown-linux-gnueabihf)
+                        # (tier2) Ubuntu's gcc-arm-linux-gnueabihf enables armv7 by default
+                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L55
+                        bail "target '${target}' not yet supported; consider using armv7-unknown-linux-gnueabihf for testing armhf or arm-unknown-linux-gnueabi for testing armv6"
+                        ;;
+                    sparc-unknown-linux-gnu)
+                        # (tier3) Setup is tricky, and fails to build test.
+                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.Dockerfile#L44
+                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/test.sh#L241
+                        bail "target '${target}' not yet supported"
+                        ;;
+                    *)
+                        case "${target}" in
+                            arm*hf | thumbv7neon-*) cc_target=arm-linux-gnueabihf ;;
+                            arm*) cc_target=arm-linux-gnueabi ;;
+                            riscv32gc-* | riscv64gc-*) cc_target="${target/gc-unknown/}" ;;
+                            sparc-*)
+                                cc_target=sparc-linux-gnu
+                                apt_target=sparc64-linux-gnu
+                                multilib=1
+                                ;;
+                            *) cc_target="${target/-unknown/}" ;;
+                        esac
+                        apt_target="${apt_target:-"${cc_target/i586/i686}"}"
+                        # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
+                        apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
+                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh
+                        qemu_ld_prefix="/usr/${apt_target}"
+                        cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc
 CC_${target_lower}=${apt_target}-gcc
 CXX_${target_lower}=${apt_target}-g++
@@ -212,64 +206,84 @@ STRIP=${apt_target}-strip
 OBJDUMP=${apt_target}-objdump
 PKG_CONFIG_PATH=/usr/lib/${apt_target}/pkgconfig:${PKG_CONFIG_PATH:-}
 EOF
-                    ;;
-            esac
-            ;;
-        *-freebsd*)
-            install_rust_cross_toolchain
-            install_llvm
-            ;;
-        *-netbsd*)
-            install_rust_cross_toolchain
-            ;;
-        x86_64-pc-windows-gnu)
-            arch="${target%%-*}"
-            apt_target="${arch}-w64-mingw32"
-            apt_packages+=("g++-mingw-w64-${arch/_/-}")
+                        ;;
+                esac
+                ;;
+            *-linux-musl*)
+                # https://github.com/rust-lang/rust/pull/107129
+                if [[ "${rustc_minor_version}" -lt 71 ]]; then
+                    sys_version=1.1
+                else
+                    sys_version=1.2
+                fi
+                install_rust_cross_toolchain
+                ;;
+            *-freebsd*)
+                install_rust_cross_toolchain
+                install_llvm
+                ;;
+            *-netbsd*)
+                install_rust_cross_toolchain
+                ;;
+            *-wasi*)
+                install_rust_cross_toolchain
+                case "${runner}" in
+                    '' | 'wasmtime') ;;
+                    *) bail "unrecognized runner '${runner}'" ;;
+                esac
+                echo "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
+                x wasmtime --version
+                # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/test/entrypoint.sh#L142-L146
+                echo "CXXSTDLIB=c++" >>"${GITHUB_ENV}"
+                ;;
+            x86_64-pc-windows-gnu)
+                arch="${target%%-*}"
+                apt_target="${arch}-w64-mingw32"
+                apt_packages+=("g++-mingw-w64-${arch/_/-}")
 
-            # https://wiki.winehq.org/Ubuntu
-            # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
-            sudo dpkg --add-architecture i386
-            codename="$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')"
-            sudo mkdir -pm755 /etc/apt/keyrings
-            retry sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-            retry sudo wget -NP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/${codename}/winehq-${codename}.sources"
-            case "${runner}" in
-                '')
-                    # Use winehq-devel 7.13 as default because mio/wepoll needs wine 7.13+.
-                    # https://github.com/tokio-rs/mio/issues/1444
-                    wine_version=7.13
-                    wine_branch=devel
-                    ;;
-                wine@*)
-                    wine_version="${runner#*@}"
-                    if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                        wine_branch=stable
-                    elif [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+                # https://wiki.winehq.org/Ubuntu
+                # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
+                sudo dpkg --add-architecture i386
+                codename="$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')"
+                sudo mkdir -pm755 /etc/apt/keyrings
+                retry sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+                retry sudo wget -NP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/${codename}/winehq-${codename}.sources"
+                case "${runner}" in
+                    '')
+                        # Use winehq-devel 7.13 as default because mio/wepoll needs wine 7.13+.
+                        # https://github.com/tokio-rs/mio/issues/1444
+                        wine_version=7.13
                         wine_branch=devel
-                    else
-                        bail "unrecognized runner '${runner}'"
-                    fi
-                    ;;
-                *) bail "unrecognized runner '${runner}'" ;;
-            esac
-            # The suffix is 1 in most cases, rarely 2.
-            # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
-            # https://dl.winehq.org/wine-builds/ubuntu/dists/focal/main/binary-amd64
-            wine_build_suffix=1
-            apt_packages+=(
-                "winehq-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
-                "wine-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
-                "wine-${wine_branch}-amd64=${wine_version}~${codename}-${wine_build_suffix}"
-                "wine-${wine_branch}-i386=${wine_version}~${codename}-${wine_build_suffix}"
-                "wine-${wine_branch}-dev=${wine_version}~${codename}-${wine_build_suffix}"
-            )
-            install_apt_packages
-            x wine --version
+                        ;;
+                    wine@*)
+                        wine_version="${runner#*@}"
+                        if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                            wine_branch=stable
+                        elif [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+                            wine_branch=devel
+                        else
+                            bail "unrecognized runner '${runner}'"
+                        fi
+                        ;;
+                    *) bail "unrecognized runner '${runner}'" ;;
+                esac
+                # The suffix is 1 in most cases, rarely 2.
+                # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
+                # https://dl.winehq.org/wine-builds/ubuntu/dists/focal/main/binary-amd64
+                wine_build_suffix=1
+                apt_packages+=(
+                    "winehq-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
+                    "wine-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
+                    "wine-${wine_branch}-amd64=${wine_version}~${codename}-${wine_build_suffix}"
+                    "wine-${wine_branch}-i386=${wine_version}~${codename}-${wine_build_suffix}"
+                    "wine-${wine_branch}-dev=${wine_version}~${codename}-${wine_build_suffix}"
+                )
+                install_apt_packages
+                x wine --version
 
-            gcc_lib="$(basename "$(ls -d "/usr/lib/gcc/${apt_target}"/*posix)")"
-            # Adapted from https://github.com/cross-rs/cross/blob/16a64e7028d90a3fdf285cfd642cdde9443c0645/docker/windows-entry.sh
-            cat >"/usr/local/bin/${target}-runner" <<EOF
+                gcc_lib="$(basename "$(ls -d "/usr/lib/gcc/${apt_target}"/*posix)")"
+                # Adapted from https://github.com/cross-rs/cross/blob/16a64e7028d90a3fdf285cfd642cdde9443c0645/docker/windows-entry.sh
+                cat >"/usr/local/bin/${target}-runner" <<EOF
 #!/bin/sh
 set -eu
 export HOME=/tmp/home
@@ -283,9 +297,9 @@ fi
 export WINEPATH="/usr/lib/gcc/${apt_target}/${gcc_lib};/usr/${apt_target}/lib;\${WINEPATH:-}"
 exec wine "\$@"
 EOF
-            chmod +x "/usr/local/bin/${target}-runner"
+                chmod +x "/usr/local/bin/${target}-runner"
 
-            cat >>"${GITHUB_ENV}" <<EOF
+                cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_RUNNER=${target}-runner
 CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc-posix
 CC_${target_lower}=${apt_target}-gcc-posix
@@ -295,20 +309,10 @@ RANLIB_${target_lower}=${apt_target}-ranlib
 STRIP=${apt_target}-strip
 OBJDUMP=${apt_target}-objdump
 EOF
-            ;;
-        *-wasi*)
-            install_rust_cross_toolchain
-            case "${runner}" in
-                '' | 'wasmtime') ;;
-                *) bail "unrecognized runner '${runner}'" ;;
-            esac
-            echo "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
-            x wasmtime --version
-            # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/test/entrypoint.sh#L142-L146
-            echo "CXXSTDLIB=c++" >>"${GITHUB_ENV}"
-            ;;
-        *) bail "unsupported target '${target}'" ;;
-    esac
+                ;;
+            *) bail "target '${target}' is not supported yet on Linux host" ;;
+        esac
+    fi
 
     case "${target}" in
         *-unknown-linux-*)
@@ -450,6 +454,17 @@ EOF
 
 case "${host}" in
     *-linux-gnu*) setup_linux_host ;;
+    # GitHub-provided macOS runners support cross-compile for other architectures or environments.
+    *-darwin*)
+        case "${target}" in
+            *-darwin*) ;;
+            *) bail "target '${target}' is not supported yet on macOS host" ;;
+        esac
+        case "${runner}" in
+            '' | native) ;;
+            *) bail "unrecognized runner '${runner}'" ;;
+        esac
+        ;;
     *) bail "unsupported host '${host}'" ;;
 esac
 

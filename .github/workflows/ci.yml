@@ -145,6 +145,14 @@ jobs:
           # - ubuntu-18.04
         # prettier-ignore
         include:
+          # macOS
+          # rustup target list | grep -e '-darwin'
+          # rustc --print target-list | grep -e '-darwin'
+          - { target: aarch64-apple-darwin, os: macos-latest }
+          # - { target: i686-apple-darwin, os: macos-latest } # tier3
+          - { target: x86_64-apple-darwin, os: macos-latest }
+          - { target: x86_64h-apple-darwin, os: macos-latest } # tier3
+
           # Windows (GNU)
           # rustup target list | grep -e '-pc-windows-gnu'
           # rustc --print target-list | grep -e '-pc-windows-gnu'
@@ -153,7 +161,7 @@ jobs:
           - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04, runner: wine@7.13 }
           - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04, runner: wine@7.0.1 }
         exclude:
-          # Segmentation fault on ubuntu 20.04
+          # Segmentation fault on ubuntu 20.04: https://github.com/taiki-e/setup-cross-toolchain-action/issues/1
           - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-20.04 }
           - { target: armeb-unknown-linux-gnueabi, os: ubuntu-20.04 }
           - { target: mips-unknown-linux-gnu, os: ubuntu-20.04 }
