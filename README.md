@@ -19,6 +19,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
   - [FreeBSD](#freebsd)
   - [NetBSD](#netbsd)
   - [WASI](#wasi)
+  - [Emscripten](#emscripten)
   - [Windows (MinGW)](#windows-mingw)
   - [Windows (LLVM MinGW)](#windows-llvm-mingw)
   - [Windows (MSVC)](#windows-msvc)
@@ -408,6 +409,18 @@ clang version and wasi-libc hash can be found here: https://github.com/taiki-e/r
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
 | `wasm32-wasi` | x86_64 Linux | wasmtime |  |
+
+### Emscripten
+
+| libc | C++ | test |
+| ---- | --- | ---- |
+| emscripten 2.0.5 | ✓ (libc++) | ✓ |
+
+**Supported targets**:
+
+| target | host | runner | note |
+| ------ | ---- | ------ | ---- |
+| `wasm32-unknown-emscripten` | x86_64 linux | node |  |
 
 ### Windows (MinGW)
 

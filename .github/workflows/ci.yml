@@ -167,6 +167,12 @@ jobs:
           # rustc --print target-list | grep -e '-wasi'
           - target: wasm32-wasi
 
+          # Emscripten
+          # rustup target list | grep -e '-emscripten'
+          # rustc --print target-list | grep -e '-emscripten'
+          # - target: asmjs-unknown-emscripten
+          - target: wasm32-unknown-emscripten
+
           # macOS
           # rustup target list | grep -e '-darwin'
           # rustc --print target-list | grep -e '-darwin'

@@ -110,7 +110,6 @@ install_llvm() {
 install_rust_cross_toolchain() {
     echo "::group::Install toolchain"
     rust_cross_toolchain_used=1
-    toolchain_dir=/usr/local
     # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
     retry docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}${sys_version:-}-dev-amd64"
     mkdir -p .setup-cross-toolchain-action-tmp
@@ -122,7 +121,14 @@ install_rust_cross_toolchain() {
             ;;
     esac
     docker rm -f rust-cross-toolchain >/dev/null
-    sudo cp -r .setup-cross-toolchain-action-tmp/toolchain/. "${toolchain_dir}"/
+    toolchain_dir=/usr/local
+    case "${target}" in
+        *-emscripten*)
+            toolchain_dir="/usr/local/${target}"
+            sudo cp -r .setup-cross-toolchain-action-tmp/toolchain "${toolchain_dir}"
+            ;;
+        *) sudo cp -r .setup-cross-toolchain-action-tmp/toolchain/. "${toolchain_dir}"/ ;;
+    esac
     rm -rf ./.setup-cross-toolchain-action-tmp
     # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/test/entrypoint.sh#L47
     case "${target}" in
@@ -184,6 +190,12 @@ STRIP=llvm-strip
 OBJCOPY=llvm-objcopy
 OBJDUMP=llvm-objdump
 READELF=llvm-readelf
+EOF
+            ;;
+        *-emscripten*)
+            cat >>"${GITHUB_ENV}" <<EOF
+CC_${target_lower}=emcc
+CXX_${target_lower}=emcc
 EOF
             ;;
         *)
@@ -420,6 +432,25 @@ EOF
                 x wasmtime --version
                 runner_path="${toolchain_dir}/bin/${target}-runner"
                 register_binfmt wasmtime
+                ;;
+            *-emscripten*)
+                node_version=12.18.1
+                install_rust_cross_toolchain
+                case "${runner}" in
+                    '' | 'node') ;;
+                    *) bail "unrecognized runner '${runner}'" ;;
+                esac
+                emsdk="/usr/local/${target}"
+                echo "EMSDK=${emsdk}" >>"${GITHUB_ENV}"
+                echo "EM_CACHE=${emsdk}/upstream/emscripten/cache" >>"${GITHUB_ENV}"
+                echo "EMSDK_NODE=${emsdk}/node/${node_version}_64bit/bin/node" >>"${GITHUB_ENV}"
+                echo "${emsdk}" >>"${GITHUB_PATH}"
+                echo "${emsdk}/upstream/emscripten" >>"${GITHUB_PATH}"
+                echo "${emsdk}/node/${node_version}_64bit/bin" >>"${GITHUB_PATH}"
+                echo "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
+                # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/test/entrypoint.sh#L142-L146
+                echo "CXXSTDLIB=c++" >>"${GITHUB_ENV}"
+                x node --version
                 ;;
             x86_64-pc-windows-gnu | x86_64-pc-windows-gnullvm | aarch64-pc-windows-gnullvm)
                 arch="${target%%-*}"

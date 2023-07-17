@@ -3,6 +3,8 @@ BINDGEN
 binfmt
 CXXSTDLIB
 devel
+emcc
+emsdk
 endgroup
 haswell
 libclang
