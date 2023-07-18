@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- This action no longer sets `PKG_CONFIG_ALLOW_CROSS=1` environment variable. This was added in 1.10.0, but introduced a regression.
+
 ## [1.11.1] - 2023-07-11
 
 - Only set `PKG_CONFIG_ALLOW_CROSS=1` environment variable when `PKG_CONFIG_PATH` environment variable is set by this action or users. This fixes a regression introduced in 1.10.0.
