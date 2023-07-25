@@ -183,7 +183,7 @@ jobs:
           target: ${{ matrix.target }}
           runner: ${{ matrix.runner }}
       - run: git clone https://github.com/taiki-e/rust-cross-toolchain.git
-      - run: ci/test.sh ${{ matrix.target }} rust-cross-toolchain/docker/test/fixtures/rust
+      - run: tools/ci/test.sh ${{ matrix.target }} rust-cross-toolchain/docker/test/fixtures/rust
         id: test
       # For debugging
       - uses: actions/upload-artifact@v3
