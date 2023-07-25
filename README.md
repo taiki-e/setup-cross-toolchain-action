@@ -175,7 +175,9 @@ jobs:
 
 | C++ | test |
 | --- | ---- |
-| ✓ (libstdc++) | ✓    |
+| ✓ (libstdc++) [1] | ✓    |
+
+[1] Except for loongarch64-unknown-linux-gnu
 
 **Supported targets**:
 
@@ -190,6 +192,7 @@ jobs:
 | `armv7-unknown-linux-gnueabihf`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
 | `i586-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default), native |       |
 | `i686-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | native (default), qemu-user |       |
+| `loongarch64-unknown-linux-gnu`        | Ubuntu (20.04, 22.04) [9]                        | qemu-user                   | experimental |
 | `mips-unknown-linux-gnu`               | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   | tier3 [8] |
 | `mips64-unknown-linux-gnuabi64`        | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   | tier3 |
 | `mips64el-unknown-linux-gnuabi64`      | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   | tier3 |
@@ -216,6 +219,7 @@ jobs:
 [6] binfmt doesn't work<br>
 [7] GCC 7, glibc 2.25<br>
 [8] [Since nightly-2023-07-05](https://github.com/rust-lang/compiler-team/issues/648), mips{,el}-unknown-linux-gnu requires release mode for building std<br>
+[9] GCC 13, glibc 2.36<br>
 
 ### Linux (musl)
 

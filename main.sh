@@ -110,6 +110,10 @@ install_rust_cross_toolchain() {
     case "${target}" in
         aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | arm-unknown-linux-gnueabihf) qemu_ld_prefix="/usr/local/${target}/libc" ;;
         riscv32gc-unknown-linux-gnu) qemu_ld_prefix="${toolchain_dir}/sysroot" ;;
+        loongarch64-unknown-linux-gnu)
+            qemu_ld_prefix="${toolchain_dir}/target/usr"
+            echo "LD_LIBRARY_PATH=${toolchain_dir}/target/usr/lib64:${toolchain_dir}/loongarch64-unknown-linux-gnu/lib64:${LD_LIBRARY_PATH:-}" >>"${GITHUB_ENV}"
+            ;;
         *) qemu_ld_prefix="${toolchain_dir}/${target}" ;;
     esac
     case "${target}" in
@@ -168,7 +172,7 @@ setup_linux_host() {
                 case "${target}" in
                     # (tier3) Toolchains for aarch64_be-linux-gnu/armeb-linux-gnueabi/riscv32-linux-gnu is not available in APT.
                     # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.sh#L17
-                    aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | riscv32gc-unknown-linux-gnu) install_rust_cross_toolchain ;;
+                    aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | riscv32gc-unknown-linux-gnu | loongarch64-unknown-linux-gnu) install_rust_cross_toolchain ;;
                     arm-unknown-linux-gnueabihf)
                         # (tier2) Ubuntu's gcc-arm-linux-gnueabihf enables armv7 by default
                         # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.sh#L55
@@ -362,6 +366,7 @@ EOF
                 ;;
             i*86-*) qemu_arch=i386 ;;
             hexagon-*) qemu_arch=hexagon ;;
+            loongarch64-*) qemu_arch=loongarch64 ;;
             m68k-*) qemu_arch=m68k ;;
             mips-* | mipsel-*) qemu_arch="${target%%-*}" ;;
             mips64-* | mips64el-*)
@@ -438,7 +443,8 @@ EOF
         x "qemu-${qemu_arch}" --version
         echo "::group::Register binfmt"
         # Refs: https://github.com/multiarch/qemu-user-static.
-        local url=https://raw.githubusercontent.com/qemu/qemu/44f28df24767cf9dca1ddc9b23157737c4cbb645/scripts/qemu-binfmt-conf.sh
+        # https://github.com/qemu/qemu/blob/master/scripts/qemu-binfmt-conf.sh
+        local url=https://raw.githubusercontent.com/qemu/qemu/a279ca4ea07383314b2d2b2f1d550be9482f148e/scripts/qemu-binfmt-conf.sh
         retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -o __qemu-binfmt-conf.sh "${url}"
         sed -i "s/i386_magic/qemu_target_list=\"${qemu_arch}\"\\ni386_magic/" ./__qemu-binfmt-conf.sh
         chmod +x ./__qemu-binfmt-conf.sh
