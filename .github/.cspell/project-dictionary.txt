@@ -7,7 +7,6 @@ libc
 libclang
 libstdc
 Loongson
-mipsn
 multilib
 objcopy
 pkgconfig

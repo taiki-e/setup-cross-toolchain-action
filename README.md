@@ -243,7 +243,7 @@ jobs:
 | `mipsel-unknown-linux-musl`        | x86_64 Linux | qemu-user                   |       |
 | `x86_64-unknown-linux-musl`        | x86_64 Linux | native (default), qemu-user |       |
 
-(Other linux-musl targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#linux-musl) also may work, although this action's CI has not tested them.)
+(Other linux-musl targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#linux-musl) may also work, although this action's CI has not tested them.)
 
 `mips{,el}-unknown-linux-musl` are dynamically linked by default. To compile in the same way as other musl targets, you need to set `-C target-feature=+crt-static` and `-C link-self-contained=yes`. For example:
 
@@ -276,7 +276,7 @@ jobs:
 [1] Clang 13<br>
 [2] Clang 15<br>
 
-(Other FreeBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#freebsd) also may work, although this action's CI has not tested them.)
+(Other FreeBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#freebsd) may also work, although this action's CI has not tested them.)
 
 You can select/pin the OS version by using `@` syntax in `target` option. For example:
 
@@ -303,7 +303,7 @@ Only specifying a major version is supported.
 
 [1] GCC 7<br>
 
-(Other NetBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#netbsd) also may work, although this action's CI has not tested them.)
+(Other NetBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#netbsd) may also work, although this action's CI has not tested them.)
 
 You can select/pin the OS version by using `@` syntax in `target` option. For example:
 
@@ -378,7 +378,7 @@ You can select/pin the version by using `@` syntax in `runner` input option. For
 
 GitHub-provided macOS runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 
-(Other macOS targets also may work, although this action's CI has not tested them.)
+(Other macOS targets may also work, although this action's CI has not tested them.)
 
 ## Related Projects
 

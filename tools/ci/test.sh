@@ -92,7 +92,9 @@ test_id=1
 
 cargo_options=()
 case "${target}" in
-    # Disable C++ build for musl with static linking and WASI
+    # Disable C++ build for:
+    # - musl with static linking
+    # - WASI
     *-linux-musl* | *-wasi*) cargo_options+=(--no-default-features) ;;
 esac
 case "${target}" in

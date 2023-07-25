@@ -97,7 +97,8 @@ install_llvm() {
 }
 install_rust_cross_toolchain() {
     echo "::group::Install toolchain"
-    local toolchain_dir=/usr/local
+    rust_cross_toolchain_used=1
+    toolchain_dir=/usr/local
     # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
     retry docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}${sys_version:-}-dev-amd64"
     mkdir -p .setup-cross-toolchain-action-tmp
@@ -105,7 +106,7 @@ install_rust_cross_toolchain() {
     docker rm -f rust-cross-toolchain >/dev/null
     sudo cp -r .setup-cross-toolchain-action-tmp/toolchain/. "${toolchain_dir}"/
     rm -rf ./.setup-cross-toolchain-action-tmp
-    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh#L47
+    # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/test/entrypoint.sh#L47
     case "${target}" in
         aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | arm-unknown-linux-gnueabihf) qemu_ld_prefix="/usr/local/${target}/libc" ;;
         riscv32gc-unknown-linux-gnu) qemu_ld_prefix="${toolchain_dir}/sysroot" ;;
@@ -163,20 +164,19 @@ setup_linux_host() {
     if [[ "${host}" != "${target}" ]]; then
         case "${target}" in
             *-linux-gnu*)
-                # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh
+                # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.sh
                 case "${target}" in
                     # (tier3) Toolchains for aarch64_be-linux-gnu/armeb-linux-gnueabi/riscv32-linux-gnu is not available in APT.
-                    # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L17
+                    # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.sh#L17
                     aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | riscv32gc-unknown-linux-gnu) install_rust_cross_toolchain ;;
                     arm-unknown-linux-gnueabihf)
                         # (tier2) Ubuntu's gcc-arm-linux-gnueabihf enables armv7 by default
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.sh#L55
+                        # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.sh#L55
                         bail "target '${target}' not yet supported; consider using armv7-unknown-linux-gnueabihf for testing armhf or arm-unknown-linux-gnueabi for testing armv6"
                         ;;
                     sparc-unknown-linux-gnu)
-                        # (tier3) Setup is tricky, and fails to build test.
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/linux-gnu.Dockerfile#L44
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/test.sh#L241
+                        # (tier3) Setup is tricky.
+                        # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.Dockerfile#L44
                         bail "target '${target}' not yet supported"
                         ;;
                     *)
@@ -194,7 +194,7 @@ setup_linux_host() {
                         apt_target="${apt_target:-"${cc_target/i586/i686}"}"
                         # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
                         apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh
+                        # https://github.com/taiki-e/rust-cross-toolchain/blob/fcb7a7e6ca14333d93c528f34a1def5a38745b3a/docker/test/entrypoint.sh
                         qemu_ld_prefix="/usr/${apt_target}"
                         cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc
@@ -233,7 +233,7 @@ EOF
                 esac
                 echo "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
                 x wasmtime --version
-                # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/test/entrypoint.sh#L142-L146
+                # https://github.com/taiki-e/rust-cross-toolchain/blob/fcb7a7e6ca14333d93c528f34a1def5a38745b3a/docker/test/entrypoint.sh#L174
                 echo "CXXSTDLIB=c++" >>"${GITHUB_ENV}"
                 ;;
             x86_64-pc-windows-gnu)
@@ -340,8 +340,7 @@ EOF
             ;;
     esac
     if [[ -n "${use_qemu:-}" ]]; then
-        echo "::group::Instal QEMU"
-        # https://github.com/taiki-e/rust-cross-toolchain/blob/590d6cb4d3a72c26c5096f2ad3033980298cd4aa/docker/test/entrypoint.sh#L251
+        # https://github.com/taiki-e/rust-cross-toolchain/blob/fcb7a7e6ca14333d93c528f34a1def5a38745b3a/docker/test/entrypoint.sh#L307
         # We basically set the newer and more powerful CPU as the
         # default QEMU_CPU so that we can test more CPU features.
         # In some contexts, we want to test for a specific CPU,
@@ -422,21 +421,26 @@ EOF
         if [[ -n "${qemu_ld_prefix:-}" ]] && [[ -z "${QEMU_LD_PREFIX:-}" ]]; then
             echo "QEMU_LD_PREFIX=${qemu_ld_prefix}" >>"${GITHUB_ENV}"
         fi
-        # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
-        retry docker create --name qemu-user ghcr.io/taiki-e/qemu-user
-        mkdir -p .setup-cross-toolchain-action-tmp
-        docker cp qemu-user:/usr/bin .setup-cross-toolchain-action-tmp/qemu
-        docker rm -f qemu-user >/dev/null
-        sudo mv .setup-cross-toolchain-action-tmp/qemu/qemu-* /usr/bin/
-        rm -rf ./.setup-cross-toolchain-action-tmp
-        echo "::endgroup::"
+        if [[ -z "${rust_cross_toolchain_used:-}" ]]; then
+            qemu_bin_dir=/usr/bin
+            echo "::group::Instal QEMU"
+            # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
+            retry docker create --name qemu-user ghcr.io/taiki-e/qemu-user
+            mkdir -p .setup-cross-toolchain-action-tmp
+            docker cp qemu-user:/usr/bin .setup-cross-toolchain-action-tmp/qemu
+            docker rm -f qemu-user >/dev/null
+            sudo mv .setup-cross-toolchain-action-tmp/qemu/qemu-* "${qemu_bin_dir}"/
+            rm -rf ./.setup-cross-toolchain-action-tmp
+            echo "::endgroup::"
+        else
+            qemu_bin_dir="${toolchain_dir}/bin"
+        fi
         x "qemu-${qemu_arch}" --version
         echo "::group::Register binfmt"
         # Refs: https://github.com/multiarch/qemu-user-static.
         local url=https://raw.githubusercontent.com/qemu/qemu/44f28df24767cf9dca1ddc9b23157737c4cbb645/scripts/qemu-binfmt-conf.sh
         retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -o __qemu-binfmt-conf.sh "${url}"
-        # They confuse binfmt.
-        sed -i 's/ mipsn32 mipsn32el / /' ./__qemu-binfmt-conf.sh
+        sed -i "s/i386_magic/qemu_target_list=\"${qemu_arch}\"\\ni386_magic/" ./__qemu-binfmt-conf.sh
         chmod +x ./__qemu-binfmt-conf.sh
         if [[ ! -d /proc/sys/fs/binfmt_misc ]]; then
             bail "kernel does not support binfmt"
@@ -444,7 +448,7 @@ EOF
         if [[ ! -f /proc/sys/fs/binfmt_misc/register ]]; then
             sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
         fi
-        sudo ./__qemu-binfmt-conf.sh --qemu-path /usr/bin --persistent yes
+        sudo ./__qemu-binfmt-conf.sh --qemu-path "${qemu_bin_dir}" --persistent yes
         rm ./__qemu-binfmt-conf.sh
         echo "::endgroup::"
     fi

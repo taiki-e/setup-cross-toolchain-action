@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Performance Improvements.
+
 ## [1.11.2] - 2023-07-18
 
 - This action no longer sets `PKG_CONFIG_ALLOW_CROSS=1` environment variable. This was added in 1.10.0, but introduced a regression.
@@ -28,7 +30,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
   GitHub-provided macOS runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 
-  (Other macOS targets also may work, although this action's CI has not tested them.)
+  (Other macOS targets may also work, although this action's CI has not tested them.)
 
 - Set `PKG_CONFIG_PATH` for most linux-gnu targets.
 
@@ -36,7 +38,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [1.10.0] - 2023-07-10
 
-- Support linux-musl targets ([#12](https://github.com/taiki-e/setup-cross-toolchain-action/pull/12))
+- Support linux-musl targets. ([#12](https://github.com/taiki-e/setup-cross-toolchain-action/pull/12))
 
   All tier 1 or 2 linux-musl targets are now supported:
 
@@ -54,7 +56,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
   - mipsel-unknown-linux-musl
   - x86_64-unknown-linux-musl
 
-  (Other linux-musl targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#linux-musl) also may work, although this action's CI has not tested them.)
+  (Other linux-musl targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#linux-musl) may also work, although this action's CI has not tested them.)
 
 - Add [document about cross-compilation of tier 3 targets](https://github.com/taiki-e/setup-cross-toolchain-action#example-workflow-tier-3-targets).
 

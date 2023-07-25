@@ -140,9 +140,6 @@ jobs:
         os:
           - ubuntu-22.04
           - ubuntu-20.04
-          # GHA regularly brownout ubuntu-18.04, so we don't enable it by default.
-          # https://github.com/actions/runner-images/issues/6002
-          # - ubuntu-18.04
         # prettier-ignore
         include:
           # macOS
