@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.12.0] - 2023-07-25
+
 - Support loongarch64-unknown-linux-gnu (experimental).
 
 - Performance Improvements.
@@ -159,7 +161,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.11.2...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.12.0...HEAD
+[1.12.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.11.2...v1.12.0
 [1.11.2]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.11.1...v1.11.2
 [1.11.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.11.0...v1.11.1
 [1.11.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.10.0...v1.11.0
