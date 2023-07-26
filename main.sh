@@ -117,21 +117,6 @@ install_rust_cross_toolchain() {
         *) qemu_ld_prefix="${toolchain_dir}/${target}" ;;
     esac
     case "${target}" in
-        *-freebsd*)
-            cat >>"${GITHUB_ENV}" <<EOF
-CARGO_TARGET_${target_upper}_LINKER=${target}-clang
-CC_${target_lower}=${target}-clang
-CXX_${target_lower}=${target}-clang++
-AR_${target_lower}=llvm-ar
-RANLIB_${target_lower}=llvm-ranlib
-AR=llvm-ar
-NM=llvm-nm
-STRIP=llvm-strip
-OBJCOPY=llvm-objcopy
-OBJDUMP=llvm-objdump
-READELF=llvm-readelf
-EOF
-            ;;
         *-wasi*)
             # Do not use prefixed clang for wasi due to rustc 1.68.0 bug: https://github.com/rust-lang/rust/pull/109156
             cat >>"${GITHUB_ENV}" <<EOF
@@ -149,7 +134,8 @@ READELF=llvm-readelf
 EOF
             ;;
         *)
-            cat >>"${GITHUB_ENV}" <<EOF
+            if type -P "${target}-gcc"; then
+                cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${target}-gcc
 CC_${target_lower}=${target}-gcc
 CXX_${target_lower}=${target}-g++
@@ -158,6 +144,23 @@ RANLIB_${target_lower}=${target}-ranlib
 STRIP=${target}-strip
 OBJDUMP=${target}-objdump
 EOF
+            elif type -P "${target}-clang"; then
+                cat >>"${GITHUB_ENV}" <<EOF
+CARGO_TARGET_${target_upper}_LINKER=${target}-clang
+CC_${target_lower}=${target}-clang
+CXX_${target_lower}=${target}-clang++
+AR_${target_lower}=llvm-ar
+RANLIB_${target_lower}=llvm-ranlib
+AR=llvm-ar
+NM=llvm-nm
+STRIP=llvm-strip
+OBJCOPY=llvm-objcopy
+OBJDUMP=llvm-objdump
+READELF=llvm-readelf
+EOF
+            else
+                bail "internal error: no linker found for ${target}"
+            fi
             ;;
     esac
     echo "::endgroup::"
