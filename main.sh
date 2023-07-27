@@ -112,8 +112,9 @@ install_rust_cross_toolchain() {
         riscv32gc-unknown-linux-gnu) qemu_ld_prefix="${toolchain_dir}/sysroot" ;;
         loongarch64-unknown-linux-gnu)
             qemu_ld_prefix="${toolchain_dir}/target/usr"
-            echo "LD_LIBRARY_PATH=${toolchain_dir}/target/usr/lib64:${toolchain_dir}/loongarch64-unknown-linux-gnu/lib64:${LD_LIBRARY_PATH:-}" >>"${GITHUB_ENV}"
+            echo "LD_LIBRARY_PATH=${toolchain_dir}/target/usr/lib64:${toolchain_dir}/${target}/lib64:${LD_LIBRARY_PATH:-}" >>"${GITHUB_ENV}"
             ;;
+        hexagon-unknown-linux-musl) qemu_ld_prefix="${toolchain_dir}/target/${target}/usr" ;;
         *) qemu_ld_prefix="${toolchain_dir}/${target}" ;;
     esac
     case "${target}" in
