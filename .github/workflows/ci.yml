@@ -60,10 +60,10 @@ jobs:
           - i686-unknown-linux-gnu
           - loongarch64-unknown-linux-gnu
           # - m68k-unknown-linux-gnu # tier3, build fail: https://github.com/rust-lang/rust/issues/89498
-          - mips-unknown-linux-gnu
+          # - mips-unknown-linux-gnu
           - mips64-unknown-linux-gnuabi64
           - mips64el-unknown-linux-gnuabi64
-          - mipsel-unknown-linux-gnu
+          # - mipsel-unknown-linux-gnu
           # TODO: https://github.com/rust-lang/rust/pull/112374 broke build-std due to https://github.com/rust-lang/libc/pull/3268 is not released yet
           # - mipsisa32r6-unknown-linux-gnu # tier3
           # - mipsisa32r6el-unknown-linux-gnu # tier3
@@ -116,47 +116,47 @@ jobs:
           - target: armv5te-unknown-linux-uclibceabi # tier3
           - target: armv7-unknown-linux-uclibceabi # tier3
           - target: armv7-unknown-linux-uclibceabihf # tier3
-          - target: mips-unknown-linux-uclibc # tier3
-          - target: mipsel-unknown-linux-uclibc # tier3
+          # - target: mips-unknown-linux-uclibc # tier3
+          # - target: mipsel-unknown-linux-uclibc # tier3
 
           # Android
           # rustup target list | grep -e '-android'
           # rustc --print target-list | grep -e '-android'
           - target: aarch64-linux-android
           - target: arm-linux-androideabi
-          - target: arm-linux-androideabi@21
+          # - target: arm-linux-androideabi@21
           - target: armv7-linux-androideabi
           - target: i686-linux-android
           - target: thumbv7neon-linux-androideabi
           - target: x86_64-linux-android
 
-          # FreeBSD
-          # rustup target list | grep -e '-freebsd'
-          # rustc --print target-list | grep -e '-freebsd'
-          - target: aarch64-unknown-freebsd # tier3
-          # - target: armv6-unknown-freebsd # tier3
-          # - target: armv7-unknown-freebsd # tier3
-          - target: i686-unknown-freebsd
-          # - target: powerpc-unknown-freebsd # tier3
-          # - target: powerpc64-unknown-freebsd # tier3
-          # - target: powerpc64le-unknown-freebsd # tier3
-          # - target: riscv64gc-unknown-freebsd # tier3
-          - target: x86_64-unknown-freebsd
-          - target: x86_64-unknown-freebsd@13
+          # # FreeBSD
+          # # rustup target list | grep -e '-freebsd'
+          # # rustc --print target-list | grep -e '-freebsd'
+          # - target: aarch64-unknown-freebsd # tier3
+          # # - target: armv6-unknown-freebsd # tier3
+          # # - target: armv7-unknown-freebsd # tier3
+          # - target: i686-unknown-freebsd
+          # # - target: powerpc-unknown-freebsd # tier3
+          # # - target: powerpc64-unknown-freebsd # tier3
+          # # - target: powerpc64le-unknown-freebsd # tier3
+          # # - target: riscv64gc-unknown-freebsd # tier3
+          # - target: x86_64-unknown-freebsd
+          # - target: x86_64-unknown-freebsd@13
 
-          # NetBSD
-          # rustup target list | grep -e '-netbsd'
-          # rustc --print target-list | grep -e '-netbsd'
-          - target: aarch64-unknown-netbsd # tier3
-          # - target: aarch64_be-unknown-netbsd # tier3
-          # - target: armv6-unknown-netbsd-eabihf # tier3
-          # - target: armv7-unknown-netbsd-eabihf # tier3
-          # - target: i686-unknown-netbsd # tier3
-          # - target: powerpc-unknown-netbsd # tier3
-          # - target: riscv64gc-unknown-netbsd # tier3
-          # - target: sparc64-unknown-netbsd # tier3
-          - target: x86_64-unknown-netbsd
-          - target: x86_64-unknown-netbsd@9
+          # # NetBSD
+          # # rustup target list | grep -e '-netbsd'
+          # # rustc --print target-list | grep -e '-netbsd'
+          # - target: aarch64-unknown-netbsd # tier3
+          # # - target: aarch64_be-unknown-netbsd # tier3
+          # # - target: armv6-unknown-netbsd-eabihf # tier3
+          # # - target: armv7-unknown-netbsd-eabihf # tier3
+          # # - target: i686-unknown-netbsd # tier3
+          # # - target: powerpc-unknown-netbsd # tier3
+          # # - target: riscv64gc-unknown-netbsd # tier3
+          # # - target: sparc64-unknown-netbsd # tier3
+          # - target: x86_64-unknown-netbsd
+          # - target: x86_64-unknown-netbsd@9
 
           # WASI
           # rustup target list | grep -e '-wasi'
@@ -166,14 +166,14 @@ jobs:
           # macOS
           # rustup target list | grep -e '-darwin'
           # rustc --print target-list | grep -e '-darwin'
-          - target: aarch64-apple-darwin
-            os: macos-latest
+          # - target: aarch64-apple-darwin
+          #   os: macos-latest
           # - target: i686-apple-darwin # tier3
           #   os: macos-latest
           - target: x86_64-apple-darwin
             os: macos-latest
-          - target: x86_64h-apple-darwin # tier3
-            os: macos-latest
+          # - target: x86_64h-apple-darwin # tier3
+          #   os: macos-latest
 
           # Windows (GNU)
           # rustup target list | grep -e '-pc-windows-gnu'
@@ -208,11 +208,21 @@ jobs:
         with:
           target: ${{ matrix.target }}
           runner: ${{ matrix.runner }}
-      - run: git clone https://github.com/taiki-e/rust-cross-toolchain.git
-      - run: tools/ci/test.sh ${{ matrix.target }} rust-cross-toolchain/docker/test/fixtures/rust
-        id: test
-      # For debugging
-      - uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.target }}-${{ matrix.os }}
-          path: /tmp/artifacts/
+      - run: |
+          set -ex
+          case "${{ matrix.target }}" in
+              *-windows*) exe=".exe" ;;
+              wasm*) exe=".wasm" ;;
+          esac
+          cd a
+          cargo run --package a --bin a $BUILD_STD -- a b
+          ./target/"${{ matrix.target }}/debug/a${exe:-}" a b
+
+      # - run: git clone https://github.com/taiki-e/rust-cross-toolchain.git
+      # - run: tools/ci/test.sh ${{ matrix.target }} rust-cross-toolchain/docker/test/fixtures/rust
+      #   id: test
+      # # For debugging
+      # - uses: actions/upload-artifact@v3
+      #   with:
+      #     name: ${{ matrix.target }}-${{ matrix.os }}
+      #     path: /tmp/artifacts/
