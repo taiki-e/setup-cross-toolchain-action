@@ -60,8 +60,10 @@ rustup_target_list=$(rustup target list | sed 's/ .*//g')
 install_apt_packages() {
     if [[ ${#apt_packages[@]} -gt 0 ]]; then
         retry sudo apt-get -o Acquire::Retries=10 -qq update
-        retry sudo apt-get -o Acquire::Retries=10 -qq -o Dpkg::Use-Pty=0 install -y --no-install-recommends \
-            "${apt_packages[@]}"
+        if ! retry sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 install -y --no-install-recommends "${apt_packages[@]}"; then
+            sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 upgrade -y
+            sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 install -y --no-install-recommends "${apt_packages[@]}"
+        fi
         apt_packages=()
     fi
 }
