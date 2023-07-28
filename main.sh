@@ -61,6 +61,7 @@ install_apt_packages() {
     if [[ ${#apt_packages[@]} -gt 0 ]]; then
         retry sudo apt-get -o Acquire::Retries=10 -qq update
         if ! retry sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 install -y --no-install-recommends "${apt_packages[@]}"; then
+            # Workaround for https://github.com/taiki-e/setup-cross-toolchain-action/issues/15
             sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 upgrade -y
             sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 install -y --no-install-recommends "${apt_packages[@]}"
         fi

@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Work around LLVM installation failure. ([#15](https://github.com/taiki-e/setup-cross-toolchain-action/issues/15))
+
 ## [1.12.0] - 2023-07-25
 
 - Support loongarch64-unknown-linux-gnu (experimental).
