@@ -175,10 +175,26 @@ jobs:
           - target: x86_64h-apple-darwin # tier3
             os: macos-latest
 
+          # Windows (MSVC)
+          # rustup target list | grep -e '-pc-windows-msvc'
+          # rustc --print target-list | grep -e '-pc-windows-msvc'
+          - { target: aarch64-pc-windows-msvc, os: windows-latest }
+          - { target: i586-pc-windows-msvc, os: windows-latest }
+          - { target: i686-pc-windows-msvc, os: windows-latest }
+          # - { target: thumbv7a-pc-windows-msvc, os: windows-latest } # tier3
+          - { target: x86_64-pc-windows-msvc, os: windows-latest }
+
           # Windows (GNU)
           # rustup target list | grep -e '-pc-windows-gnu'
           # rustc --print target-list | grep -e '-pc-windows-gnu'
+          # Windows host:
           # - target: i686-pc-windows-gnu
+          #   os: windows-latest
+          - target: x86_64-pc-windows-gnu
+            os: windows-latest
+          # Linux host:
+          # - target: i686-pc-windows-gnu
+          #   os: ubuntu-22.04
           - target: x86_64-pc-windows-gnu
             os: ubuntu-22.04
           - target: x86_64-pc-windows-gnu

@@ -20,6 +20,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
   - [NetBSD](#netbsd)
   - [WASI](#wasi)
   - [Windows (GNU)](#windows-gnu)
+  - [Windows (MSVC)](#windows-msvc)
   - [macOS](#macos)
 - [Related Projects](#related-projects)
 - [License](#license)
@@ -392,11 +393,14 @@ clang version and wasi-libc hash can be found here: https://github.com/WebAssemb
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `x86_64-pc-windows-gnu` | Ubuntu (<!-- 20.04 [1], -->22.04 [2]) | wine |  |
+| `x86_64-pc-windows-gnu` | *Windows*, Ubuntu (<!-- 20.04 [1], -->22.04 [2]) | native (Windows host) / wine (Linux host) |  |
 
 <!-- [1] [GCC 9](https://packages.ubuntu.com/en/focal/gcc-mingw-w64-base), [MinGW-w64 7](https://packages.ubuntu.com/en/focal/mingw-w64-x86-64-dev)<br> -->
 [2] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev)<br>
 
+On Windows host, GitHub-provided Windows runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
+
+On Linux host, this action installs MinGW toolchain and Wine.
 The current default version of Wine is 7.13.
 You can select/pin the version by using `@` syntax in `runner` input option. For example:
 
@@ -406,6 +410,25 @@ You can select/pin the version by using `@` syntax in `runner` input option. For
     target: x86_64-pc-windows-gnu
     runner: wine@7.13
 ```
+
+### Windows (MSVC)
+
+| C++ | test |
+| --- | ---- |
+| ✓ | ✓ [1] |
+
+[1] Only x86/x86_64 targets
+
+**Supported targets**:
+
+| target | host | runner | note |
+| ------ | ---- | ------ | ---- |
+| `aarch64-pc-windows-msvc` | *Windows* |        |  |
+| `i586-pc-windows-msvc`    | *Windows* | native |  |
+| `i686-pc-windows-msvc`    | *Windows* | native |  |
+| `x86_64-pc-windows-msvc`  | *Windows* | native |  |
+
+GitHub-provided Windows runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 
 ### macOS
 

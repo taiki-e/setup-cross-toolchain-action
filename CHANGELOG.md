@@ -10,6 +10,16 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support Windows targets on Windows host.
+
+  - aarch64-pc-windows-msvc (build-only)
+  - i586-pc-windows-msvc
+  - i686-pc-windows-msvc
+  - x86_64-pc-windows-msvc
+  - x86_64-pc-windows-gnu
+
+  GitHub-provided Windows runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
+
 ## [1.13.0] - 2023-07-28
 
 - Support running WASI and Windows binaries directly on Linux host (via binfmt).

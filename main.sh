@@ -601,11 +601,21 @@ EOF
 
 case "${host}" in
     *-linux-gnu*) setup_linux_host ;;
-    # GitHub-provided macOS runners support cross-compile for other architectures or environments.
+    # GitHub-provided macOS/Windows runners support cross-compile for other architectures or environments.
     *-darwin*)
         case "${target}" in
             *-darwin*) ;;
             *) bail "target '${target}' is not supported yet on macOS host" ;;
+        esac
+        case "${runner}" in
+            '' | native) ;;
+            *) bail "unrecognized runner '${runner}'" ;;
+        esac
+        ;;
+    *-windows*)
+        case "${target}" in
+            *-windows*) ;;
+            *) bail "target '${target}' is not supported yet on Windows host" ;;
         esac
         case "${runner}" in
             '' | native) ;;
