@@ -273,12 +273,11 @@ jobs:
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-freebsd` | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) | tier3 |
-| `i686-unknown-freebsd`    | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) |       |
-| `x86_64-unknown-freebsd`  | 12.4 (default), 13.1 | Ubuntu (18.04 [1], 20.04 [2], 22.04 [2]) |       |
+| `aarch64-unknown-freebsd` | 12.4 (default), 13.1 | Linux [1] | tier3 |
+| `i686-unknown-freebsd`    | 12.4 (default), 13.1 | Linux [1] |       |
+| `x86_64-unknown-freebsd`  | 12.4 (default), 13.1 | Linux [1] |       |
 
-[1] Clang 13<br>
-[2] Clang 15<br>
+[1] Clang 13 for Ubuntu 18.04, otherwise Clang 15<br>
 
 (Other FreeBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#freebsd) may also work, although this action's CI has not tested them.)
 
@@ -329,7 +328,7 @@ Only specifying a major version is supported.
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `wasm32-wasi` | Ubuntu (20.04, 22.04) [1] | wasmtime [2] |  |
+| `wasm32-wasi` | x86_64 Linux [1] | wasmtime [2] |  |
 
 <!--
 clang version and wasi-libc hash can be found here: https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-16/src

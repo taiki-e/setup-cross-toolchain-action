@@ -81,83 +81,90 @@ jobs:
           - thumbv7neon-unknown-linux-gnueabihf
           - x86_64-unknown-linux-gnu
           # - x86_64-unknown-linux-gnux32 # tier3, run-fail
-
+        os:
+          - ubuntu-22.04
+          - ubuntu-20.04
+        include:
           # Linux (musl)
           # rustup target list | grep -e '-linux-musl'
           # rustc --print target-list | grep -e '-linux-musl'
-          - aarch64-unknown-linux-musl
-          - arm-unknown-linux-musleabi
-          - arm-unknown-linux-musleabihf
-          - armv5te-unknown-linux-musleabi
-          - armv7-unknown-linux-musleabi
-          - armv7-unknown-linux-musleabihf
-          # - hexagon-unknown-linux-musl # tier3
-          - i586-unknown-linux-musl
-          - i686-unknown-linux-musl
-          - mips-unknown-linux-musl
-          # - mips64-openwrt-linux-musl # tier3
-          - mips64-unknown-linux-muslabi64
-          - mips64el-unknown-linux-muslabi64
-          - mipsel-unknown-linux-musl
-          # - powerpc-unknown-linux-musl # tier3
-          # - powerpc64-unknown-linux-musl # tier3
-          # - powerpc64le-unknown-linux-musl # tier3
-          # - riscv32gc-unknown-linux-musl # tier3
-          # - riscv64gc-unknown-linux-musl # tier3
-          # - s390x-unknown-linux-musl # tier3
-          # - thumbv7neon-unknown-linux-musleabihf # tier3
-          - x86_64-unknown-linux-musl
+          - target: aarch64-unknown-linux-musl
+          - target: arm-unknown-linux-musleabi
+          - target: arm-unknown-linux-musleabihf
+          - target: armv5te-unknown-linux-musleabi
+          - target: armv7-unknown-linux-musleabi
+          - target: armv7-unknown-linux-musleabihf
+          # - target: hexagon-unknown-linux-musl # tier3
+          - target: i586-unknown-linux-musl
+          - target: i686-unknown-linux-musl
+          - target: mips-unknown-linux-musl
+          # - target: mips64-openwrt-linux-musl # tier3
+          - target: mips64-unknown-linux-muslabi64
+          - target: mips64el-unknown-linux-muslabi64
+          - target: mipsel-unknown-linux-musl
+          # - target: powerpc-unknown-linux-musl # tier3
+          # - target: powerpc64-unknown-linux-musl # tier3
+          # - target: powerpc64le-unknown-linux-musl # tier3
+          # - target: riscv32gc-unknown-linux-musl # tier3
+          # - target: riscv64gc-unknown-linux-musl # tier3
+          # - target: s390x-unknown-linux-musl # tier3
+          # - target: thumbv7neon-unknown-linux-musleabihf # tier3
+          - target: x86_64-unknown-linux-musl
 
           # FreeBSD
           # rustup target list | grep -e '-freebsd'
           # rustc --print target-list | grep -e '-freebsd'
-          - aarch64-unknown-freebsd # tier3
-          # - armv6-unknown-freebsd # tier3
-          # - armv7-unknown-freebsd # tier3
-          - i686-unknown-freebsd
-          # - powerpc-unknown-freebsd # tier3
-          # - powerpc64-unknown-freebsd # tier3
-          # - powerpc64le-unknown-freebsd # tier3
-          # - riscv64gc-unknown-freebsd # tier3
-          - x86_64-unknown-freebsd
+          - target: aarch64-unknown-freebsd # tier3
+          # - target: armv6-unknown-freebsd # tier3
+          # - target: armv7-unknown-freebsd # tier3
+          - target: i686-unknown-freebsd
+          # - target: powerpc-unknown-freebsd # tier3
+          # - target: powerpc64-unknown-freebsd # tier3
+          # - target: powerpc64le-unknown-freebsd # tier3
+          # - target: riscv64gc-unknown-freebsd # tier3
+          - target: x86_64-unknown-freebsd
 
           # NetBSD
           # rustup target list | grep -e '-netbsd'
           # rustc --print target-list | grep -e '-netbsd'
-          - aarch64-unknown-netbsd # tier3
-          # - aarch64_be-unknown-netbsd # tier3
-          # - armv6-unknown-netbsd-eabihf # tier3
-          # - armv7-unknown-netbsd-eabihf # tier3
-          # - i686-unknown-netbsd # tier3
-          # - powerpc-unknown-netbsd # tier3
-          # - riscv64gc-unknown-netbsd # tier3
-          # - sparc64-unknown-netbsd # tier3
-          - x86_64-unknown-netbsd
+          - target: aarch64-unknown-netbsd # tier3
+          # - target: aarch64_be-unknown-netbsd # tier3
+          # - target: armv6-unknown-netbsd-eabihf # tier3
+          # - target: armv7-unknown-netbsd-eabihf # tier3
+          # - target: i686-unknown-netbsd # tier3
+          # - target: powerpc-unknown-netbsd # tier3
+          # - target: riscv64gc-unknown-netbsd # tier3
+          # - target: sparc64-unknown-netbsd # tier3
+          - target: x86_64-unknown-netbsd
 
           # WASI
           # rustup target list | grep -e '-wasi'
           # rustc --print target-list | grep -e '-wasi'
-          - wasm32-wasi
-        os:
-          - ubuntu-22.04
-          - ubuntu-20.04
-        # prettier-ignore
-        include:
+          - target: wasm32-wasi
+
           # macOS
           # rustup target list | grep -e '-darwin'
           # rustc --print target-list | grep -e '-darwin'
-          - { target: aarch64-apple-darwin, os: macos-latest }
-          # - { target: i686-apple-darwin, os: macos-latest } # tier3
-          - { target: x86_64-apple-darwin, os: macos-latest }
-          - { target: x86_64h-apple-darwin, os: macos-latest } # tier3
+          - target: aarch64-apple-darwin
+            os: macos-latest
+          # - target: i686-apple-darwin # tier3
+          #   os: macos-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: x86_64h-apple-darwin # tier3
+            os: macos-latest
 
           # Windows (GNU)
           # rustup target list | grep -e '-pc-windows-gnu'
           # rustc --print target-list | grep -e '-pc-windows-gnu'
-          # - { target: i686-pc-windows-gnu, os: ubuntu-22.04 }
-          - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04 }
-          - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04, runner: wine@7.13 }
-          - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04, runner: wine@7.0.1 }
+          # - target: i686-pc-windows-gnu
+          - target: x86_64-pc-windows-gnu
+            os: ubuntu-22.04
+          - target: x86_64-pc-windows-gnu
+            runner: wine@7.13
+          - target: x86_64-pc-windows-gnu
+            runner: wine@7.0.1
+        # prettier-ignore
         exclude:
           # Segmentation fault on ubuntu 20.04: https://github.com/taiki-e/setup-cross-toolchain-action/issues/1
           - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-20.04 }
@@ -168,7 +175,7 @@ jobs:
           - { target: mipsisa64r6-unknown-linux-gnuabi64, os: ubuntu-20.04 }
           - { target: powerpc64-unknown-linux-gnu, os: ubuntu-20.04 }
           - { target: sparc64-unknown-linux-gnu, os: ubuntu-20.04 }
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v3
