@@ -20,6 +20,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
   GitHub-provided Windows runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 
+  (Other Windows targets may also work, although this action's CI has not tested them.)
+
 ## [1.13.0] - 2023-07-28
 
 - Support running WASI and Windows binaries directly on Linux host (via binfmt).

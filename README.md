@@ -400,6 +400,8 @@ clang version and wasi-libc hash can be found here: https://github.com/WebAssemb
 
 On Windows host, GitHub-provided Windows runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 
+(Other Windows targets may also work, although this action's CI has not tested them.)
+
 On Linux host, this action installs MinGW toolchain and Wine.
 The current default version of Wine is 7.13.
 You can select/pin the version by using `@` syntax in `runner` input option. For example:
@@ -429,6 +431,8 @@ You can select/pin the version by using `@` syntax in `runner` input option. For
 | `x86_64-pc-windows-msvc`  | *Windows* | native |  |
 
 GitHub-provided Windows runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
+
+(Other Windows targets may also work, although this action's CI has not tested them.)
 
 ### macOS
 
