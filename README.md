@@ -342,18 +342,16 @@ Only specifying a major version is supported.
 
 ### NetBSD
 
-| C++ | test |
-| --- | ---- |
-| ✓ (libstdc++) | |
+| GCC | C++ | test |
+| --- | --- | ---- |
+| 7.5.0 | ✓ (libstdc++) | |
 
 **Supported targets**:
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-netbsd` | 9.2                | x86_64 Linux [1] | tier3 |
-| `x86_64-unknown-netbsd`  | 8.2 (default), 9.2 | x86_64 Linux [1] |       |
-
-[1] GCC 7<br>
+| `aarch64-unknown-netbsd` | 9.2                | x86_64 Linux | tier3 |
+| `x86_64-unknown-netbsd`  | 8.2 (default), 9.2 | x86_64 Linux |       |
 
 (Other NetBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#netbsd) may also work, although this action's CI has not tested them.)
 
@@ -418,7 +416,7 @@ You can select/pin the version by using `@` syntax in `runner` input option. For
 | --- | ---- |
 | ✓ | ✓ [1] |
 
-[1] Only x86_64-apple-darwin. (x86_64h-apple-darwin is also x86_64 but build-only due to the CPU of GitHub-provided macOS runners is older than haswell. If you use a large runner, you may be able to run the test.)
+[1] Only x86_64-apple-darwin. (x86_64h-apple-darwin is also x86_64 but build-only because the CPU of GitHub-provided macOS runners is older than Haswell. If you use a large runner or self-hosted runner, you may be able to run the test.)
 
 **Supported targets**:
 
