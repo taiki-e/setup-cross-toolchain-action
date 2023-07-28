@@ -14,6 +14,8 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
 - [Platform Support](#platform-support)
   - [Linux (GNU)](#linux-gnu)
   - [Linux (musl)](#linux-musl)
+  - [Linux (uClibc)](#linux-uclibc)
+  - [Android](#android)
   - [FreeBSD](#freebsd)
   - [NetBSD](#netbsd)
   - [WASI](#wasi)
@@ -261,6 +263,53 @@ jobs:
     # `-C link-self-contained=yes` to link with libraries and objects shipped with Rust.
     # `${{ env.RUSTFLAGS }}` is needed if you want to inherit existing rustflags.
     RUSTFLAGS: ${{ env.RUSTFLAGS }} -C target-feature=+crt-static -C link-self-contained=yes
+```
+
+### Linux (uClibc)
+
+| libc | GCC | C++ | test |
+| ---- | --- | --- | ---- |
+| uClibc-ng 1.0.34 | 10.2.0 | ✓ (libstdc++) | ✓ |
+
+**Supported targets**:
+
+| target | host | runner | note |
+| ------ | ---- | ------ | ---- |
+| `armv5te-unknown-linux-uclibceabi` | x86_64 Linux | qemu-user | tier3 |
+| `armv7-unknown-linux-uclibceabi`   | x86_64 Linux | qemu-user | tier3 |
+| `armv7-unknown-linux-uclibceabihf` | x86_64 Linux | qemu-user | tier3 |
+| `mips-unknown-linux-uclibc`        | x86_64 Linux | qemu-user | tier3 [1] |
+| `mipsel-unknown-linux-uclibc`      | x86_64 Linux | qemu-user | tier3 [1] |
+
+[1] mips{,el}-unknown-linux-uclibc requires release mode for building std<br>
+
+### Android
+
+| clang | C++ | test |
+| ----- | --- | ---- |
+| 14.0.6 | ✓ (libc++) | ✓ |
+
+**Note:** By making use of these targets you accept the [Android SDK License](https://developer.android.com/studio/terms)
+
+**Supported targets**:
+
+| target | api level | host | runner | note |
+| ------ | --------- | ---- | ------ | ---- |
+| `aarch64-linux-android`         | 21 (default), 22-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
+| `arm-linux-androideabi`         | 19 (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
+| `armv7-linux-androideabi`       | 19 (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
+| `i686-linux-android`            | 19 (default), 21-24, 26-33 [1] | x86_64 Linux | native (default), qemu-user |       |
+| `thumbv7neon-linux-androideabi` | 19 (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
+| `x86_64-linux-android`          | 21 (default), 22-24, 26-33 [1] | x86_64 Linux | native (default), qemu-user |       |
+
+[1] This action currently uses the API level 24 system image, so `cargo test` and `cargo run` may not work on API level 26+.
+
+You can select/pin the API level version by using `@` syntax in `target` option. For example:
+
+```yaml
+- uses: taiki-e/setup-cross-toolchain-action@v1
+  with:
+    target: arm-linux-androideabi@21
 ```
 
 ### FreeBSD

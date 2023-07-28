@@ -111,6 +111,25 @@ jobs:
           # - target: thumbv7neon-unknown-linux-musleabihf # tier3
           - target: x86_64-unknown-linux-musl
 
+          # Linux (uClibc)
+          # rustc --print target-list | grep -e '-linux-uclibc'
+          - target: armv5te-unknown-linux-uclibceabi # tier3
+          - target: armv7-unknown-linux-uclibceabi # tier3
+          - target: armv7-unknown-linux-uclibceabihf # tier3
+          - target: mips-unknown-linux-uclibc # tier3
+          - target: mipsel-unknown-linux-uclibc # tier3
+
+          # Android
+          # rustup target list | grep -e '-android'
+          # rustc --print target-list | grep -e '-android'
+          - target: aarch64-linux-android
+          - target: arm-linux-androideabi
+          - target: arm-linux-androideabi@21
+          - target: armv7-linux-androideabi
+          - target: i686-linux-android
+          - target: thumbv7neon-linux-androideabi
+          - target: x86_64-linux-android
+
           # FreeBSD
           # rustup target list | grep -e '-freebsd'
           # rustc --print target-list | grep -e '-freebsd'
@@ -123,6 +142,7 @@ jobs:
           # - target: powerpc64le-unknown-freebsd # tier3
           # - target: riscv64gc-unknown-freebsd # tier3
           - target: x86_64-unknown-freebsd
+          - target: x86_64-unknown-freebsd@13
 
           # NetBSD
           # rustup target list | grep -e '-netbsd'
@@ -136,6 +156,7 @@ jobs:
           # - target: riscv64gc-unknown-netbsd # tier3
           # - target: sparc64-unknown-netbsd # tier3
           - target: x86_64-unknown-netbsd
+          - target: x86_64-unknown-netbsd@9
 
           # WASI
           # rustup target list | grep -e '-wasi'

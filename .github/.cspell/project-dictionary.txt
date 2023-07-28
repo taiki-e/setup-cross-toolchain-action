@@ -1,3 +1,4 @@
+armeabi
 BINDGEN
 binfmt
 CXXSTDLIB
@@ -10,6 +11,7 @@ libstdc
 Loongson
 multilib
 pkgconfig
+TMPDIR
 Vger
 wasmtime
 wepoll
