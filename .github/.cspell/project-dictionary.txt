@@ -1,3 +1,4 @@
+BINDGEN
 binfmt
 CXXSTDLIB
 devel
@@ -8,7 +9,6 @@ libclang
 libstdc
 Loongson
 multilib
-objcopy
 pkgconfig
 Vger
 wasmtime
@@ -18,3 +18,4 @@ winehq
 WINEPATH
 WINEPREFIX
 Zbuild
+Zdoctest

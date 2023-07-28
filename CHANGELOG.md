@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Set `BINDGEN_EXTRA_CLANG_ARGS_<target>` environment variable.
+
 ## [1.12.1] - 2023-07-28
 
 - Work around LLVM installation failure. ([#15](https://github.com/taiki-e/setup-cross-toolchain-action/issues/15))

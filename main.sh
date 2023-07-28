@@ -111,13 +111,13 @@ install_rust_cross_toolchain() {
     rm -rf ./.setup-cross-toolchain-action-tmp
     # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/test/entrypoint.sh#L47
     case "${target}" in
-        aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | arm-unknown-linux-gnueabihf) qemu_ld_prefix="/usr/local/${target}/libc" ;;
-        riscv32gc-unknown-linux-gnu) qemu_ld_prefix="${toolchain_dir}/sysroot" ;;
+        aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | arm-unknown-linux-gnueabihf) sysroot_dir="/usr/local/${target}/libc" ;;
+        riscv32gc-unknown-linux-gnu) sysroot_dir="${toolchain_dir}/sysroot" ;;
         loongarch64-unknown-linux-gnu)
-            qemu_ld_prefix="${toolchain_dir}/target/usr"
+            sysroot_dir="${toolchain_dir}/target/usr"
             echo "LD_LIBRARY_PATH=${toolchain_dir}/target/usr/lib64:${toolchain_dir}/${target}/lib64:${LD_LIBRARY_PATH:-}" >>"${GITHUB_ENV}"
             ;;
-        *) qemu_ld_prefix="${toolchain_dir}/${target}" ;;
+        *) sysroot_dir="${toolchain_dir}/${target}" ;;
     esac
     case "${target}" in
         *-wasi*)
@@ -205,7 +205,7 @@ setup_linux_host() {
                         # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
                         apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
                         # https://github.com/taiki-e/rust-cross-toolchain/blob/fcb7a7e6ca14333d93c528f34a1def5a38745b3a/docker/test/entrypoint.sh
-                        qemu_ld_prefix="/usr/${apt_target}"
+                        sysroot_dir="/usr/${apt_target}"
                         cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc
 CC_${target_lower}=${apt_target}-gcc
@@ -250,6 +250,7 @@ EOF
                 arch="${target%%-*}"
                 apt_target="${arch}-w64-mingw32"
                 apt_packages+=("g++-mingw-w64-${arch/_/-}")
+                sysroot_dir="/usr/${apt_target}"
 
                 # https://wiki.winehq.org/Ubuntu
                 # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
@@ -322,6 +323,9 @@ EOF
                 ;;
             *) bail "target '${target}' is not supported yet on Linux host" ;;
         esac
+    fi
+    if [[ -n "${sysroot_dir:-}" ]]; then
+        echo "BINDGEN_EXTRA_CLANG_ARGS_${target_lower}=--sysroot=${sysroot_dir}" >>"${GITHUB_ENV}"
     fi
 
     case "${target}" in
@@ -429,8 +433,8 @@ EOF
         if [[ -n "${qemu_cpu:-}" ]] && [[ -z "${QEMU_CPU:-}" ]]; then
             echo "QEMU_CPU=${qemu_cpu}" >>"${GITHUB_ENV}"
         fi
-        if [[ -n "${qemu_ld_prefix:-}" ]] && [[ -z "${QEMU_LD_PREFIX:-}" ]]; then
-            echo "QEMU_LD_PREFIX=${qemu_ld_prefix}" >>"${GITHUB_ENV}"
+        if [[ -n "${sysroot_dir:-}" ]] && [[ -z "${QEMU_LD_PREFIX:-}" ]]; then
+            echo "QEMU_LD_PREFIX=${sysroot_dir}" >>"${GITHUB_ENV}"
         fi
         if [[ -z "${rust_cross_toolchain_used:-}" ]]; then
             qemu_bin_dir=/usr/bin
