@@ -52,7 +52,7 @@ jobs:
       - run: cargo test --verbose
       # `cargo run` also works.
       - run: cargo run --verbose
-      # You can also run the cross-compiled binaries directly.
+      # You can also run the cross-compiled binaries directly (via binfmt).
       - run: ./target/aarch64-unknown-linux-gnu/debug/my-app
 ```
 
@@ -188,19 +188,19 @@ jobs:
 | `aarch64-unknown-linux-gnu`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
 | `aarch64_be-unknown-linux-gnu`         | Ubuntu (<!-- 20.04, -->18.04, 22.04) [4]         | qemu-user                   | tier3 |
 | `arm-unknown-linux-gnueabi`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
-| `armeb-unknown-linux-gnueabi`          | Ubuntu (<!-- 20.04, -->18.04, 22.04) [7]         | qemu-user                   | tier3 |
+| `armeb-unknown-linux-gnueabi`          | Ubuntu (<!-- 20.04, -->18.04, 22.04) [6]         | qemu-user                   | tier3 |
 | `armv5te-unknown-linux-gnueabi`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
 | `armv7-unknown-linux-gnueabi`          | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
 | `armv7-unknown-linux-gnueabihf`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
 | `i586-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default), native |       |
 | `i686-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | native (default), qemu-user |       |
-| `loongarch64-unknown-linux-gnu`        | Ubuntu (20.04, 22.04) [9]                        | qemu-user                   | experimental |
+| `loongarch64-unknown-linux-gnu`        | Ubuntu (20.04, 22.04) [7]                        | qemu-user                   | experimental |
 | `mips-unknown-linux-gnu`               | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   | tier3 [8] |
 | `mips64-unknown-linux-gnuabi64`        | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   | tier3 |
 | `mips64el-unknown-linux-gnuabi64`      | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   | tier3 |
 | `mipsel-unknown-linux-gnu`             | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   | tier3 [8] |
-| `mipsisa32r6-unknown-linux-gnu`        | Ubuntu (<!-- 20.04 [1], -->22.04 [3])            | qemu-user [6]               | tier3 |
-| `mipsisa32r6el-unknown-linux-gnu`      | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user [6]               | tier3 |
+| `mipsisa32r6-unknown-linux-gnu`        | Ubuntu (<!-- 20.04 [1], -->22.04 [3])            | qemu-user                   | tier3 |
+| `mipsisa32r6el-unknown-linux-gnu`      | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user                   | tier3 |
 | `mipsisa64r6-unknown-linux-gnuabi64`   | Ubuntu (<!-- 20.04 [1], -->22.04 [3])            | qemu-user                   | tier3 |
 | `mipsisa64r6el-unknown-linux-gnuabi64` | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user                   | tier3 |
 | `powerpc-unknown-linux-gnu`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
@@ -218,10 +218,9 @@ jobs:
 [3] [GCC 11](https://packages.ubuntu.com/en/jammy/gcc), [glibc 2.35](https://packages.ubuntu.com/en/jammy/libc6-dev)<br>
 [4] GCC 10, glibc 2.31<br>
 [5] GCC 11, glibc 2.33<br>
-[6] binfmt doesn't work<br>
-[7] GCC 7, glibc 2.25<br>
+[6] GCC 7, glibc 2.25<br>
+[7] GCC 13, glibc 2.36<br>
 [8] [Since nightly-2023-07-05](https://github.com/rust-lang/compiler-team/issues/648), mips{,el}-unknown-linux-gnu requires release mode for building std<br>
-[9] GCC 13, glibc 2.36<br>
 
 ### Linux (musl)
 
@@ -375,14 +374,13 @@ Only specifying a major version is supported.
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `wasm32-wasi` | x86_64 Linux [1] | wasmtime [2] |  |
+| `wasm32-wasi` | x86_64 Linux [1] | wasmtime |  |
 
 <!--
 clang version and wasi-libc hash can be found here: https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-16/src
 -->
 
 [1] clang 14, wasi-sdk 16 (wasi-libc 30094b6)<br>
-[2] binfmt doesn't work<br>
 
 ### Windows (GNU)
 
@@ -394,11 +392,10 @@ clang version and wasi-libc hash can be found here: https://github.com/WebAssemb
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `x86_64-pc-windows-gnu` | Ubuntu (<!-- 20.04 [1], -->22.04 [2]) | wine [3] |  |
+| `x86_64-pc-windows-gnu` | Ubuntu (<!-- 20.04 [1], -->22.04 [2]) | wine |  |
 
 <!-- [1] [GCC 9](https://packages.ubuntu.com/en/focal/gcc-mingw-w64-base), [MinGW-w64 7](https://packages.ubuntu.com/en/focal/mingw-w64-x86-64-dev)<br> -->
 [2] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev)<br>
-[3] binfmt doesn't work<br>
 
 The current default version of Wine is 7.13.
 You can select/pin the version by using `@` syntax in `runner` input option. For example:

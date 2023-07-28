@@ -13,7 +13,6 @@ set -x
 target="$1"
 target="${target%@*}"
 wd="$2"
-host=$(rustc -Vv | grep 'host: ' | cut -c 7-)
 base_rustflags="${RUSTFLAGS:-}"
 case "${target}" in
     *-windows*) exe=".exe" ;;
@@ -49,16 +48,6 @@ run_native() {
     if skip_run; then
         return
     fi
-    # Run only on targets that binfmt work.
-    case "${target}" in
-        mipsisa32r6* | *-wasi*) return ;;
-        *-windows*)
-            case "${host}" in
-                *-windows*) ;;
-                *) return ;;
-            esac
-            ;;
-    esac
     "${target_dir}/${target}/${profile}/rust-test${exe:-}"
 }
 run_tests() {

@@ -207,6 +207,40 @@ EOF
     esac
     echo "::endgroup::"
 }
+# Refs: https://github.com/qemu/qemu/blob/master/scripts/qemu-binfmt-conf.sh
+register_binfmt() {
+    echo "::group::Register binfmt"
+    if [[ ! -d /proc/sys/fs/binfmt_misc ]]; then
+        sudo /sbin/modprobe binfmt_misc
+    fi
+    if [[ ! -f /proc/sys/fs/binfmt_misc/register ]]; then
+        sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+    fi
+    case "$1" in
+        qemu-user)
+            local url=https://raw.githubusercontent.com/qemu/qemu/a279ca4ea07383314b2d2b2f1d550be9482f148e/scripts/qemu-binfmt-conf.sh
+            retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -o __qemu-binfmt-conf.sh "${url}"
+            sed -i "s/i386_magic/qemu_target_list=\"${qemu_arch}\"\\ni386_magic/" ./__qemu-binfmt-conf.sh
+            chmod +x ./__qemu-binfmt-conf.sh
+            sudo ./__qemu-binfmt-conf.sh --qemu-path "${qemu_bin_dir}" --persistent yes
+            rm ./__qemu-binfmt-conf.sh
+            echo "::endgroup::"
+            return
+            ;;
+        wasmtime)
+            local magic='\x00asm'
+            local mask='\xff\xff\xff\xff'
+            ;;
+        wine)
+            local magic='MZ'
+            local mask=''
+            ;;
+        *) bail "internal error: unrecognized register_binfmt arg" ;;
+    esac
+    echo ":${target}:M::${magic}:${mask}:${runner_path}:F" \
+        | sudo tee /proc/sys/fs/binfmt_misc/register >/dev/null
+    echo "::endgroup::"
+}
 
 setup_linux_host() {
     apt_packages=()
@@ -341,9 +375,11 @@ EOF
                     *) bail "unrecognized runner '${runner}'" ;;
                 esac
                 echo "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
-                x wasmtime --version
                 # https://github.com/taiki-e/rust-cross-toolchain/blob/fcb7a7e6ca14333d93c528f34a1def5a38745b3a/docker/test/entrypoint.sh#L174
                 echo "CXXSTDLIB=c++" >>"${GITHUB_ENV}"
+                x wasmtime --version
+                runner_path="${toolchain_dir}/bin/${target}-runner"
+                register_binfmt wasmtime
                 ;;
             x86_64-pc-windows-gnu)
                 arch="${target%%-*}"
@@ -393,7 +429,8 @@ EOF
 
                 gcc_lib="$(basename "$(ls -d "/usr/lib/gcc/${apt_target}"/*posix)")"
                 # Adapted from https://github.com/cross-rs/cross/blob/16a64e7028d90a3fdf285cfd642cdde9443c0645/docker/windows-entry.sh
-                cat >"/usr/local/bin/${target}-runner" <<EOF
+                runner_path="/usr/local/bin/${target}-runner"
+                cat >"${runner_path}" <<EOF
 #!/bin/sh
 set -eu
 export HOME=/tmp/home
@@ -407,7 +444,8 @@ fi
 export WINEPATH="/usr/lib/gcc/${apt_target}/${gcc_lib};/usr/${apt_target}/lib;\${WINEPATH:-}"
 exec wine "\$@"
 EOF
-                chmod +x "/usr/local/bin/${target}-runner"
+                chmod +x "${runner_path}"
+                register_binfmt wine
 
                 cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_RUNNER=${target}-runner
@@ -555,22 +593,7 @@ EOF
             qemu_bin_dir="${toolchain_dir}/bin"
         fi
         x "qemu-${qemu_arch}" --version
-        echo "::group::Register binfmt"
-        # Refs: https://github.com/multiarch/qemu-user-static.
-        # https://github.com/qemu/qemu/blob/master/scripts/qemu-binfmt-conf.sh
-        local url=https://raw.githubusercontent.com/qemu/qemu/a279ca4ea07383314b2d2b2f1d550be9482f148e/scripts/qemu-binfmt-conf.sh
-        retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -o __qemu-binfmt-conf.sh "${url}"
-        sed -i "s/i386_magic/qemu_target_list=\"${qemu_arch}\"\\ni386_magic/" ./__qemu-binfmt-conf.sh
-        chmod +x ./__qemu-binfmt-conf.sh
-        if [[ ! -d /proc/sys/fs/binfmt_misc ]]; then
-            bail "kernel does not support binfmt"
-        fi
-        if [[ ! -f /proc/sys/fs/binfmt_misc/register ]]; then
-            sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
-        fi
-        sudo ./__qemu-binfmt-conf.sh --qemu-path "${qemu_bin_dir}" --persistent yes
-        rm ./__qemu-binfmt-conf.sh
-        echo "::endgroup::"
+        register_binfmt qemu-user
     fi
 
     install_apt_packages

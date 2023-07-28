@@ -10,6 +10,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support running WASI and Windows binaries directly on Linux host (via binfmt).
 
 - Support Android targets. ([#13](https://github.com/taiki-e/setup-cross-toolchain-action/pull/13))
 
