@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.13.0] - 2023-07-28
+
 - Support running WASI and Windows binaries directly on Linux host (via binfmt).
 
 - Support Android targets. ([#13](https://github.com/taiki-e/setup-cross-toolchain-action/pull/13))
@@ -190,7 +192,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.12.1...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.13.0...HEAD
+[1.13.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.12.1...v1.13.0
 [1.12.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.12.0...v1.12.1
 [1.12.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.11.2...v1.12.0
 [1.11.2]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.11.1...v1.11.2
