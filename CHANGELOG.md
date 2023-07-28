@@ -10,6 +10,28 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+
+- Support Android targets. ([#13](https://github.com/taiki-e/setup-cross-toolchain-action/pull/13))
+
+  All builtin Android targets are now supported:
+
+  - aarch64-linux-android
+  - arm-linux-androideabi
+  - armv7-linux-androideabi
+  - i686-linux-android
+  - thumbv7neon-linux-androideabi
+  - x86_64-linux-android
+
+- Support linux-uclibc targets. ([#13](https://github.com/taiki-e/setup-cross-toolchain-action/pull/13))
+
+  All builtin linux-uclibc targets are now supported:
+
+  - armv5te-unknown-linux-uclibceabi
+  - armv7-unknown-linux-uclibceabi
+  - armv7-unknown-linux-uclibceabihf
+  - mips-unknown-linux-uclibc
+  - mipsel-unknown-linux-uclibc
+
 - Set `BINDGEN_EXTRA_CLANG_ARGS_<target>` environment variable.
 
 ## [1.12.1] - 2023-07-28

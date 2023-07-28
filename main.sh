@@ -42,10 +42,14 @@ runner="${INPUT_RUNNER:-}"
 
 if [[ "${target}" == *"@"* ]]; then
     case "${target}" in
-        *-freebsd* | *-netbsd*) ;;
-        *) bail "versioned target triple is currently only supported on BSDs" ;;
+        *-android*)
+            api_level="${target#*@}"
+            ;;
+        *-freebsd* | *-netbsd*)
+            sys_version="${target#*@}"
+            ;;
+        *) bail "versioned target triple is currently only supported on BSDs and Android" ;;
     esac
-    sys_version="${target#*@}"
     target="${target%@*}"
 fi
 target_lower="${target//-/_}"
@@ -120,6 +124,41 @@ install_rust_cross_toolchain() {
         *) sysroot_dir="${toolchain_dir}/${target}" ;;
     esac
     case "${target}" in
+        *-android*)
+            if [[ -n "${api_level:-}" ]]; then
+                case "${target}" in
+                    arm* | thumb*) cc_target=armv7a-linux-androideabi ;;
+                    *) cc_target="${target}" ;;
+                esac
+                cat >>"${GITHUB_ENV}" <<EOF
+CARGO_TARGET_${target_upper}_LINKER=${cc_target}${api_level}-clang
+CC_${target_lower}=${cc_target}${api_level}-clang
+CXX_${target_lower}=${cc_target}${api_level}-clang++
+AR_${target_lower}=llvm-ar
+RANLIB_${target_lower}=llvm-ranlib
+AR=llvm-ar
+NM=llvm-nm
+STRIP=llvm-strip
+OBJCOPY=llvm-objcopy
+OBJDUMP=llvm-objdump
+READELF=llvm-readelf
+EOF
+            else
+                cat >>"${GITHUB_ENV}" <<EOF
+CARGO_TARGET_${target_upper}_LINKER=${target}-clang
+CC_${target_lower}=${target}-clang
+CXX_${target_lower}=${target}-clang++
+AR_${target_lower}=llvm-ar
+RANLIB_${target_lower}=llvm-ranlib
+AR=llvm-ar
+NM=llvm-nm
+STRIP=llvm-strip
+OBJCOPY=llvm-objcopy
+OBJDUMP=llvm-objdump
+READELF=llvm-readelf
+EOF
+            fi
+            ;;
         *-wasi*)
             # Do not use prefixed clang for wasi due to rustc 1.68.0 bug: https://github.com/rust-lang/rust/pull/109156
             cat >>"${GITHUB_ENV}" <<EOF
@@ -228,6 +267,62 @@ EOF
                 fi
                 install_rust_cross_toolchain
                 ;;
+            *-linux-uclibc*)
+                install_rust_cross_toolchain
+                ;;
+            *-android*)
+                # https://dl.google.com/android/repository/sys-img/android/sys-img.xml
+                install_rust_cross_toolchain
+                apt_packages+=(e2tools)
+                install_apt_packages
+                sudo mkdir -p /system/{bin,lib,lib64}
+                case "${target}" in
+                    aarch64*)
+                        lib_target=aarch64-linux-android
+                        arch=arm64-v8a
+                        ;;
+                    arm* | thumb*)
+                        lib_target=arm-linux-androideabi
+                        arch=armeabi-v7a
+                        ;;
+                    i686-*)
+                        lib_target=i686-linux-android
+                        arch=x86
+                        ;;
+                    x86_64*)
+                        lib_target=x86_64-linux-android
+                        arch=x86_64
+                        ;;
+                    *) bail "unrecognized target '${target}'" ;;
+                esac
+                img_api_level=24
+                case "${target}" in
+                    aarch64* | arm* | thumb*) revision=r07 ;;
+                    i686-* | x86_64*) revision=r08 ;;
+                    *) bail "unrecognized target '${target}'" ;;
+                esac
+                file="${arch}-${img_api_level}_${revision}.zip"
+                prefix=''
+                case "${target}" in
+                    x86_64* | aarch64*) prefix='64' ;;
+                esac
+                # Note that due to the Android SDK license, rust-cross-toolchain cannot redistribute sys-img distributed by Google.
+                retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -O "https://dl.google.com/android/repository/sys-img/android/${file}"
+                unzip -q "${file}" "${arch}/system.img"
+                sudo e2cp -p "${arch}/system.img:/bin/linker${prefix}" "/system/bin/"
+                for lib in "${toolchain_dir}/sysroot/usr/lib/${lib_target}/${img_api_level}"/*.so; do
+                    lib=$(basename "${lib}")
+                    sudo e2cp -p "${arch}/system.img:/lib${prefix}/${lib}" "/system/lib${prefix}/"
+                done
+                sudo cp "${toolchain_dir}/sysroot/usr/lib/${lib_target}/libc++_shared.so" "/system/lib${prefix}/"
+                rm "${file}"
+                rm -rf "${arch}"
+                cat >>"${GITHUB_ENV}" <<EOF
+ANDROID_DNS_MODE=local
+ANDROID_ROOT=/system
+TMPDIR=/tmp/
+EOF
+                ;;
             *-freebsd*)
                 install_rust_cross_toolchain
                 install_llvm
@@ -329,7 +424,7 @@ EOF
     fi
 
     case "${target}" in
-        *-unknown-linux-*)
+        *-unknown-linux-* | *-android*)
             case "${runner}" in
                 '')
                     case "${target}" in
