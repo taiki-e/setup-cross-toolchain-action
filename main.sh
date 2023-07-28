@@ -276,6 +276,9 @@ EOF
                 apt_packages+=(e2tools)
                 install_apt_packages
                 sudo mkdir -p /system/{bin,lib,lib64}
+                # /data may conflict with the existing directory.
+                data_dir="${HOME}/.setup-cross-toolchain-action/data"
+                mkdir -p "${data_dir}"
                 case "${target}" in
                     aarch64*)
                         lib_target=aarch64-linux-android
@@ -318,9 +321,10 @@ EOF
                 rm "${file}"
                 rm -rf "${arch}"
                 cat >>"${GITHUB_ENV}" <<EOF
+ANDROID_DATA=${data_dir}
 ANDROID_DNS_MODE=local
 ANDROID_ROOT=/system
-TMPDIR=/tmp/
+TMPDIR=/tmp
 EOF
                 ;;
             *-freebsd*)
@@ -528,9 +532,14 @@ EOF
         if [[ -n "${qemu_cpu:-}" ]] && [[ -z "${QEMU_CPU:-}" ]]; then
             echo "QEMU_CPU=${qemu_cpu}" >>"${GITHUB_ENV}"
         fi
-        if [[ -n "${sysroot_dir:-}" ]] && [[ -z "${QEMU_LD_PREFIX:-}" ]]; then
-            echo "QEMU_LD_PREFIX=${sysroot_dir}" >>"${GITHUB_ENV}"
-        fi
+        case "${target}" in
+            *-android*) ;;
+            *)
+                if [[ -n "${sysroot_dir:-}" ]] && [[ -z "${QEMU_LD_PREFIX:-}" ]]; then
+                    echo "QEMU_LD_PREFIX=${sysroot_dir}" >>"${GITHUB_ENV}"
+                fi
+                ;;
+        esac
         if [[ -z "${rust_cross_toolchain_used:-}" ]]; then
             qemu_bin_dir=/usr/bin
             echo "::group::Instal QEMU"
