@@ -110,6 +110,12 @@ install_rust_cross_toolchain() {
     retry docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}${sys_version:-}-dev-amd64"
     mkdir -p .setup-cross-toolchain-action-tmp
     docker cp "rust-cross-toolchain:/${target}" .setup-cross-toolchain-action-tmp/toolchain
+    case "${target}" in
+        aarch64-pc-windows-gnullvm)
+            docker cp "rust-cross-toolchain:/opt/wine-arm64" .setup-cross-toolchain-action-tmp/wine-arm64
+            sudo cp -r .setup-cross-toolchain-action-tmp/wine-arm64 /opt/wine-arm64
+            ;;
+    esac
     docker rm -f rust-cross-toolchain >/dev/null
     sudo cp -r .setup-cross-toolchain-action-tmp/toolchain/. "${toolchain_dir}"/
     rm -rf ./.setup-cross-toolchain-action-tmp
@@ -235,8 +241,9 @@ register_binfmt() {
             local magic='MZ'
             local mask=''
             ;;
-        *) bail "internal error: unrecognized register_binfmt arg" ;;
+        *) bail "internal error: unrecognized register_binfmt argument '$1'" ;;
     esac
+    echo "Setting ${runner_path} as binfmt interpreter for ${target}"
     echo ":${target}:M::${magic}:${mask}:${runner_path}:F" \
         | sudo tee /proc/sys/fs/binfmt_misc/register >/dev/null
     echo "::endgroup::"
@@ -381,73 +388,15 @@ EOF
                 runner_path="${toolchain_dir}/bin/${target}-runner"
                 register_binfmt wasmtime
                 ;;
-            x86_64-pc-windows-gnu)
+            x86_64-pc-windows-gnu | x86_64-pc-windows-gnullvm | aarch64-pc-windows-gnullvm)
                 arch="${target%%-*}"
-                apt_target="${arch}-w64-mingw32"
-                apt_packages+=("g++-mingw-w64-${arch/_/-}")
-                sysroot_dir="/usr/${apt_target}"
-
-                # https://wiki.winehq.org/Ubuntu
-                # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
-                sudo dpkg --add-architecture i386
-                codename="$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')"
-                sudo mkdir -pm755 /etc/apt/keyrings
-                retry sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-                retry sudo wget -NP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/${codename}/winehq-${codename}.sources"
-                case "${runner}" in
-                    '')
-                        # Use winehq-devel 7.13 as default because mio/wepoll needs wine 7.13+.
-                        # https://github.com/tokio-rs/mio/issues/1444
-                        wine_version=7.13
-                        wine_branch=devel
-                        ;;
-                    wine@*)
-                        wine_version="${runner#*@}"
-                        if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                            wine_branch=stable
-                        elif [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
-                            wine_branch=devel
-                        else
-                            bail "unrecognized runner '${runner}'"
-                        fi
-                        ;;
-                    *) bail "unrecognized runner '${runner}'" ;;
-                esac
-                # The suffix is 1 in most cases, rarely 2.
-                # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
-                # https://dl.winehq.org/wine-builds/ubuntu/dists/focal/main/binary-amd64
-                wine_build_suffix=1
-                apt_packages+=(
-                    "winehq-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
-                    "wine-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
-                    "wine-${wine_branch}-amd64=${wine_version}~${codename}-${wine_build_suffix}"
-                    "wine-${wine_branch}-i386=${wine_version}~${codename}-${wine_build_suffix}"
-                    "wine-${wine_branch}-dev=${wine_version}~${codename}-${wine_build_suffix}"
-                )
-                install_apt_packages
-                x wine --version
-
-                gcc_lib="$(basename "$(ls -d "/usr/lib/gcc/${apt_target}"/*posix)")"
-                # Adapted from https://github.com/cross-rs/cross/blob/16a64e7028d90a3fdf285cfd642cdde9443c0645/docker/windows-entry.sh
-                runner_path="/usr/local/bin/${target}-runner"
-                cat >"${runner_path}" <<EOF
-#!/bin/sh
-set -eu
-export HOME=/tmp/home
-mkdir -p "\${HOME}"
-export WINEPREFIX=/tmp/wine
-mkdir -p "\${WINEPREFIX}"
-if [ ! -e /tmp/WINEBOOT ]; then
-    wineboot &>/dev/null
-    touch /tmp/WINEBOOT
-fi
-export WINEPATH="/usr/lib/gcc/${apt_target}/${gcc_lib};/usr/${apt_target}/lib;\${WINEPATH:-}"
-exec wine "\$@"
-EOF
-                chmod +x "${runner_path}"
-                register_binfmt wine
-
-                cat >>"${GITHUB_ENV}" <<EOF
+                case "${target}" in
+                    *-gnullvm*) install_rust_cross_toolchain ;;
+                    *)
+                        apt_target="${arch}-w64-mingw32"
+                        apt_packages+=("g++-mingw-w64-${arch/_/-}")
+                        sysroot_dir="/usr/${apt_target}"
+                        cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_RUNNER=${target}-runner
 CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc-posix
 CC_${target_lower}=${apt_target}-gcc-posix
@@ -457,6 +406,94 @@ RANLIB_${target_lower}=${apt_target}-ranlib
 STRIP=${apt_target}-strip
 OBJDUMP=${apt_target}-objdump
 EOF
+                        ;;
+                esac
+
+                case "${target}" in
+                    aarch64*)
+                        wine_root=/opt/wine-arm64
+                        wine_exe="${wine_root}"/bin/wine
+                        qemu_arch=aarch64
+                        case "${runner}" in
+                            '' | wine) ;;
+                            wine@*) bail "specifying wine version for aarch64 windows is not yet supported" ;;
+                            *) bail "unrecognized runner '${runner}'" ;;
+                        esac
+                        sudo cp "${wine_root}"/lib/ld-linux-aarch64.so.1 /lib/
+                        x "qemu-${qemu_arch}" --version
+                        x "${wine_exe}" --version
+                        wineboot="${wine_root}/bin/wineserver"
+                        ;;
+                    x86_64*)
+                        wine_exe=wine
+                        # https://wiki.winehq.org/Ubuntu
+                        # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
+                        sudo dpkg --add-architecture i386
+                        codename="$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')"
+                        sudo mkdir -pm755 /etc/apt/keyrings
+                        retry sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+                        retry sudo wget -NP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/${codename}/winehq-${codename}.sources"
+                        case "${runner}" in
+                            '' | wine)
+                                # Use winehq-devel 7.13 as default because mio/wepoll needs wine 7.13+.
+                                # https://github.com/tokio-rs/mio/issues/1444
+                                wine_version=7.13
+                                wine_branch=devel
+                                ;;
+                            wine@*)
+                                wine_version="${runner#*@}"
+                                if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                                    wine_branch=stable
+                                elif [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+                                    wine_branch=devel
+                                else
+                                    bail "unrecognized runner '${runner}'"
+                                fi
+                                ;;
+                            *) bail "unrecognized runner '${runner}'" ;;
+                        esac
+                        # The suffix is 1 in most cases, rarely 2.
+                        # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
+                        # https://dl.winehq.org/wine-builds/ubuntu/dists/focal/main/binary-amd64
+                        wine_build_suffix=1
+                        apt_packages+=(
+                            "winehq-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
+                            "wine-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
+                            "wine-${wine_branch}-amd64=${wine_version}~${codename}-${wine_build_suffix}"
+                            "wine-${wine_branch}-i386=${wine_version}~${codename}-${wine_build_suffix}"
+                            "wine-${wine_branch}-dev=${wine_version}~${codename}-${wine_build_suffix}"
+                        )
+                        install_apt_packages
+                        x wine --version
+                        wineboot=wineboot
+                        ;;
+                    *) bail "internal error: unrecognized target '${target}'" ;;
+                esac
+                case "${target}" in
+                    *-gnullvm*) winepath="${toolchain_dir}/${target}/bin" ;;
+                    *)
+                        gcc_lib="$(basename "$(ls -d "/usr/lib/gcc/${apt_target}"/*posix)")"
+                        winepath="/usr/lib/gcc/${apt_target}/${gcc_lib};/usr/${apt_target}/lib"
+                        ;;
+                esac
+                runner_path="/usr/local/bin/${target}-runner"
+                cat >".${target}-runner.tmp" <<EOF
+#!/bin/sh
+set -eu
+export HOME=/tmp/home
+mkdir -p "\${HOME}"/.wine
+export WINEPREFIX=/tmp/wine
+mkdir -p "\${WINEPREFIX}"
+if [ ! -e /tmp/WINEBOOT ]; then
+    ${wineboot} &>/dev/null
+    touch /tmp/WINEBOOT
+fi
+export WINEPATH="${winepath};\${WINEPATH:-}"
+exec ${wine_exe} "\$@"
+EOF
+                chmod +x ".${target}-runner.tmp"
+                sudo mv ".${target}-runner.tmp" "${runner_path}"
+                register_binfmt wine
                 ;;
             *) bail "target '${target}' is not supported yet on Linux host" ;;
         esac

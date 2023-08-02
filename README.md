@@ -19,7 +19,8 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
   - [FreeBSD](#freebsd)
   - [NetBSD](#netbsd)
   - [WASI](#wasi)
-  - [Windows (GNU)](#windows-gnu)
+  - [Windows (MinGW)](#windows-mingw)
+  - [Windows (LLVM MinGW)](#windows-llvm-mingw)
   - [Windows (MSVC)](#windows-msvc)
   - [macOS](#macos)
 - [Related Projects](#related-projects)
@@ -367,23 +368,21 @@ Only specifying a major version is supported.
 
 ### WASI
 
-| C++ | test |
-| --- | ---- |
-| ? (libc++) | ✓ |
+| libc | Clang | C++ | test |
+| ---- | ----- | --- | ---- |
+| wasi-sdk 20 (wasi-libc 1dfe5c3) | 16.0.0 | ? (libc++) | ✓ |
+
+<!--
+clang version and wasi-libc hash can be found here: https://github.com/taiki-e/rust-cross-toolchain#wasi
+-->
 
 **Supported targets**:
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `wasm32-wasi` | x86_64 Linux [1] | wasmtime |  |
+| `wasm32-wasi` | x86_64 Linux | wasmtime |  |
 
-<!--
-clang version and wasi-libc hash can be found here: https://github.com/WebAssembly/wasi-sdk/tree/wasi-sdk-16/src
--->
-
-[1] clang 14, wasi-sdk 16 (wasi-libc 30094b6)<br>
-
-### Windows (GNU)
+### Windows (MinGW)
 
 | C++ | test |
 | --- | ---- |
@@ -412,6 +411,19 @@ You can select/pin the version by using `@` syntax in `runner` input option. For
     target: x86_64-pc-windows-gnu
     runner: wine@7.13
 ```
+
+### Windows (LLVM MinGW)
+
+| libc | Clang | C++ | test |
+| ---- | ----- | --- | ---- |
+| Mingw-w64 b190082 | 16.0.6 | ✓ (libc++) | ✓ |
+
+**Supported targets**:
+
+| target | host | runner | note |
+| ------ | ---- | ------ | ---- |
+| `aarch64-pc-windows-gnullvm` | Ubuntu (22.04) | wine |  |
+| `x86_64-pc-windows-gnullvm` | Ubuntu (22.04) | wine |  |
 
 ### Windows (MSVC)
 
