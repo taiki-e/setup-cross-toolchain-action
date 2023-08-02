@@ -18,7 +18,6 @@ env:
   CARGO_NET_GIT_FETCH_WITH_CLI: true
   CARGO_NET_RETRY: 10
   CARGO_TERM_COLOR: always
-  QEMU_STRACE: 1
   RUST_BACKTRACE: 1
   RUSTDOCFLAGS: -D warnings
   RUSTFLAGS: -D warnings
@@ -184,7 +183,7 @@ jobs:
           # - { target: thumbv7a-pc-windows-msvc, os: windows-latest } # tier3
           - { target: x86_64-pc-windows-msvc, os: windows-latest }
 
-          # Windows (GNU)
+          # Windows (MinGW)
           # rustup target list | grep -e '-pc-windows-gnu'
           # rustc --print target-list | grep -e '-pc-windows-gnu'
           # Windows host:
@@ -194,13 +193,13 @@ jobs:
             os: windows-latest
           # Linux host:
           # - target: i686-pc-windows-gnu
-          #   os: ubuntu-22.04
           - target: x86_64-pc-windows-gnu
-            os: ubuntu-22.04
           - target: x86_64-pc-windows-gnu
             runner: wine@7.13
           - target: x86_64-pc-windows-gnu
             runner: wine@7.0.1
+          - target: x86_64-pc-windows-gnullvm
+          - target: aarch64-pc-windows-gnullvm
         # prettier-ignore
         exclude:
           # Segmentation fault on ubuntu 20.04: https://github.com/taiki-e/setup-cross-toolchain-action/issues/1
@@ -220,6 +219,8 @@ jobs:
           persist-credentials: false
       - name: Install Rust
         run: rustup toolchain add nightly --no-self-update && rustup default nightly
+      - run: echo "QEMU_STRACE=1" >>"${GITHUB_ENV}"
+        if: matrix.target != 'aarch64-pc-windows-gnullvm'
       - uses: ./
         with:
           target: ${{ matrix.target }}

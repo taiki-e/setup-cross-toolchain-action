@@ -10,6 +10,13 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support windows-gnullvm targets on Linux host.
+
+  - aarch64-pc-windows-gnullvm
+  - x86_64-pc-windows-gnullvm
+
+  Running tests is supported on both targets.
+
 ## [1.14.0] - 2023-07-28
 
 - Support Windows targets on Windows host.
