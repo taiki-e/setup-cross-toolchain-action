@@ -209,7 +209,7 @@ jobs:
 | `powerpc64-unknown-linux-gnu`          | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   |       |
 | `powerpc64le-unknown-linux-gnu`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
 | `riscv32gc-unknown-linux-gnu`          | Ubuntu (20.04, 18.04, 22.04) [5]                 | qemu-user                   |       |
-| `riscv64gc-unknown-linux-gnu`          | ubuntu (20.04 [1], <!-- 18.04 [2], -->22.04 [3]) | qemu-user                   |       |
+| `riscv64gc-unknown-linux-gnu`          | ubuntu (<!-- 20.04 [1], 18.04 [2], -->22.04 [3]) | qemu-user                   |       |
 | `s390x-unknown-linux-gnu`              | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
 | `sparc64-unknown-linux-gnu`            | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   |       |
 | `thumbv7neon-unknown-linux-gnueabihf`  | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
