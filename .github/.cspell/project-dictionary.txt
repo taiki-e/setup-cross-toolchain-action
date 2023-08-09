@@ -9,6 +9,7 @@ libclang
 libstdc
 Loongson
 multilib
+neoverse
 pkgconfig
 TMPDIR
 Vger
