@@ -54,7 +54,7 @@ if [[ "${target}" == *"@"* ]]; then
 fi
 target_lower="${target//-/_}"
 target_lower="${target_lower//./_}"
-target_upper="$(tr '[:lower:]' '[:upper:]' <<<"${target_lower}")"
+target_upper=$(tr '[:lower:]' '[:upper:]' <<<"${target_lower}")
 host=$(rustc -Vv | grep 'host: ' | cut -c 7-)
 rustc_version=$(rustc -Vv | grep 'release: ' | cut -c 10-)
 rustc_minor_version="${rustc_version#*.}"
@@ -75,7 +75,7 @@ install_apt_packages() {
 install_llvm() {
     # https://github.com/taiki-e/dockerfiles/blob/998a9ad25ae76314d9439681de4d5fe70bb25430/build-base/apt.Dockerfile#L68
     echo "::group::Install LLVM"
-    codename="$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')"
+    codename=$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')
     case "${codename}" in
         bionic) llvm_version=13 ;;
         # TODO: update to 16
@@ -429,7 +429,7 @@ EOF
                         # https://wiki.winehq.org/Ubuntu
                         # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
                         sudo dpkg --add-architecture i386
-                        codename="$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')"
+                        codename=$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')
                         sudo mkdir -pm755 /etc/apt/keyrings
                         retry sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
                         retry sudo wget -NP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/${codename}/winehq-${codename}.sources"
@@ -472,7 +472,7 @@ EOF
                 case "${target}" in
                     *-gnullvm*) winepath="${toolchain_dir}/${target}/bin" ;;
                     *)
-                        gcc_lib="$(basename "$(ls -d "/usr/lib/gcc/${apt_target}"/*posix)")"
+                        gcc_lib=$(basename "$(ls -d "/usr/lib/gcc/${apt_target}"/*posix)")
                         winepath="/usr/lib/gcc/${apt_target}/${gcc_lib};/usr/${apt_target}/lib"
                         ;;
                 esac
