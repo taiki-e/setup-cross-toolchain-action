@@ -10,6 +10,28 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support specifying the QEMU version by using `qemu` input option, or `@` syntax in `runner` input option (if both are set, the latter is preferred).
+
+  For example:
+
+  ```yaml
+  - uses: taiki-e/setup-cross-toolchain-action@v1
+    with:
+      target: aarch64-unknown-linux-gnu
+      qemu: '7.2'
+  ```
+
+  ```yaml
+  - uses: taiki-e/setup-cross-toolchain-action@v1
+    with:
+      target: aarch64-unknown-linux-gnu
+      runner: qemu@8.1
+  ```
+
+- Support specifying the Wine version by using `wine` input option. Previously only `@` syntax in `runner` input option was supported.
+
+- Update the default Wine version to 8.0.0, which is the latest stable version.
+
 ## [1.15.0] - 2023-08-02
 
 - Support windows-gnullvm targets on Linux host.

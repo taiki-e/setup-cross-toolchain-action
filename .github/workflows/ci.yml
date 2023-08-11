@@ -36,6 +36,7 @@ jobs:
     uses: taiki-e/workflows/.github/workflows/tidy.yml@main
 
   test:
+    needs: tidy
     strategy:
       fail-fast: false
       matrix:
@@ -88,6 +89,10 @@ jobs:
           # rustup target list | grep -e '-linux-musl'
           # rustc --print target-list | grep -e '-linux-musl'
           - target: aarch64-unknown-linux-musl
+          - target: aarch64-unknown-linux-musl
+            runner: qemu-user@7.2
+          - target: aarch64-unknown-linux-musl
+            qemu: '7.2'
           - target: arm-unknown-linux-musleabi
           - target: arm-unknown-linux-musleabihf
           - target: armv5te-unknown-linux-musleabi
@@ -197,7 +202,7 @@ jobs:
           - target: x86_64-pc-windows-gnu
             runner: wine@7.13
           - target: x86_64-pc-windows-gnu
-            runner: wine@7.0.1
+            wine: '7.0.1'
           - target: x86_64-pc-windows-gnullvm
           - target: aarch64-pc-windows-gnullvm
         # prettier-ignore
@@ -227,6 +232,8 @@ jobs:
         with:
           target: ${{ matrix.target }}
           runner: ${{ matrix.runner }}
+          qemu: ${{ matrix.qemu }}
+          wine: ${{ matrix.wine }}
       - run: git clone https://github.com/taiki-e/rust-cross-toolchain.git
       - run: tools/ci/test.sh ${{ matrix.target }} rust-cross-toolchain/docker/test/fixtures/rust
         id: test

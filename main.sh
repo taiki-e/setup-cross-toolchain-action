@@ -33,6 +33,11 @@ export DEBIAN_FRONTEND=noninteractive
 export CARGO_NET_RETRY=10
 export RUSTUP_MAX_RETRIES=10
 
+# As a general rule, we use the latest stable version or one previous stable
+# version as the default runner version.
+default_qemu_version='8.0'
+default_wine_version='8.0.2'
+
 if [[ $# -gt 0 ]]; then
     bail "invalid argument '$1'"
 fi
@@ -212,6 +217,34 @@ EOF
             ;;
     esac
     echo "::endgroup::"
+}
+install_qemu() {
+    if [[ ! "${qemu_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+        bail "unrecognized QEMU version '${qemu_version}'"
+    fi
+    if [[ -z "${rust_cross_toolchain_used:-}" ]]; then
+        qemu_bin_dir=/usr/bin
+    else
+        qemu_bin_dir="${toolchain_dir}/bin"
+        rm -f "${qemu_bin_dir}/qemu-${qemu_arch}"
+    fi
+    echo "::group::Instal QEMU"
+    # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
+    qemu_user_tag=":${qemu_version}"
+    if [[ "${qemu_version}" == "8.0" ]]; then
+        case "${qemu_arch}" in
+            # Use 8.0.2 instead of 8.0.3 for ppc64{,le}. 8.0.3 is broken for them due to incomplete backport of 8.1 patches.
+            ppc64*) qemu_user_tag=@sha256:552a32adda13312fe6a33cf09855ebe46c8de52df927c86f14f727cbe574c7c9 ;;
+        esac
+    fi
+    retry docker create --name qemu-user "ghcr.io/taiki-e/qemu-user${qemu_user_tag}"
+    mkdir -p .setup-cross-toolchain-action-tmp
+    docker cp "qemu-user:/usr/bin/qemu-${qemu_arch}" ".setup-cross-toolchain-action-tmp/qemu-${qemu_arch}"
+    docker rm -f qemu-user >/dev/null
+    sudo mv ".setup-cross-toolchain-action-tmp/qemu-${qemu_arch}" "${qemu_bin_dir}"/
+    rm -rf ./.setup-cross-toolchain-action-tmp
+    echo "::endgroup::"
+    x "qemu-${qemu_arch}" --version
 }
 # Refs: https://github.com/qemu/qemu/blob/master/scripts/qemu-binfmt-conf.sh
 register_binfmt() {
@@ -414,13 +447,17 @@ EOF
                         wine_root=/opt/wine-arm64
                         wine_exe="${wine_root}"/bin/wine
                         qemu_arch=aarch64
+                        if [[ -n "${INPUT_WINE:-}" ]]; then
+                            warn "specifying Wine version for aarch64 windows is not yet supported"
+                        fi
                         case "${runner}" in
                             '' | wine) ;;
-                            wine@*) bail "specifying wine version for aarch64 windows is not yet supported" ;;
+                            wine@*) bail "specifying Wine version for aarch64 windows is not yet supported" ;;
                             *) bail "unrecognized runner '${runner}'" ;;
                         esac
                         sudo cp "${wine_root}"/lib/ld-linux-aarch64.so.1 /lib/
-                        x "qemu-${qemu_arch}" --version
+                        qemu_version="${INPUT_QEMU:-"${default_qemu_version}"}"
+                        install_qemu
                         x "${wine_exe}" --version
                         wineboot="${wine_root}/bin/wineserver"
                         ;;
@@ -431,27 +468,22 @@ EOF
                         sudo dpkg --add-architecture i386
                         codename=$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')
                         sudo mkdir -pm755 /etc/apt/keyrings
-                        retry sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
-                        retry sudo wget -NP /etc/apt/sources.list.d/ "https://dl.winehq.org/wine-builds/ubuntu/dists/${codename}/winehq-${codename}.sources"
+                        retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://dl.winehq.org/wine-builds/winehq.key \
+                            | sudo tee /etc/apt/keyrings/winehq-archive.key >/dev/null
+                        retry curl --proto '=https' --tlsv1.2 -fsSLR --retry 10 --retry-connrefused "https://dl.winehq.org/wine-builds/ubuntu/dists/${codename}/winehq-${codename}.sources" \
+                            | sudo tee "/etc/apt/sources.list.d/winehq-${codename}.sources" >/dev/null
                         case "${runner}" in
-                            '' | wine)
-                                # Use winehq-devel 7.13 as default because mio/wepoll needs wine 7.13+.
-                                # https://github.com/tokio-rs/mio/issues/1444
-                                wine_version=7.13
-                                wine_branch=devel
-                                ;;
-                            wine@*)
-                                wine_version="${runner#*@}"
-                                if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                                    wine_branch=stable
-                                elif [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
-                                    wine_branch=devel
-                                else
-                                    bail "unrecognized runner '${runner}'"
-                                fi
-                                ;;
+                            '' | wine) wine_version="${INPUT_WINE:-"${default_wine_version}"}" ;;
+                            wine@*) wine_version="${runner#*@}" ;;
                             *) bail "unrecognized runner '${runner}'" ;;
                         esac
+                        if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                            wine_branch=stable
+                        elif [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+                            wine_branch=devel
+                        else
+                            bail "unrecognized Wine version '${wine_version}'"
+                        fi
                         # The suffix is 1 in most cases, rarely 2.
                         # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
                         # https://dl.winehq.org/wine-builds/ubuntu/dists/focal/main/binary-amd64
@@ -502,6 +534,7 @@ EOF
         echo "BINDGEN_EXTRA_CLANG_ARGS_${target_lower}=--sysroot=${sysroot_dir}" >>"${GITHUB_ENV}"
     fi
 
+    qemu_version="${INPUT_QEMU:-"${default_qemu_version}"}"
     case "${target}" in
         *-unknown-linux-* | *-android*)
             case "${runner}" in
@@ -514,6 +547,10 @@ EOF
                     ;;
                 native) ;;
                 qemu-user) use_qemu='1' ;;
+                qemu-user@*)
+                    use_qemu='1'
+                    qemu_version="${runner#*@}"
+                    ;;
                 *) bail "unrecognized runner '${runner}'" ;;
             esac
             ;;
@@ -540,8 +577,10 @@ EOF
                     arm64*be*) qemu_arch=aarch64_be ;;
                     arm64*) qemu_arch=aarch64 ;;
                 esac
-                # TODO: Use neoverse-v1 once QEMU 8.1 released
-                qemu_cpu=a64fx
+                case "${qemu_version}" in
+                    7.* | 8.0) default_qemu_cpu=a64fx ;; # ARMv8.2-a + SVE
+                    *) default_qemu_cpu=neoverse-v1 ;;   # ARMv8.4-a + SVE + more features (https://developer.arm.com/Processors/Neoverse%20V1)
+                esac
                 ;;
             arm* | thumb*)
                 case "${target}" in
@@ -557,35 +596,33 @@ EOF
             mips64-* | mips64el-*)
                 qemu_arch="${target%%-*}"
                 # As of qemu 6.1, only Loongson-3A4000 supports MSA instructions with mips64r5.
-                qemu_cpu=Loongson-3A4000
+                default_qemu_cpu=Loongson-3A4000
                 ;;
             mipsisa32r6-* | mipsisa32r6el-*)
                 qemu_arch="${target%%-*}"
                 qemu_arch="${qemu_arch/isa32r6/}"
-                qemu_cpu=mips32r6-generic
+                default_qemu_cpu=mips32r6-generic
                 ;;
             mipsisa64r6-* | mipsisa64r6el-*)
                 qemu_arch="${target%%-*}"
                 qemu_arch="${qemu_arch/isa64r6/64}"
-                qemu_cpu=I6400
+                default_qemu_cpu=I6400
                 ;;
             powerpc-*spe)
                 qemu_arch=ppc
-                qemu_cpu=e500v2
+                default_qemu_cpu=e500v2
                 ;;
             powerpc-*)
                 qemu_arch=ppc
-                qemu_cpu=Vger
+                default_qemu_cpu=Vger
                 ;;
-            powerpc64-*)
-                qemu_arch=ppc64
-                qemu_cpu=power10
+            powerpc64-* | powerpc64le-*)
+                qemu_arch="${target%%-*}"
+                qemu_arch="${qemu_arch/powerpc/ppc}"
+                default_qemu_cpu=power10
                 ;;
-            powerpc64le-*)
-                qemu_arch=ppc64le
-                qemu_cpu=power10
-                ;;
-            riscv32gc-* | riscv64gc-*) qemu_arch="${target%%gc-*}" ;;
+            riscv32*) qemu_arch=riscv32 ;;
+            riscv64*) qemu_arch=riscv64 ;;
             s390x-*) qemu_arch=s390x ;;
             sparc-*) qemu_arch=sparc32plus ;;
             sparc64-*) qemu_arch=sparc64 ;;
@@ -605,8 +642,8 @@ EOF
         echo "CARGO_TARGET_${target_upper}_RUNNER=qemu-${qemu_arch}" >>"${GITHUB_ENV}"
         # QEMU's multi-threading support is incomplete and slow.
         echo "RUST_TEST_THREADS=1" >>"${GITHUB_ENV}"
-        if [[ -n "${qemu_cpu:-}" ]] && [[ -z "${QEMU_CPU:-}" ]]; then
-            echo "QEMU_CPU=${qemu_cpu}" >>"${GITHUB_ENV}"
+        if [[ -n "${default_qemu_cpu:-}" ]] && [[ -z "${QEMU_CPU:-}" ]]; then
+            echo "QEMU_CPU=${default_qemu_cpu}" >>"${GITHUB_ENV}"
         fi
         case "${target}" in
             *-android*) ;;
@@ -616,21 +653,7 @@ EOF
                 fi
                 ;;
         esac
-        if [[ -z "${rust_cross_toolchain_used:-}" ]]; then
-            qemu_bin_dir=/usr/bin
-            echo "::group::Instal QEMU"
-            # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
-            retry docker create --name qemu-user ghcr.io/taiki-e/qemu-user
-            mkdir -p .setup-cross-toolchain-action-tmp
-            docker cp qemu-user:/usr/bin .setup-cross-toolchain-action-tmp/qemu
-            docker rm -f qemu-user >/dev/null
-            sudo mv .setup-cross-toolchain-action-tmp/qemu/qemu-* "${qemu_bin_dir}"/
-            rm -rf ./.setup-cross-toolchain-action-tmp
-            echo "::endgroup::"
-        else
-            qemu_bin_dir="${toolchain_dir}/bin"
-        fi
-        x "qemu-${qemu_arch}" --version
+        install_qemu
         register_binfmt qemu-user
     fi
 

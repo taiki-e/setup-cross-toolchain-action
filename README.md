@@ -224,6 +224,27 @@ jobs:
 [7] GCC 13, glibc 2.36<br>
 [8] [Since nightly-2023-07-05](https://github.com/rust-lang/compiler-team/issues/648), mips{,el}-unknown-linux-gnu requires release mode for building std<br>
 
+<!-- omit in toc -->
+#### <a name="qemu-user-runner"></a>qemu-user runner
+
+The current default QEMU version is 8.0.
+
+You can select/pin the version by using `qemu` input option, or `@` syntax in `runner` input option (if both are set, the latter is preferred). For example:
+
+```yaml
+- uses: taiki-e/setup-cross-toolchain-action@v1
+  with:
+    target: aarch64-unknown-linux-gnu
+    qemu: '7.2'
+```
+
+```yaml
+- uses: taiki-e/setup-cross-toolchain-action@v1
+  with:
+    target: aarch64-unknown-linux-gnu
+    runner: qemu@8.1
+```
+
 ### Linux (musl)
 
 | libc | GCC | C++ | test |
@@ -266,6 +287,8 @@ jobs:
     RUSTFLAGS: ${{ env.RUSTFLAGS }} -C target-feature=+crt-static -C link-self-contained=yes
 ```
 
+For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu targets](#qemu-user-runner).
+
 ### Linux (uClibc)
 
 | libc | GCC | C++ | test |
@@ -283,6 +306,8 @@ jobs:
 | `mipsel-unknown-linux-uclibc`      | x86_64 Linux | qemu-user | tier3 [1] |
 
 [1] mips{,el}-unknown-linux-uclibc requires release mode for building std<br>
+
+For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu targets](#qemu-user-runner).
 
 ### Android
 
@@ -312,6 +337,8 @@ You can select/pin the API level version by using `@` syntax in `target` option.
   with:
     target: arm-linux-androideabi@21
 ```
+
+For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu targets](#qemu-user-runner).
 
 ### FreeBSD
 
@@ -402,14 +429,26 @@ On Windows host, GitHub-provided Windows runners support cross-compile for other
 (Other Windows targets may also work, although this action's CI has not tested them.)
 
 On Linux host, this action installs MinGW toolchain and Wine.
-The current default version of Wine is 7.13.
-You can select/pin the version by using `@` syntax in `runner` input option. For example:
+
+<!-- omit in toc -->
+#### <a name="wine-runner"></a>wine runner
+
+The current default Wine version is 8.0.2.
+
+You can select/pin the version by using `wine` input option, or `@` syntax in `runner` input option (if both are set, the latter is preferred). For example:
 
 ```yaml
 - uses: taiki-e/setup-cross-toolchain-action@v1
   with:
     target: x86_64-pc-windows-gnu
-    runner: wine@7.13
+    wine: '7.13'
+```
+
+```yaml
+- uses: taiki-e/setup-cross-toolchain-action@v1
+  with:
+    target: x86_64-pc-windows-gnu
+    runner: wine@7.0.1
 ```
 
 ### Windows (LLVM MinGW)
@@ -424,6 +463,10 @@ You can select/pin the version by using `@` syntax in `runner` input option. For
 | ------ | ---- | ------ | ---- |
 | `aarch64-pc-windows-gnullvm` | Ubuntu (22.04) | wine |  |
 | `x86_64-pc-windows-gnullvm` | Ubuntu (22.04) | wine |  |
+
+For the `wine` runner for x86_64-pc-windows-gnullvm, see ["wine runner" section for windows-gnu targets](#wine-runner).
+
+The `wine` runner for aarch64-pc-windows-gnullvm is AArch64 Wine running on qemu-user; specifying the Wine version is not yet supported, but the QEMU version can be specified by using `qemu` input option like Linux targets.
 
 ### Windows (MSVC)
 

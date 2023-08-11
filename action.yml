@@ -8,6 +8,12 @@ inputs:
   runner:
     description: Test runner
     required: false
+  qemu:
+    description: QEMU version
+    required: false
+  wine:
+    description: Wine version
+    required: false
 
 # Note:
 # - inputs.* should be manually mapped to INPUT_* due to https://github.com/actions/runner/issues/665
@@ -20,3 +26,5 @@ runs:
       env:
         INPUT_TARGET: ${{ inputs.target }}
         INPUT_RUNNER: ${{ inputs.runner }}
+        INPUT_QEMU: ${{ inputs.qemu }}
+        INPUT_WINE: ${{ inputs.wine }}
