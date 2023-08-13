@@ -540,7 +540,7 @@ EOF
             case "${runner}" in
                 '')
                     case "${target}" in
-                        # On x86, qemu-user is not used by default.
+                        # On x86 with SSE2, qemu-user is not used by default.
                         x86_64* | i686-*) ;;
                         *) use_qemu='1' ;;
                     esac
@@ -573,10 +573,7 @@ EOF
         case "${target}" in
             aarch64* | arm64*)
                 qemu_arch="${target%%-*}"
-                case "${target}" in
-                    arm64*be*) qemu_arch=aarch64_be ;;
-                    arm64*) qemu_arch=aarch64 ;;
-                esac
+                qemu_arch="${qemu_arch/arm64/aarch64}"
                 case "${qemu_version}" in
                     7.* | 8.0) default_qemu_cpu=a64fx ;; # ARMv8.2-a + SVE
                     *) default_qemu_cpu=neoverse-v1 ;;   # ARMv8.4-a + SVE + more features (https://developer.arm.com/Processors/Neoverse%20V1)
@@ -588,7 +585,7 @@ EOF
                     *) qemu_arch=arm ;;
                 esac
                 ;;
-            i*86-*) qemu_arch=i386 ;;
+            i?86-*) qemu_arch=i386 ;;
             hexagon-*) qemu_arch=hexagon ;;
             loongarch64-*) qemu_arch=loongarch64 ;;
             m68k-*) qemu_arch=m68k ;;
@@ -625,7 +622,7 @@ EOF
             riscv64*) qemu_arch=riscv64 ;;
             s390x-*) qemu_arch=s390x ;;
             sparc-*) qemu_arch=sparc32plus ;;
-            sparc64-*) qemu_arch=sparc64 ;;
+            sparc64-* | sparcv9-*) qemu_arch=sparc64 ;;
             x86_64*)
                 qemu_arch=x86_64
                 # qemu does not seem to support emulating x86_64 CPU features on x86_64 hosts.

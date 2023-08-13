@@ -98,7 +98,7 @@ case "${target}" in
         # With dynamic linking (default for mips{,el}-unknown-linux-musl/mips64-openwrt-linux-musl)
         case "${target}" in
             # TODO: No such file or directory
-            i586-* | i686-* | x86_64*) ;;
+            i?86-* | x86_64*) ;;
             *)
                 export RUSTFLAGS="${base_rustflags} -C target-feature=-crt-static"
                 run_tests
