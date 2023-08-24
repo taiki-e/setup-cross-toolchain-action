@@ -35,7 +35,7 @@ export RUSTUP_MAX_RETRIES=10
 
 # As a general rule, we use the latest stable version or one previous stable
 # version as the default runner version.
-default_qemu_version='8.0'
+default_qemu_version='8.1'
 default_wine_version='8.0.2'
 
 if [[ $# -gt 0 ]]; then

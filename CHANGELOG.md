@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Update the default QEMU version to 8.1 from 8.0.
+
 ## [1.16.0] - 2023-08-11
 
 - Support specifying the QEMU version by using `qemu` input option, or `@` syntax in `runner` input option (if both are set, the latter is preferred).
