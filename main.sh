@@ -333,11 +333,13 @@ EOF
                 esac
                 ;;
             *-linux-musl*)
+                sys_version=1.2
                 # https://github.com/rust-lang/rust/pull/107129
                 if [[ "${rustc_minor_version}" -lt 71 ]]; then
-                    sys_version=1.1
-                else
-                    sys_version=1.2
+                    case "${target}" in
+                        hexagon-*) ;;
+                        *) sys_version=1.1 ;;
+                    esac
                 fi
                 install_rust_cross_toolchain
                 ;;
