@@ -234,7 +234,7 @@ jobs:
           runner: ${{ matrix.runner }}
           qemu: ${{ matrix.qemu }}
           wine: ${{ matrix.wine }}
-      - run: git clone https://github.com/taiki-e/rust-cross-toolchain.git
+      - run: git clone --depth 1 https://github.com/taiki-e/rust-cross-toolchain.git
       - run: tools/ci/test.sh ${{ matrix.target }} rust-cross-toolchain/docker/test/fixtures/rust
         id: test
       # For debugging
