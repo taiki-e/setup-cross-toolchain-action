@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.18.0] - 2023-09-22
+
 - Support i686-pc-windows-gnullvm.
 - Support sparc-unknown-linux-gnu (experimental).
 
@@ -246,7 +248,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.17.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.18.0...HEAD
+[1.18.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.17.0...v1.18.0
 [1.17.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.16.0...v1.17.0
 [1.16.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.15.0...v1.16.0
 [1.15.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.14.0...v1.15.0
