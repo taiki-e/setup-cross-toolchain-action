@@ -423,7 +423,7 @@ EOF
                 runner_path="${toolchain_dir}/bin/${target}-runner"
                 register_binfmt wasmtime
                 ;;
-            x86_64-pc-windows-gnu | x86_64-pc-windows-gnullvm | aarch64-pc-windows-gnullvm)
+            x86_64-pc-windows-gnu | *-windows-gnullvm)
                 arch="${target%%-*}"
                 case "${target}" in
                     *-gnullvm*) install_rust_cross_toolchain ;;
@@ -463,7 +463,7 @@ EOF
                         x "${wine_exe}" --version
                         wineboot="${wine_root}/bin/wineserver"
                         ;;
-                    x86_64*)
+                    i686-* | x86_64*)
                         wine_exe=wine
                         # https://wiki.winehq.org/Ubuntu
                         # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ

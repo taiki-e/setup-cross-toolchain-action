@@ -462,9 +462,10 @@ You can select/pin the version by using `wine` input option, or `@` syntax in `r
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
 | `aarch64-pc-windows-gnullvm` | Ubuntu (22.04) | wine |  |
+| `i686-pc-windows-gnullvm` | Ubuntu (22.04) | wine |  |
 | `x86_64-pc-windows-gnullvm` | Ubuntu (22.04) | wine |  |
 
-For the `wine` runner for x86_64-pc-windows-gnullvm, see ["wine runner" section for windows-gnu targets](#wine-runner).
+For the `wine` runner for {i686,x86_64}-pc-windows-gnullvm, see ["wine runner" section for windows-gnu targets](#wine-runner).
 
 The `wine` runner for aarch64-pc-windows-gnullvm is AArch64 Wine running on qemu-user; specifying the Wine version is not yet supported, but the QEMU version can be specified by using `qemu` input option like Linux targets.
 

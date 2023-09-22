@@ -203,6 +203,7 @@ jobs:
           - target: x86_64-pc-windows-gnu
             wine: '7.0.1'
           - target: x86_64-pc-windows-gnullvm
+          - target: i686-pc-windows-gnullvm
           - target: aarch64-pc-windows-gnullvm
         # prettier-ignore
         exclude:
