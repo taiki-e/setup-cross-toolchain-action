@@ -297,17 +297,14 @@ setup_linux_host() {
                         # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.sh#L55
                         bail "target '${target}' not yet supported; consider using armv7-unknown-linux-gnueabihf for testing armhf or arm-unknown-linux-gnueabi for testing armv6"
                         ;;
-                    sparc-unknown-linux-gnu)
-                        # (tier3) Setup is tricky.
-                        # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.Dockerfile#L44
-                        bail "target '${target}' not yet supported"
-                        ;;
                     *)
                         case "${target}" in
                             arm*hf | thumbv7neon-*) cc_target=arm-linux-gnueabihf ;;
                             arm*) cc_target=arm-linux-gnueabi ;;
                             riscv32gc-* | riscv64gc-*) cc_target="${target/gc-unknown/}" ;;
                             sparc-*)
+                                # Toolchain for sparc-linux-gnu is not available in APT,
+                                # but we can use -m32 with sparc64-linux-gnu multilib.
                                 cc_target=sparc-linux-gnu
                                 apt_target=sparc64-linux-gnu
                                 multilib=1
@@ -319,10 +316,23 @@ setup_linux_host() {
                         apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
                         # https://github.com/taiki-e/rust-cross-toolchain/blob/fcb7a7e6ca14333d93c528f34a1def5a38745b3a/docker/test/entrypoint.sh
                         sysroot_dir="/usr/${apt_target}"
-                        cat >>"${GITHUB_ENV}" <<EOF
+                        case "${target}" in
+                            sparc-*)
+                                cat >>"${GITHUB_ENV}" <<EOF
+CARGO_TARGET_${target_upper}_LINKER=${target}-gcc
+CC_${target_lower}=${target}-gcc
+CXX_${target_lower}=${target}-g++
+EOF
+                                ;;
+                            *)
+                                cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc
 CC_${target_lower}=${apt_target}-gcc
 CXX_${target_lower}=${apt_target}-g++
+EOF
+                                ;;
+                        esac
+                        cat >>"${GITHUB_ENV}" <<EOF
 AR_${target_lower}=${apt_target}-ar
 RANLIB_${target_lower}=${apt_target}-ranlib
 STRIP=${apt_target}-strip
@@ -657,6 +667,31 @@ EOF
     fi
 
     install_apt_packages
+
+    case "${target}" in
+        sparc-unknown-linux-gnu)
+            # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.Dockerfile#L44
+            # The interpreter for sparc-linux-gnu is /lib/ld-linux.so.2,
+            # so lib/ld-linux.so.2 must be target sparc-linux-gnu to run binaries on qemu-user.
+            toolchain_dir=/usr
+            sudo rm -rf "${toolchain_dir:?}/${apt_target}/lib"
+            sudo rm -rf "${toolchain_dir:?}/${apt_target}/lib64"
+            sudo ln -s lib32 "${toolchain_dir}/${apt_target}/lib"
+            gcc_version="$(gcc --version | sed -n '1 s/^.*) //p')"
+            common_flags="-m32 -mv8plus -L${toolchain_dir}/${apt_target}/lib32 -L${toolchain_dir}/${apt_target}/lib/gcc-cross/${apt_target}/${gcc_version}/32"
+            cat >"/usr/local/bin/${target}-gcc" <<EOF2
+#!/bin/sh
+set -eu
+exec ${toolchain_dir}/bin/${apt_target}-gcc ${common_flags} "\$@"
+EOF2
+            cat >"/usr/local/bin/${target}-g++" <<EOF2
+#!/bin/sh
+set -eu
+exec ${toolchain_dir}/bin/${apt_target}-g++ ${common_flags} "\$@"
+EOF2
+            chmod +x "/usr/local/bin/${target}-gcc" "/usr/local/bin/${target}-g++"
+            ;;
+    esac
 }
 
 case "${host}" in

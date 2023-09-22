@@ -11,6 +11,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 ## [Unreleased]
 
 - Support i686-pc-windows-gnullvm.
+- Support sparc-unknown-linux-gnu (experimental).
 
 ## [1.17.0] - 2023-08-24
 

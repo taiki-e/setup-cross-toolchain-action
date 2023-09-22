@@ -75,7 +75,7 @@ jobs:
           - riscv32gc-unknown-linux-gnu # tier3
           - riscv64gc-unknown-linux-gnu
           - s390x-unknown-linux-gnu
-          # - sparc-unknown-linux-gnu # tier3, supported in rust-cross-toolchain but not ported to this action
+          - sparc-unknown-linux-gnu # tier3
           - sparc64-unknown-linux-gnu
           - thumbv7neon-unknown-linux-gnueabihf
           - x86_64-unknown-linux-gnu
@@ -217,6 +217,7 @@ jobs:
           - { target: mipsisa32r6-unknown-linux-gnu, os: ubuntu-20.04 }
           - { target: mipsisa64r6-unknown-linux-gnuabi64, os: ubuntu-20.04 }
           - { target: powerpc64-unknown-linux-gnu, os: ubuntu-20.04 }
+          - { target: sparc-unknown-linux-gnu, os: ubuntu-20.04 }
           - { target: sparc64-unknown-linux-gnu, os: ubuntu-20.04 }
     runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     timeout-minutes: 60
