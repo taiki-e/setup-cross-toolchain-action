@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support i686-pc-windows-gnullvm.
+
 ## [1.17.0] - 2023-08-24
 
 - Update the default QEMU version to 8.1 from 8.0.
