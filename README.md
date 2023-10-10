@@ -266,27 +266,9 @@ You can select/pin the version by using `qemu` input option, or `@` syntax in `r
 | `armv7-unknown-linux-musleabihf`   | x86_64 Linux | qemu-user                   |       |
 | `i586-unknown-linux-musl`          | x86_64 Linux | qemu-user (default), native |       |
 | `i686-unknown-linux-musl`          | x86_64 Linux | native (default), qemu-user |       |
-| `mips-unknown-linux-musl`          | x86_64 Linux | qemu-user                   |       |
-| `mips64-unknown-linux-muslabi64`   | x86_64 Linux | qemu-user                   |       |
-| `mips64el-unknown-linux-muslabi64` | x86_64 Linux | qemu-user                   |       |
-| `mipsel-unknown-linux-musl`        | x86_64 Linux | qemu-user                   |       |
 | `x86_64-unknown-linux-musl`        | x86_64 Linux | native (default), qemu-user |       |
 
 (Other linux-musl targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#linux-musl) may also work, although this action's CI has not tested them.)
-
-`mips{,el}-unknown-linux-musl` are dynamically linked by default. To compile in the same way as other musl targets, you need to set `-C target-feature=+crt-static` and `-C link-self-contained=yes`. For example:
-
-```yaml
-- uses: taiki-e/setup-cross-toolchain-action@v1
-  with:
-    target: mips-unknown-linux-musl
-- run: cargo build
-  env:
-    # `-C target-feature=+crt-static` to enable static linking.
-    # `-C link-self-contained=yes` to link with libraries and objects shipped with Rust.
-    # `${{ env.RUSTFLAGS }}` is needed if you want to inherit existing rustflags.
-    RUSTFLAGS: ${{ env.RUSTFLAGS }} -C target-feature=+crt-static -C link-self-contained=yes
-```
 
 For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu targets](#qemu-user-runner).
 

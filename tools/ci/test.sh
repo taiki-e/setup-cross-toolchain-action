@@ -53,7 +53,7 @@ run_native() {
 run_tests() {
     case "${target}" in
         # TODO: LLVM bug: Undefined temporary symbol error when building std.
-        mips-unknown-linux-gnu | mipsel-unknown-linux-gnu | mips-unknown-linux-uclibc | mipsel-unknown-linux-uclibc) ;;
+        mips-*-linux-* | mipsel-*-linux-*) ;;
         *)
             profile=debug
             cargo_run

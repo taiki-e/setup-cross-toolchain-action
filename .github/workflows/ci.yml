@@ -10,7 +10,7 @@ on:
       - main
       - dev
   schedule:
-    - cron: '0 1 * * *'
+    - cron: '0 2 * * *'
   workflow_dispatch:
 
 env:
@@ -60,10 +60,10 @@ jobs:
           - i686-unknown-linux-gnu
           - loongarch64-unknown-linux-gnu
           # - m68k-unknown-linux-gnu # tier3, build fail: https://github.com/rust-lang/rust/issues/89498
-          - mips-unknown-linux-gnu
-          - mips64-unknown-linux-gnuabi64
-          - mips64el-unknown-linux-gnuabi64
-          - mipsel-unknown-linux-gnu
+          - mips-unknown-linux-gnu # tier3
+          - mips64-unknown-linux-gnuabi64 # tier3
+          - mips64el-unknown-linux-gnuabi64 # tier3
+          - mipsel-unknown-linux-gnu # tier3
           # - mipsisa32r6-unknown-linux-gnu # tier3, TODO: hang with LLVM 17
           # - mipsisa32r6el-unknown-linux-gnu # tier3, TODO: hang with LLVM 17
           - mipsisa64r6-unknown-linux-gnuabi64 # tier3
@@ -100,11 +100,11 @@ jobs:
           # - target: hexagon-unknown-linux-musl # tier3
           - target: i586-unknown-linux-musl
           - target: i686-unknown-linux-musl
-          - target: mips-unknown-linux-musl
+          # - target: mips-unknown-linux-musl # tier3
           # - target: mips64-openwrt-linux-musl # tier3
-          - target: mips64-unknown-linux-muslabi64
-          - target: mips64el-unknown-linux-muslabi64
-          - target: mipsel-unknown-linux-musl
+          # - target: mips64-unknown-linux-muslabi64 # tier3
+          # - target: mips64el-unknown-linux-muslabi64 # tier3
+          # - target: mipsel-unknown-linux-musl # tier3
           # - target: powerpc-unknown-linux-musl # tier3
           # - target: powerpc64-unknown-linux-musl # tier3
           # - target: powerpc64le-unknown-linux-musl # tier3
