@@ -366,7 +366,7 @@ EOF
                 data_dir="${HOME}/.setup-cross-toolchain-action/data"
                 mkdir -p "${data_dir}"
                 case "${target}" in
-                    aarch64*)
+                    aarch64* | arm64*)
                         lib_target=aarch64-linux-android
                         arch=arm64-v8a
                         ;;
@@ -393,7 +393,7 @@ EOF
                 file="${arch}-${img_api_level}_${revision}.zip"
                 prefix=''
                 case "${target}" in
-                    x86_64* | aarch64*) prefix='64' ;;
+                    x86_64* | aarch64* | arm64*) prefix='64' ;;
                 esac
                 # Note that due to the Android SDK license, rust-cross-toolchain cannot redistribute sys-img distributed by Google.
                 retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -O "https://dl.google.com/android/repository/sys-img/android/${file}"
@@ -433,7 +433,7 @@ EOF
                 runner_path="${toolchain_dir}/bin/${target}-runner"
                 register_binfmt wasmtime
                 ;;
-            x86_64-pc-windows-gnu | *-windows-gnullvm)
+            *-windows-gnu*)
                 arch="${target%%-*}"
                 case "${target}" in
                     *-gnullvm*) install_rust_cross_toolchain ;;
@@ -455,7 +455,7 @@ EOF
                 esac
 
                 case "${target}" in
-                    aarch64*)
+                    aarch64* | arm64*)
                         wine_root=/opt/wine-arm64
                         wine_exe="${wine_root}"/bin/wine
                         qemu_arch=aarch64
