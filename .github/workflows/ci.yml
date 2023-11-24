@@ -116,11 +116,12 @@ jobs:
 
           # Linux (uClibc)
           # rustc --print target-list | grep -e '-linux-uclibc'
-          - target: armv5te-unknown-linux-uclibceabi # tier3
-          - target: armv7-unknown-linux-uclibceabi # tier3
-          - target: armv7-unknown-linux-uclibceabihf # tier3
-          - target: mips-unknown-linux-uclibc # tier3
-          - target: mipsel-unknown-linux-uclibc # tier3
+          # TODO: https://github.com/rust-lang/rust/issues/118190
+          # - target: armv5te-unknown-linux-uclibceabi # tier3
+          # - target: armv7-unknown-linux-uclibceabi # tier3
+          # - target: armv7-unknown-linux-uclibceabihf # tier3
+          # - target: mips-unknown-linux-uclibc # tier3
+          # - target: mipsel-unknown-linux-uclibc # tier3
 
           # Android
           # rustup target list | grep -e '-android'
