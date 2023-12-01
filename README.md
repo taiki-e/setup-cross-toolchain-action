@@ -333,9 +333,9 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-freebsd` | 12.4 (default), 13.1 | Linux [1] | tier3 |
-| `i686-unknown-freebsd`    | 12.4 (default), 13.1 | Linux [1] |       |
-| `x86_64-unknown-freebsd`  | 12.4 (default), 13.1 | Linux [1] |       |
+| `aarch64-unknown-freebsd` | 12.4 (default), 13.2, 14.0 | Linux [1] | tier3 |
+| `i686-unknown-freebsd`    | 12.4 (default), 13.2, 14.0 | Linux [1] |       |
+| `x86_64-unknown-freebsd`  | 12.4 (default), 13.2, 14.0 | Linux [1] |       |
 
 [1] Clang 13 for Ubuntu 18.04, otherwise Clang 15<br>
 
@@ -438,7 +438,7 @@ You can select/pin the version by using `wine` input option, or `@` syntax in `r
 
 | libc | Clang | C++ | test |
 | ---- | ----- | --- | ---- |
-| Mingw-w64 b190082 | 16.0.6 | ✓ (libc++) | ✓ |
+| Mingw-w64 7ea930b | 17.0.6 | ✓ (libc++) | ✓ |
 
 **Supported targets**:
 
