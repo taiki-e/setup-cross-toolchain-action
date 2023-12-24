@@ -337,7 +337,7 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 | `i686-unknown-freebsd`    | 12.4 (default), 13.2, 14.0 | Linux [1] |       |
 | `x86_64-unknown-freebsd`  | 12.4 (default), 13.2, 14.0 | Linux [1] |       |
 
-[1] Clang 13 for Ubuntu 18.04, otherwise Clang 15<br>
+[1] Clang 13 for Ubuntu 18.04, otherwise Clang 17<br>
 
 (Other FreeBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#freebsd) may also work, although this action's CI has not tested them.)
 

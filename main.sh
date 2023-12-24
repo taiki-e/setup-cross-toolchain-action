@@ -83,8 +83,7 @@ install_llvm() {
     codename=$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')
     case "${codename}" in
         bionic) llvm_version=13 ;;
-        # TODO: update to 16
-        *) llvm_version=15 ;;
+        *) llvm_version=17 ;;
     esac
     echo "deb http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${llvm_version} main" \
         | sudo tee "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${llvm_version}.list" >/dev/null
