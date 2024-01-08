@@ -223,9 +223,7 @@ jobs:
     runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+      - uses: taiki-e/github-actions/checkout@main
       - name: Install Rust
         run: rustup toolchain add nightly --no-self-update && rustup default nightly
       - run: echo "QEMU_STRACE=1" >>"${GITHUB_ENV}"
