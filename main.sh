@@ -35,7 +35,9 @@ export RUSTUP_MAX_RETRIES=10
 
 # As a general rule, we use the latest stable version or one previous stable
 # version as the default runner version.
+# https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
 default_qemu_version='8.2'
+# https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
 default_wine_version='8.0.2'
 
 if [[ $# -gt 0 ]]; then
@@ -83,7 +85,7 @@ install_llvm() {
     codename=$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')
     case "${codename}" in
         bionic) llvm_version=13 ;;
-        # TODO: update to 16
+        # TODO: update to 17
         *) llvm_version=15 ;;
     esac
     echo "deb http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${llvm_version} main" \
