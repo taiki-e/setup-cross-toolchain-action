@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.19.0] - 2024-01-25
+
 - Update the default QEMU version to 8.2 from 8.1.
 
 ## [1.18.0] - 2023-09-22
@@ -250,7 +252,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.18.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.19.0...HEAD
+[1.19.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.18.0...v1.19.0
 [1.18.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.17.0...v1.18.0
 [1.17.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.16.0...v1.17.0
 [1.16.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.15.0...v1.16.0
