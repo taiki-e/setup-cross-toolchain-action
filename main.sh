@@ -38,7 +38,7 @@ export RUSTUP_MAX_RETRIES=10
 # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
 default_qemu_version='8.2'
 # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
-default_wine_version='8.0.2'
+default_wine_version='9.0.0.0'
 
 if [[ $# -gt 0 ]]; then
     bail "invalid argument '$1'"
@@ -491,7 +491,7 @@ EOF
                             wine@*) wine_version="${runner#*@}" ;;
                             *) bail "unrecognized runner '${runner}'" ;;
                         esac
-                        if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                        if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
                             wine_branch=stable
                         elif [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
                             wine_branch=devel

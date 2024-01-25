@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Update the default Wine version to 9.0 from 8.0.
+
 ## [1.19.0] - 2024-01-25
 
 - Update the default QEMU version to 8.2 from 8.1.
