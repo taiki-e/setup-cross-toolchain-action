@@ -183,7 +183,7 @@ jobs:
 
 [1] Except for loongarch64-unknown-linux-gnu
 
-**Supported targets**:
+**Supported targets:**
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
@@ -254,7 +254,7 @@ You can select/pin the version by using `qemu` input option, or `@` syntax in `r
 
 [1]: [1.2 on Rust 1.71+](https://github.com/rust-lang/rust/pull/107129), otherwise 1.1. 1.1 toolchain is with a patch that fixes CVE-2020-28928.
 
-**Supported targets**:
+**Supported targets:**
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
@@ -278,7 +278,7 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 | ---- | --- | --- | ---- |
 | uClibc-ng 1.0.34 | 10.2.0 | ✓ (libstdc++) | ✓ |
 
-**Supported targets**:
+**Supported targets:**
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
@@ -300,7 +300,7 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 **Note:** By making use of these targets you accept the [Android SDK License](https://developer.android.com/studio/terms)
 
-**Supported targets**:
+**Supported targets:**
 
 | target | api level | host | runner | note |
 | ------ | --------- | ---- | ------ | ---- |
@@ -329,7 +329,7 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 | --- | ---- |
 | ✓ (libc++) | |
 
-**Supported targets**:
+**Supported targets:**
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
@@ -357,7 +357,7 @@ Only specifying a major version is supported.
 | --- | --- | ---- |
 | 7.5.0 | ✓ (libstdc++) | |
 
-**Supported targets**:
+**Supported targets:**
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
@@ -386,7 +386,7 @@ Only specifying a major version is supported.
 clang version and wasi-libc hash can be found here: https://github.com/taiki-e/rust-cross-toolchain#wasi
 -->
 
-**Supported targets**:
+**Supported targets:**
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
@@ -398,7 +398,7 @@ clang version and wasi-libc hash can be found here: https://github.com/taiki-e/r
 | --- | ---- |
 | ✓ (libstdc++) | ✓ |
 
-**Supported targets**:
+**Supported targets:**
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
@@ -440,7 +440,7 @@ You can select/pin the version by using `wine` input option, or `@` syntax in `r
 | ---- | ----- | --- | ---- |
 | Mingw-w64 7ea930b | 17.0.6 | ✓ (libc++) | ✓ |
 
-**Supported targets**:
+**Supported targets:**
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
@@ -460,7 +460,7 @@ The `wine` runner for aarch64-pc-windows-gnullvm is AArch64 Wine running on qemu
 
 [1] Only x86/x86_64 targets
 
-**Supported targets**:
+**Supported targets:**
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
@@ -481,7 +481,7 @@ GitHub-provided Windows runners support cross-compile for other architectures or
 
 [1] Only x86_64-apple-darwin. (x86_64h-apple-darwin is also x86_64 but build-only because the CPU of GitHub-provided macOS runners is older than Haswell. If you use a large runner or self-hosted runner, you may be able to run the test.)
 
-**Supported targets**:
+**Supported targets:**
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
