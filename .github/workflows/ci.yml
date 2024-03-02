@@ -201,9 +201,9 @@ jobs:
           # - target: i686-pc-windows-gnu
           - target: x86_64-pc-windows-gnu
           - target: x86_64-pc-windows-gnu
-            runner: wine@7.13
+            runner: wine@9.3
           - target: x86_64-pc-windows-gnu
-            wine: '7.0.1'
+            wine: '9.0.0.0'
           - target: x86_64-pc-windows-gnullvm
           - target: i686-pc-windows-gnullvm
           - target: aarch64-pc-windows-gnullvm
