@@ -47,7 +47,8 @@ jobs:
           # rustc --print target-list | grep -e '-linux-gnu'
           - aarch64-unknown-linux-gnu
           # - aarch64-unknown-linux-gnu_ilp32 # tier3
-          - aarch64_be-unknown-linux-gnu # tier3
+          # TODO: core_simd bug https://github.com/rust-lang/portable-simd/pull/396
+          # - aarch64_be-unknown-linux-gnu # tier3
           # - aarch64_be-unknown-linux-gnu_ilp32 # tier3
           - arm-unknown-linux-gnueabi
           # - arm-unknown-linux-gnueabihf # supported in rust-cross-toolchain but not ported to this action
@@ -200,9 +201,9 @@ jobs:
           # - target: i686-pc-windows-gnu
           - target: x86_64-pc-windows-gnu
           - target: x86_64-pc-windows-gnu
-            runner: wine@7.13
+            runner: wine@9.3
           - target: x86_64-pc-windows-gnu
-            wine: '7.0.1'
+            wine: '8.0.2'
           - target: x86_64-pc-windows-gnullvm
           - target: i686-pc-windows-gnullvm
           - target: aarch64-pc-windows-gnullvm
