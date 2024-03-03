@@ -2,7 +2,6 @@ armeabi
 BINDGEN
 binfmt
 CXXSTDLIB
-devel
 endgroup
 haswell
 libclang
