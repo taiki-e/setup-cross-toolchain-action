@@ -474,13 +474,13 @@ GitHub-provided Windows runners support cross-compile for other architectures or
 | --- | ---- |
 | ✓ | ✓ [1] |
 
-[1] Only x86_64-apple-darwin. (x86_64h-apple-darwin is also x86_64 but build-only because the CPU of GitHub-provided macOS runners is older than Haswell. If you use a large runner or self-hosted runner, you may be able to run the test.)
+[1] For x86_64-apple-darwin all runners and for aarch64-apple-darwin only arm64 runners. (x86_64h-apple-darwin is also x86_64 but build-only because the CPU of GitHub-provided macOS runners is older than Haswell. If you use a large runner or self-hosted runner, you may be able to run the test.)
 
 **Supported targets:**
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-apple-darwin` | *macOS* |        |       |
+| `aarch64-apple-darwin` | *macOS* | native |       |
 | `x86_64-apple-darwin`  | *macOS* | native |       |
 | `x86_64h-apple-darwin` | *macOS* | native | tier3 |
 

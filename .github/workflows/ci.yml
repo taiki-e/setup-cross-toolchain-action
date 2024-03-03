@@ -172,7 +172,9 @@ jobs:
           # rustup target list | grep -e '-darwin'
           # rustc --print target-list | grep -e '-darwin'
           - target: aarch64-apple-darwin
-            os: macos-latest
+            os: macos-14 # aarch64
+          - target: aarch64-apple-darwin
+            os: macos-13 # x86_64
           # - target: i686-apple-darwin # tier3
           #   os: macos-latest
           - target: x86_64-apple-darwin
