@@ -380,11 +380,7 @@ Only specifying a major version is supported.
 
 | libc | Clang | C++ | test |
 | ---- | ----- | --- | ---- |
-| wasi-sdk 20 (wasi-libc 1dfe5c3) | 16.0.0 | ? (libc++) | ✓ |
-
-<!--
-clang version and wasi-libc hash can be found here: https://github.com/taiki-e/rust-cross-toolchain#wasi
--->
+| wasi-sdk 21 (wasi-libc c5264e2) | 17.0.6 | ? (libc++) | ✓ |
 
 **Supported targets:**
 
@@ -402,10 +398,9 @@ clang version and wasi-libc hash can be found here: https://github.com/taiki-e/r
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `x86_64-pc-windows-gnu` | *Windows*, Ubuntu (<!-- 20.04 [1], -->22.04 [2]) | native (Windows host) / wine (Linux host) |  |
+| `x86_64-pc-windows-gnu` | *Windows*, Ubuntu (22.04 [1]) | native (Windows host) / wine (Linux host) |  |
 
-<!-- [1] [GCC 9](https://packages.ubuntu.com/en/focal/gcc-mingw-w64-base), [MinGW-w64 7](https://packages.ubuntu.com/en/focal/mingw-w64-x86-64-dev)<br> -->
-[2] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev)<br>
+[1] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev)<br>
 
 On Windows host, GitHub-provided Windows runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 
