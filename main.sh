@@ -35,6 +35,7 @@ export RUSTUP_MAX_RETRIES=10
 
 # As a general rule, we use the latest stable version or one previous stable
 # version as the default runner version.
+# NB: Sync with readme.
 # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
 default_qemu_version='8.2'
 # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
@@ -58,6 +59,29 @@ if [[ "${target}" == *"@"* ]]; then
         *) bail "versioned target triple is currently only supported on BSDs and Android" ;;
     esac
     target="${target%@*}"
+else
+    # NB: Sync with readme.
+    case "${target}" in
+        *-freebsd*)
+            # FreeBSD have binary compatibility with previous releases.
+            # Therefore, the default is the minimum supported version.
+            # https://github.com/taiki-e/rust-cross-toolchain/blob/HEAD/tools/build-docker.sh
+            case "${target}" in
+                powerpc* | riscv64*) sys_version=13 ;;
+                *) sys_version=12 ;;
+            esac
+            ;;
+        *-netbsd*)
+            # NetBSD have binary compatibility with previous releases.
+            # Therefore, the default is the minimum supported version.
+            # https://github.com/taiki-e/rust-cross-toolchain/blob/HEAD/tools/build-docker.sh
+            case "${target}" in
+                aarch64-*) sys_version=9 ;;
+                aarch64_be-*) sys_version=10 ;;
+                *) sys_version=8 ;;
+            esac
+            ;;
+    esac
 fi
 target_lower="${target//-/_}"
 target_lower="${target_lower//./_}"
@@ -189,7 +213,7 @@ READELF=llvm-readelf
 EOF
             ;;
         *)
-            if type -P "${target}-gcc"; then
+            if type -P "${target}-gcc" &>/dev/null; then
                 cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${target}-gcc
 CC_${target_lower}=${target}-gcc
@@ -199,7 +223,7 @@ RANLIB_${target_lower}=${target}-ranlib
 STRIP=${target}-strip
 OBJDUMP=${target}-objdump
 EOF
-            elif type -P "${target}-clang"; then
+            elif type -P "${target}-clang" &>/dev/null; then
                 cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=${target}-clang
 CC_${target_lower}=${target}-clang
@@ -233,12 +257,14 @@ install_qemu() {
     echo "::group::Instal QEMU"
     # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
     qemu_user_tag=":${qemu_version}"
-    if [[ "${qemu_version}" == "8.0" ]]; then
-        case "${qemu_arch}" in
-            # Use 8.0.2 instead of 8.0.3 for ppc64{,le}. 8.0.3 is broken for them due to incomplete backport of 8.1 patches.
-            ppc64*) qemu_user_tag=@sha256:552a32adda13312fe6a33cf09855ebe46c8de52df927c86f14f727cbe574c7c9 ;;
-        esac
-    fi
+    case "${qemu_version}" in
+        8.0)
+            case "${qemu_arch}" in
+                # Use 8.0.2 instead of 8.0.3 for ppc64{,le}. 8.0.3 is broken for them due to incomplete backport of 8.1 patches.
+                ppc64*) qemu_user_tag=@sha256:552a32adda13312fe6a33cf09855ebe46c8de52df927c86f14f727cbe574c7c9 ;;
+            esac
+            ;;
+    esac
     retry docker create --name qemu-user "ghcr.io/taiki-e/qemu-user${qemu_user_tag}"
     mkdir -p .setup-cross-toolchain-action-tmp
     docker cp "qemu-user:/usr/bin/qemu-${qemu_arch}" ".setup-cross-toolchain-action-tmp/qemu-${qemu_arch}"
