@@ -361,8 +361,8 @@ Only specifying a major version is supported.
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-netbsd` | 9.2                | x86_64 Linux | tier3 |
-| `x86_64-unknown-netbsd`  | 8.2 (default), 9.2 | x86_64 Linux |       |
+| `aarch64-unknown-netbsd` | 9.2 (default), 10.0      | x86_64 Linux | tier3 |
+| `x86_64-unknown-netbsd`  | 8.2 (default), 9.2, 10.0 | x86_64 Linux |       |
 
 (Other NetBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#netbsd) may also work, although this action's CI has not tested them.)
 
