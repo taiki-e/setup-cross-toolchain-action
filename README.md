@@ -23,6 +23,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
   - [Windows (LLVM MinGW)](#windows-llvm-mingw)
   - [Windows (MSVC)](#windows-msvc)
   - [macOS](#macos)
+- [Compatibility](#compatibility)
 - [Related Projects](#related-projects)
 - [License](#license)
 
@@ -187,43 +188,42 @@ jobs:
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-unknown-linux-gnu`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
-| `aarch64_be-unknown-linux-gnu`         | Ubuntu (<!-- 20.04, -->18.04, 22.04) [4]         | qemu-user                   | tier3 |
-| `arm-unknown-linux-gnueabi`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
-| `armeb-unknown-linux-gnueabi`          | Ubuntu (<!-- 20.04, -->18.04, 22.04) [6]         | qemu-user                   | tier3 |
-| `armv5te-unknown-linux-gnueabi`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
-| `armv7-unknown-linux-gnueabi`          | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
-| `armv7-unknown-linux-gnueabihf`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
-| `i586-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user (default), native |       |
-| `i686-unknown-linux-gnu`               | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | native (default), qemu-user |       |
-| `loongarch64-unknown-linux-gnu`        | Ubuntu (20.04, 22.04) [7]                        | qemu-user                   | experimental |
-| `mips-unknown-linux-gnu`               | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   | tier3 [8] |
-| `mips64-unknown-linux-gnuabi64`        | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   | tier3 |
-| `mips64el-unknown-linux-gnuabi64`      | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   | tier3 |
-| `mipsel-unknown-linux-gnu`             | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   | tier3 [8] |
-| `mipsisa32r6-unknown-linux-gnu`        | Ubuntu (<!-- 20.04 [1], -->22.04 [3])            | qemu-user                   | tier3 |
-| `mipsisa32r6el-unknown-linux-gnu`      | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user                   | tier3 |
-| `mipsisa64r6-unknown-linux-gnuabi64`   | Ubuntu (<!-- 20.04 [1], -->22.04 [3])            | qemu-user                   | tier3 |
-| `mipsisa64r6el-unknown-linux-gnuabi64` | Ubuntu (20.04 [1], 22.04 [3])                    | qemu-user                   | tier3 |
-| `powerpc-unknown-linux-gnu`            | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
-| `powerpc64-unknown-linux-gnu`          | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   |       |
-| `powerpc64le-unknown-linux-gnu`        | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
-| `riscv32gc-unknown-linux-gnu`          | Ubuntu (20.04, 18.04, 22.04) [5]                 | qemu-user                   |       |
-| `riscv64gc-unknown-linux-gnu`          | ubuntu (<!-- 20.04 [1], 18.04 [2], -->22.04 [3]) | qemu-user                   |       |
-| `s390x-unknown-linux-gnu`              | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
-| `sparc-unknown-linux-gnu`              | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   | tier3, experimental |
-| `sparc64-unknown-linux-gnu`            | Ubuntu (<!-- 20.04 [1], -->18.04 [2], 22.04 [3]) | qemu-user                   |       |
-| `thumbv7neon-unknown-linux-gnueabihf`  | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | qemu-user                   |       |
-| `x86_64-unknown-linux-gnu`             | Ubuntu (20.04 [1], 18.04 [2], 22.04 [3])         | native (default), qemu-user |       |
+| `aarch64-unknown-linux-gnu`            | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
+| `aarch64_be-unknown-linux-gnu`         | Ubuntu (18.04, 22.04), Debian (10, 11, 12) [2]        | qemu-user                   | tier3 |
+| `arm-unknown-linux-gnueabi`            | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
+| `armeb-unknown-linux-gnueabi`          | Ubuntu (18.04, 22.04), Debian (10, 11, 12) [3]        | qemu-user                   | tier3 |
+| `armv5te-unknown-linux-gnueabi`        | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
+| `armv7-unknown-linux-gnueabi`          | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
+| `armv7-unknown-linux-gnueabihf`        | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
+| `i586-unknown-linux-gnu`               | Ubuntu (18.04, 20.04, 22.04) [1]                      | qemu-user (default), native | [7]   |
+| `i686-unknown-linux-gnu`               | Ubuntu (18.04, 20.04, 22.04) [1]                      | native (default), qemu-user | [7]   |
+| `loongarch64-unknown-linux-gnu`        | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [4] | qemu-user                   | experimental |
+| `mips-unknown-linux-gnu`               | Ubuntu (18.04, 22.04), Debian (10, 11, 12) [1]        | qemu-user                   | tier3 [6] |
+| `mips64-unknown-linux-gnuabi64`        | Ubuntu (18.04, 22.04), Debian (10, 11, 12) [1]        | qemu-user                   | tier3 |
+| `mips64el-unknown-linux-gnuabi64`      | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [1] | qemu-user                   | tier3 |
+| `mipsel-unknown-linux-gnu`             | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [1] | qemu-user                   | tier3 [6] |
+| `mipsisa32r6-unknown-linux-gnu`        | Ubuntu (22.04), Debian (10, 11, 12) [1]               | qemu-user                   | tier3 |
+| `mipsisa32r6el-unknown-linux-gnu`      | Ubuntu (20.04, 22.04), Debian (10, 11, 12) [1]        | qemu-user                   | tier3 |
+| `mipsisa64r6-unknown-linux-gnuabi64`   | Ubuntu (22.04), Debian (10, 11, 12) [1]               | qemu-user                   | tier3 |
+| `mipsisa64r6el-unknown-linux-gnuabi64` | Ubuntu (20.04, 22.04), Debian (10, 11, 12) [1]        | qemu-user                   | tier3 |
+| `powerpc-unknown-linux-gnu`            | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
+| `powerpc64-unknown-linux-gnu`          | Ubuntu (18.04, 22.04), Debian (10, 11, 12) [1]        | qemu-user                   |       |
+| `powerpc64le-unknown-linux-gnu`        | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
+| `riscv32gc-unknown-linux-gnu`          | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [5] | qemu-user                   |       |
+| `riscv64gc-unknown-linux-gnu`          | ubuntu (18.04, 22.04), Debian (10, 11, 12) [1]        | qemu-user                   |       |
+| `s390x-unknown-linux-gnu`              | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
+| `sparc-unknown-linux-gnu`              | Ubuntu (18.04, 22.04), Debian (10, 12) [1]            | qemu-user                   | tier3, experimental |
+| `sparc64-unknown-linux-gnu`            | Ubuntu (18.04, 22.04), Debian (10, 11, 12) [1]        | qemu-user                   |       |
+| `thumbv7neon-unknown-linux-gnueabihf`  | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
+| `x86_64-unknown-linux-gnu`             | Ubuntu (18.04, 20.04, 22.04), Debian (10, 11, 12) [1] | native (default), qemu-user |       |
 
-[1] [GCC 9](https://packages.ubuntu.com/en/focal/gcc), [glibc 2.31](https://packages.ubuntu.com/en/focal/libc6-dev)<br>
-[2] [GCC 7](https://packages.ubuntu.com/en/bionic/gcc), [glibc 2.27](https://packages.ubuntu.com/en/bionic/libc6-dev)<br>
-[3] [GCC 11](https://packages.ubuntu.com/en/jammy/gcc), [glibc 2.35](https://packages.ubuntu.com/en/jammy/libc6-dev)<br>
-[4] GCC 10, glibc 2.31<br>
+[1] [GCC 7](https://packages.ubuntu.com/en/bionic/gcc), [glibc 2.27](https://packages.ubuntu.com/en/bionic/libc6-dev) for Ubuntu 18.04. [GCC 9](https://packages.ubuntu.com/en/focal/gcc), [glibc 2.31](https://packages.ubuntu.com/en/focal/libc6-dev) for Ubuntu 20.04. [GCC 11](https://packages.ubuntu.com/en/jammy/gcc), [glibc 2.35](https://packages.ubuntu.com/en/jammy/libc6-dev) for Ubuntu 22.04. [GCC 8](https://packages.debian.org/en/buster/gcc), [glibc 2.28](https://packages.debian.org/en/buster/libc6-dev) for Debian 10. [GCC 10](https://packages.debian.org/en/bullseye/gcc), [glibc 2.31](https://packages.debian.org/en/bullseye/libc6-dev) for Debian 11. [GCC 12](https://packages.debian.org/en/bookworm/gcc), [glibc 2.36](https://packages.debian.org/en/bookworm/libc6-dev) for Debian 12.<br>
+[2] GCC 10, glibc 2.31<br>
+[3] GCC 7, glibc 2.25<br>
+[4] GCC 13, glibc 2.36<br>
 [5] GCC 11, glibc 2.33<br>
-[6] GCC 7, glibc 2.25<br>
-[7] GCC 13, glibc 2.36<br>
-[8] [Since nightly-2023-07-05](https://github.com/rust-lang/compiler-team/issues/648), mips{,el}-unknown-linux-gnu requires release mode for building std<br>
+[6] [Since nightly-2023-07-05](https://github.com/rust-lang/compiler-team/issues/648), mips{,el}-unknown-linux-gnu requires release mode for building std<br>
+[7] Not fully supported with containers<br>
 
 <!-- omit in toc -->
 #### <a name="qemu-user-runner"></a>qemu-user runner
@@ -333,9 +333,9 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-freebsd` | 12.4 (default), 13.2, 14.0 | Linux [1] | tier3 |
-| `i686-unknown-freebsd`    | 12.4 (default), 13.2, 14.0 | Linux [1] |       |
-| `x86_64-unknown-freebsd`  | 12.4 (default), 13.2, 14.0 | Linux [1] |       |
+| `aarch64-unknown-freebsd` | 12.4 (default), 13.2, 14.0 | Ubuntu, Debian [1] | tier3 |
+| `i686-unknown-freebsd`    | 12.4 (default), 13.2, 14.0 | Ubuntu, Debian [1] |       |
+| `x86_64-unknown-freebsd`  | 12.4 (default), 13.2, 14.0 | Ubuntu, Debian [1] |       |
 
 [1] Clang 13 for Ubuntu 18.04, otherwise Clang 15<br>
 
@@ -398,9 +398,9 @@ Only specifying a major version is supported.
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `x86_64-pc-windows-gnu` | *Windows*, Ubuntu (22.04 [1]) | native (Windows host) / wine (Linux host) |  |
+| `x86_64-pc-windows-gnu` | *Windows*, Ubuntu (22.04), Debian (11, 12) [1] | native (Windows host) / wine (Linux host) |  |
 
-[1] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev)<br>
+[1] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev) for Ubuntu 22.04. [GCC 10](https://packages.debian.org/en/bullseye/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.debian.org/en/bullseye/mingw-w64-x86-64-dev) for Debian 11. [GCC 12](https://packages.debian.org/en/bookworm/gcc-mingw-w64-base), [MinGW-w64 10](https://packages.debian.org/en/bookworm/mingw-w64-x86-64-dev) for Debian 12.<br>
 
 On Windows host, GitHub-provided Windows runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 
@@ -487,6 +487,22 @@ GitHub-provided Windows runners support cross-compile for other architectures or
 GitHub-provided macOS runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 
 (Other macOS targets may also work, although this action's CI has not tested them.)
+
+## Compatibility
+
+This action has been tested for GitHub-hosted runners (Ubuntu, macOS, Windows) and containers (Ubuntu, Debian).
+To use this action in self-hosted runners or in containers, at least the following tools are required:
+
+- bash
+- rustup, cargo
+
+`--privileged` option is currently required when using with containers (due to binfmt).
+
+```yaml
+container:
+  image: '...'
+  options: --privileged
+```
 
 ## Related Projects
 

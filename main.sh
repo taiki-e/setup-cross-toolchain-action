@@ -28,6 +28,13 @@ bail() {
 warn() {
     echo "::warning::$*"
 }
+_sudo() {
+    if type -P sudo &>/dev/null; then
+        sudo "$@"
+    else
+        "$@"
+    fi
+}
 
 export DEBIAN_FRONTEND=noninteractive
 export CARGO_NET_RETRY=10
@@ -94,11 +101,11 @@ rustup_target_list=$(rustup target list | sed 's/ .*//g')
 
 install_apt_packages() {
     if [[ ${#apt_packages[@]} -gt 0 ]]; then
-        retry sudo apt-get -o Acquire::Retries=10 -qq update
-        if ! retry sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 install -y --no-install-recommends "${apt_packages[@]}"; then
+        retry _sudo apt-get -o Acquire::Retries=10 -qq update
+        if ! retry _sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 install -y --no-install-recommends "${apt_packages[@]}"; then
             # Workaround for https://github.com/taiki-e/setup-cross-toolchain-action/issues/15
-            sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 upgrade -y
-            sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 install -y --no-install-recommends "${apt_packages[@]}"
+            _sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 upgrade -y
+            _sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 install -y --no-install-recommends "${apt_packages[@]}"
         fi
         apt_packages=()
     fi
@@ -112,11 +119,18 @@ install_llvm() {
         # TODO: update to 17
         *) llvm_version=15 ;;
     esac
+    if ! type -P curl &>/dev/null; then
+        apt_packages+=(ca-certificates curl)
+    fi
+    if ! type -P gpg &>/dev/null; then
+        apt_packages+=(gnupg)
+    fi
+    install_apt_packages
     echo "deb http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${llvm_version} main" \
-        | sudo tee "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${llvm_version}.list" >/dev/null
+        | _sudo tee "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${llvm_version}.list" >/dev/null
     retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://apt.llvm.org/llvm-snapshot.gpg.key \
         | gpg --dearmor \
-        | sudo tee /etc/apt/trusted.gpg.d/llvm-snapshot.gpg >/dev/null
+        | _sudo tee /etc/apt/trusted.gpg.d/llvm-snapshot.gpg >/dev/null
     apt_packages+=(
         clang-"${llvm_version}"
         libc++-"${llvm_version}"-dev
@@ -129,7 +143,7 @@ install_llvm() {
     install_apt_packages
     for tool in /usr/bin/clang*-"${llvm_version}" /usr/bin/llvm-*-"${llvm_version}" /usr/bin/*lld*-"${llvm_version}" /usr/bin/wasm-ld-"${llvm_version}"; do
         local link="${tool%"-${llvm_version}"}"
-        sudo update-alternatives --install "${link}" "${link##*/}" "${tool}" 100
+        _sudo update-alternatives --install "${link}" "${link##*/}" "${tool}" 100
     done
     echo "::endgroup::"
 }
@@ -137,6 +151,11 @@ install_rust_cross_toolchain() {
     echo "::group::Install toolchain"
     rust_cross_toolchain_used=1
     toolchain_dir=/usr/local
+    # TODO: distribute rust-cross-toolchain without docker
+    if ! type -P docker &>/dev/null; then
+        apt_packages+=(docker.io)
+        install_apt_packages
+    fi
     # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
     retry docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}${sys_version:-}-dev-amd64"
     mkdir -p .setup-cross-toolchain-action-tmp
@@ -144,11 +163,11 @@ install_rust_cross_toolchain() {
     case "${target}" in
         aarch64-pc-windows-gnullvm)
             docker cp "rust-cross-toolchain:/opt/wine-arm64" .setup-cross-toolchain-action-tmp/wine-arm64
-            sudo cp -r .setup-cross-toolchain-action-tmp/wine-arm64 /opt/wine-arm64
+            _sudo cp -r .setup-cross-toolchain-action-tmp/wine-arm64 /opt/wine-arm64
             ;;
     esac
     docker rm -f rust-cross-toolchain >/dev/null
-    sudo cp -r .setup-cross-toolchain-action-tmp/toolchain/. "${toolchain_dir}"/
+    _sudo cp -r .setup-cross-toolchain-action-tmp/toolchain/. "${toolchain_dir}"/
     rm -rf ./.setup-cross-toolchain-action-tmp
     # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/test/entrypoint.sh#L47
     case "${target}" in
@@ -265,11 +284,16 @@ install_qemu() {
             esac
             ;;
     esac
+    # TODO: distribute rust-cross-toolchain without docker
+    if ! type -P docker &>/dev/null; then
+        apt_packages+=(docker.io)
+        install_apt_packages
+    fi
     retry docker create --name qemu-user "ghcr.io/taiki-e/qemu-user${qemu_user_tag}"
     mkdir -p .setup-cross-toolchain-action-tmp
     docker cp "qemu-user:/usr/bin/qemu-${qemu_arch}" ".setup-cross-toolchain-action-tmp/qemu-${qemu_arch}"
     docker rm -f qemu-user >/dev/null
-    sudo mv ".setup-cross-toolchain-action-tmp/qemu-${qemu_arch}" "${qemu_bin_dir}"/
+    _sudo mv ".setup-cross-toolchain-action-tmp/qemu-${qemu_arch}" "${qemu_bin_dir}"/
     rm -rf ./.setup-cross-toolchain-action-tmp
     echo "::endgroup::"
     x "qemu-${qemu_arch}" --version
@@ -278,18 +302,22 @@ install_qemu() {
 register_binfmt() {
     echo "::group::Register binfmt"
     if [[ ! -d /proc/sys/fs/binfmt_misc ]]; then
-        sudo /sbin/modprobe binfmt_misc
+        _sudo /sbin/modprobe binfmt_misc
     fi
     if [[ ! -f /proc/sys/fs/binfmt_misc/register ]]; then
-        sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
+        _sudo mount binfmt_misc -t binfmt_misc /proc/sys/fs/binfmt_misc
     fi
     case "$1" in
         qemu-user)
             local url=https://raw.githubusercontent.com/qemu/qemu/a279ca4ea07383314b2d2b2f1d550be9482f148e/scripts/qemu-binfmt-conf.sh
+            if ! type -P curl &>/dev/null; then
+                apt_packages+=(ca-certificates curl)
+                install_apt_packages
+            fi
             retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -o __qemu-binfmt-conf.sh "${url}"
             sed -i "s/i386_magic/qemu_target_list=\"${qemu_arch}\"\\ni386_magic/" ./__qemu-binfmt-conf.sh
             chmod +x ./__qemu-binfmt-conf.sh
-            sudo ./__qemu-binfmt-conf.sh --qemu-path "${qemu_bin_dir}" --persistent yes
+            _sudo ./__qemu-binfmt-conf.sh --qemu-path "${qemu_bin_dir}" --persistent yes
             rm ./__qemu-binfmt-conf.sh
             echo "::endgroup::"
             return
@@ -306,13 +334,20 @@ register_binfmt() {
     esac
     echo "Setting ${runner_path} as binfmt interpreter for ${target}"
     echo ":${target}:M::${magic}:${mask}:${runner_path}:F" \
-        | sudo tee /proc/sys/fs/binfmt_misc/register >/dev/null
+        | _sudo tee /proc/sys/fs/binfmt_misc/register >/dev/null
     echo "::endgroup::"
 }
 
 setup_linux_host() {
     apt_packages=()
-    if [[ "${host}" != "${target}" ]]; then
+    if [[ "${host}" == "${target}" ]]; then
+        # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
+        # TODO: other lang? https://packages.ubuntu.com/search?lang=en&suite=jammy&arch=any&searchon=names&keywords=12-aarch64-linux-gnu
+        if ! type -P g++ &>/dev/null; then
+            apt_packages+=(g++)
+            install_apt_packages
+        fi
+    else
         case "${target}" in
             *-linux-gnu*)
                 # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.sh
@@ -341,6 +376,7 @@ setup_linux_host() {
                         esac
                         apt_target="${apt_target:-"${cc_target/i586/i686}"}"
                         # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
+                        # TODO: other lang? https://packages.ubuntu.com/search?lang=en&suite=jammy&arch=any&searchon=names&keywords=12-aarch64-linux-gnu
                         apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
                         # https://github.com/taiki-e/rust-cross-toolchain/blob/fcb7a7e6ca14333d93c528f34a1def5a38745b3a/docker/test/entrypoint.sh
                         sysroot_dir="/usr/${apt_target}"
@@ -387,9 +423,17 @@ EOF
             *-android*)
                 # https://dl.google.com/android/repository/sys-img/android/sys-img.xml
                 install_rust_cross_toolchain
-                apt_packages+=(e2tools)
+                if ! type -P curl &>/dev/null; then
+                    apt_packages+=(ca-certificates curl)
+                fi
+                if ! type -P unzip &>/dev/null; then
+                    apt_packages+=(unzip)
+                fi
+                if ! type -P e2cp &>/dev/null; then
+                    apt_packages+=(e2tools)
+                fi
                 install_apt_packages
-                sudo mkdir -p /system/{bin,lib,lib64}
+                _sudo mkdir -p /system/{bin,lib,lib64}
                 # /data may conflict with the existing directory.
                 data_dir="${HOME}/.setup-cross-toolchain-action/data"
                 mkdir -p "${data_dir}"
@@ -426,12 +470,12 @@ EOF
                 # Note that due to the Android SDK license, rust-cross-toolchain cannot redistribute sys-img distributed by Google.
                 retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -O "https://dl.google.com/android/repository/sys-img/android/${file}"
                 unzip -q "${file}" "${arch}/system.img"
-                sudo e2cp -p "${arch}/system.img:/bin/linker${prefix}" "/system/bin/"
+                _sudo e2cp -p "${arch}/system.img:/bin/linker${prefix}" "/system/bin/"
                 for lib in "${toolchain_dir}/sysroot/usr/lib/${lib_target}/${img_api_level}"/*.so; do
                     lib=$(basename "${lib}")
-                    sudo e2cp -p "${arch}/system.img:/lib${prefix}/${lib}" "/system/lib${prefix}/"
+                    _sudo e2cp -p "${arch}/system.img:/lib${prefix}/${lib}" "/system/lib${prefix}/"
                 done
-                sudo cp "${toolchain_dir}/sysroot/usr/lib/${lib_target}/libc++_shared.so" "/system/lib${prefix}/"
+                _sudo cp "${toolchain_dir}/sysroot/usr/lib/${lib_target}/libc++_shared.so" "/system/lib${prefix}/"
                 rm "${file}"
                 rm -rf "${arch}"
                 cat >>"${GITHUB_ENV}" <<EOF
@@ -495,7 +539,7 @@ EOF
                             wine@*) bail "specifying Wine version for aarch64 windows is not yet supported" ;;
                             *) bail "unrecognized runner '${runner}'" ;;
                         esac
-                        sudo cp "${wine_root}"/lib/ld-linux-aarch64.so.1 /lib/
+                        _sudo cp "${wine_root}"/lib/ld-linux-aarch64.so.1 /lib/
                         qemu_version="${INPUT_QEMU:-"${default_qemu_version}"}"
                         install_qemu
                         x "${wine_exe}" --version
@@ -504,14 +548,21 @@ EOF
                     i686-* | x86_64*)
                         wine_exe=wine
                         # https://wiki.winehq.org/Ubuntu
+                        # https://wiki.winehq.org/Debian
+                        # https://dl.winehq.org/wine-builds
                         # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
-                        sudo dpkg --add-architecture i386
+                        _sudo dpkg --add-architecture i386
+                        distro=$(grep '^ID=' /etc/os-release | sed 's/^ID=//')
                         codename=$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')
-                        sudo mkdir -pm755 /etc/apt/keyrings
+                        _sudo mkdir -pm755 /etc/apt/keyrings
+                        if ! type -P curl &>/dev/null; then
+                            apt_packages+=(ca-certificates curl)
+                            install_apt_packages
+                        fi
                         retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://dl.winehq.org/wine-builds/winehq.key \
-                            | sudo tee /etc/apt/keyrings/winehq-archive.key >/dev/null
-                        retry curl --proto '=https' --tlsv1.2 -fsSLR --retry 10 --retry-connrefused "https://dl.winehq.org/wine-builds/ubuntu/dists/${codename}/winehq-${codename}.sources" \
-                            | sudo tee "/etc/apt/sources.list.d/winehq-${codename}.sources" >/dev/null
+                            | _sudo tee /etc/apt/keyrings/winehq-archive.key >/dev/null
+                        retry curl --proto '=https' --tlsv1.2 -fsSLR --retry 10 --retry-connrefused "https://dl.winehq.org/wine-builds/${distro}/dists/${codename}/winehq-${codename}.sources" \
+                            | _sudo tee "/etc/apt/sources.list.d/winehq-${codename}.sources" >/dev/null
                         case "${runner}" in
                             '' | wine) wine_version="${INPUT_WINE:-"${default_wine_version}"}" ;;
                             wine@*) wine_version="${runner#*@}" ;;
@@ -564,7 +615,7 @@ export WINEPATH="${winepath};\${WINEPATH:-}"
 exec ${wine_exe} "\$@"
 EOF
                 chmod +x ".${target}-runner.tmp"
-                sudo mv ".${target}-runner.tmp" "${runner_path}"
+                _sudo mv ".${target}-runner.tmp" "${runner_path}"
                 register_binfmt wine
                 ;;
             *) bail "target '${target}' is not supported yet on Linux host" ;;
@@ -612,8 +663,10 @@ EOF
         # so respect user-set QEMU_CPU.
         case "${target}" in
             aarch64* | arm64*)
-                qemu_arch="${target%%-*}"
-                qemu_arch="${qemu_arch/arm64/aarch64}"
+                case "${target}" in
+                    aarch64_be-*) qemu_arch=aarch64_be ;;
+                    *) qemu_arch=aarch64 ;;
+                esac
                 case "${qemu_version}" in
                     7.* | 8.0) default_qemu_cpu=a64fx ;; # ARMv8.2-a + SVE
                     *) default_qemu_cpu=neoverse-v1 ;;   # ARMv8.4-a + SVE + more features (https://developer.arm.com/Processors/Neoverse%20V1)
@@ -702,10 +755,10 @@ EOF
             # The interpreter for sparc-linux-gnu is /lib/ld-linux.so.2,
             # so lib/ld-linux.so.2 must be target sparc-linux-gnu to run binaries on qemu-user.
             toolchain_dir=/usr
-            sudo rm -rf "${toolchain_dir:?}/${apt_target}/lib"
-            sudo rm -rf "${toolchain_dir:?}/${apt_target}/lib64"
-            sudo ln -s lib32 "${toolchain_dir}/${apt_target}/lib"
-            gcc_version="$(gcc --version | sed -n '1 s/^.*) //p')"
+            _sudo rm -rf "${toolchain_dir:?}/${apt_target}/lib"
+            _sudo rm -rf "${toolchain_dir:?}/${apt_target}/lib64"
+            _sudo ln -s lib32 "${toolchain_dir}/${apt_target}/lib"
+            gcc_version="$("${apt_target}"-gcc --version | sed -n '1 s/^.*) //p')"
             common_flags="-m32 -mv8plus -L${toolchain_dir}/${apt_target}/lib32 -L${toolchain_dir}/${apt_target}/lib/gcc-cross/${apt_target}/${gcc_version}/32"
             cat >"/usr/local/bin/${target}-gcc" <<EOF2
 #!/bin/sh
@@ -749,7 +802,9 @@ case "${host}" in
 esac
 
 if grep <<<"${rustup_target_list}" -Eq "^${target}$"; then
-    retry rustup target add "${target}" &>/dev/null
+    if [[ "${target}" != "${host}" ]]; then
+        retry rustup target add "${target}"
+    fi
     # Note: -Z doctest-xcompile doesn't compatible with -Z build-std yet.
     if [[ "${rustc_version}" == *"nightly"* ]] || [[ "${rustc_version}" == *"dev"* ]]; then
         if cargo -Z help | grep -Eq '\bZ doctest-xcompile\b'; then
@@ -758,7 +813,7 @@ if grep <<<"${rustup_target_list}" -Eq "^${target}$"; then
     fi
 else
     # for -Z build-std
-    retry rustup component add rust-src &>/dev/null
+    retry rustup component add rust-src
     echo "BUILD_STD=-Zbuild-std" >>"${GITHUB_ENV}"
 fi
 echo "CARGO_BUILD_TARGET=${target}" >>"${GITHUB_ENV}"

@@ -10,6 +10,21 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support containers.
+
+  Note:
+  - Only Ubuntu and Debian containers are currently supported.
+  - Not fully supported for some targets.
+  - `--privileged` option is currently required (due to binfmt).
+
+    ```yaml
+    container:
+      image: '...'
+      options: --privileged
+    ```
+
+- Improve robustness of installation.
+
 ## [1.20.0] - 2024-01-25
 
 - Update the default Wine version to 9.0 from 8.0.
