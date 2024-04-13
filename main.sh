@@ -113,12 +113,6 @@ install_apt_packages() {
 install_llvm() {
     # https://github.com/taiki-e/dockerfiles/blob/998a9ad25ae76314d9439681de4d5fe70bb25430/build-base/apt.Dockerfile#L68
     echo "::group::Install LLVM"
-    codename=$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')
-    case "${codename}" in
-        bionic) llvm_version=13 ;;
-        # TODO: update to 17
-        *) llvm_version=15 ;;
-    esac
     if ! type -P curl &>/dev/null; then
         apt_packages+=(ca-certificates curl)
     fi
@@ -126,11 +120,18 @@ install_llvm() {
         apt_packages+=(gnupg)
     fi
     install_apt_packages
-    echo "deb http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${llvm_version} main" \
-        | _sudo tee "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${llvm_version}.list" >/dev/null
+    codename=$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')
+    case "${codename}" in
+        bionic) llvm_version=13 ;;
+        # TODO: update to 18
+        *) llvm_version=15 ;;
+    esac
+    _sudo mkdir -pm755 /etc/apt/keyrings
     retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://apt.llvm.org/llvm-snapshot.gpg.key \
         | gpg --dearmor \
-        | _sudo tee /etc/apt/trusted.gpg.d/llvm-snapshot.gpg >/dev/null
+        | _sudo tee /etc/apt/keyrings/llvm-snapshot.gpg >/dev/null
+    echo "deb [signed-by=/etc/apt/keyrings/llvm-snapshot.gpg] http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${llvm_version} main" \
+        | _sudo tee "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${llvm_version}.list" >/dev/null
     apt_packages+=(
         clang-"${llvm_version}"
         libc++-"${llvm_version}"-dev
