@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.21.0] - 2024-04-13
+
 - Support containers.
 
   Note:
@@ -271,7 +273,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.20.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.21.0...HEAD
+[1.21.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.19.0...v1.20.0
 [1.19.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.18.0...v1.19.0
 [1.18.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.17.0...v1.18.0
