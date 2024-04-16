@@ -380,13 +380,16 @@ Only specifying a major version is supported.
 
 | libc | Clang | C++ | test |
 | ---- | ----- | --- | ---- |
-| wasi-sdk 21 (wasi-libc c5264e2) | 17.0.6 | ? (libc++) | ✓ |
+| wasi-sdk 22 (wasi-libc 9e8c542) | 18.1.2 | ? (libc++) | ✓ |
 
 **Supported targets:**
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `wasm32-wasi` | x86_64 Linux | wasmtime |  |
+| `wasm32-wasi`   | x86_64 Linux | wasmtime |  |
+| `wasm32-wasip1` | x86_64 Linux | wasmtime |  |
+
+(Other WASI targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#wasi) may also work, although this action's CI has not tested them.)
 
 ### Windows (MinGW)
 

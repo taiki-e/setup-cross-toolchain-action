@@ -166,6 +166,7 @@ jobs:
           # rustup target list | grep -e '-wasi'
           # rustc --print target-list | grep -e '-wasi'
           - target: wasm32-wasi
+          - target: wasm32-wasip1
 
           # macOS
           # rustup target list | grep -e '-darwin'
@@ -274,7 +275,7 @@ jobs:
           - aarch64-linux-android
           - x86_64-unknown-freebsd
           - x86_64-unknown-netbsd
-          - wasm32-wasi
+          - wasm32-wasip1
           - x86_64-pc-windows-gnu
           - x86_64-pc-windows-gnullvm
         # prettier-ignore
