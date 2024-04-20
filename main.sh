@@ -93,11 +93,11 @@ fi
 target_lower="${target//-/_}"
 target_lower="${target_lower//./_}"
 target_upper=$(tr '[:lower:]' '[:upper:]' <<<"${target_lower}")
-host=$(rustc -Vv | grep 'host: ' | cut -c 7-)
-rustc_version=$(rustc -Vv | grep 'release: ' | cut -c 10-)
+host=$(rustc -vV | grep '^host:' | cut -d' ' -f2)
+rustc_version=$(rustc -vV | grep '^release:' | cut -d' ' -f2)
 rustc_minor_version="${rustc_version#*.}"
 rustc_minor_version="${rustc_minor_version%%.*}"
-rustup_target_list=$(rustup target list | sed 's/ .*//g')
+rustup_target_list=$(rustup target list | cut -d' ' -f1)
 
 install_apt_packages() {
     if [[ ${#apt_packages[@]} -gt 0 ]]; then
@@ -120,7 +120,7 @@ install_llvm() {
         apt_packages+=(gnupg)
     fi
     install_apt_packages
-    codename=$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')
+    codename=$(grep '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2)
     case "${codename}" in
         bionic) llvm_version=13 ;;
         # TODO: update to 18
@@ -553,8 +553,8 @@ EOF
                         # https://dl.winehq.org/wine-builds
                         # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
                         _sudo dpkg --add-architecture i386
-                        distro=$(grep '^ID=' /etc/os-release | sed 's/^ID=//')
-                        codename=$(grep '^VERSION_CODENAME=' /etc/os-release | sed 's/^VERSION_CODENAME=//')
+                        distro=$(grep '^ID=' /etc/os-release | cut -d= -f2)
+                        codename=$(grep '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2)
                         _sudo mkdir -pm755 /etc/apt/keyrings
                         if ! type -P curl &>/dev/null; then
                             apt_packages+=(ca-certificates curl)
