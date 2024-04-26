@@ -123,15 +123,21 @@ install_llvm() {
     codename=$(grep '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2)
     case "${codename}" in
         bionic) llvm_version=13 ;;
+        noble) llvm_version=18 ;;
         # TODO: update to 18
         *) llvm_version=15 ;;
     esac
-    _sudo mkdir -pm755 /etc/apt/keyrings
-    retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://apt.llvm.org/llvm-snapshot.gpg.key \
-        | gpg --dearmor \
-        | _sudo tee /etc/apt/keyrings/llvm-snapshot.gpg >/dev/null
-    echo "deb [signed-by=/etc/apt/keyrings/llvm-snapshot.gpg] http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${llvm_version} main" \
-        | _sudo tee "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${llvm_version}.list" >/dev/null
+    case "${codename}" in
+        noble) ;;
+        *)
+            _sudo mkdir -pm755 /etc/apt/keyrings
+            retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://apt.llvm.org/llvm-snapshot.gpg.key \
+                | gpg --dearmor \
+                | _sudo tee /etc/apt/keyrings/llvm-snapshot.gpg >/dev/null
+            echo "deb [signed-by=/etc/apt/keyrings/llvm-snapshot.gpg] http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${llvm_version} main" \
+                | _sudo tee "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${llvm_version}.list" >/dev/null
+            ;;
+    esac
     apt_packages+=(
         clang-"${llvm_version}"
         libc++-"${llvm_version}"-dev
