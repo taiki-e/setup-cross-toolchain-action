@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Document support status for ubuntu-24.04.
+
 ## [1.21.0] - 2024-04-13
 
 - Support containers.
