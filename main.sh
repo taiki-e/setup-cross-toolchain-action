@@ -521,7 +521,6 @@ EOF
                         apt_packages+=("g++-mingw-w64-${arch/_/-}")
                         sysroot_dir="/usr/${apt_target}"
                         cat >>"${GITHUB_ENV}" <<EOF
-CARGO_TARGET_${target_upper}_RUNNER=${target}-runner
 CARGO_TARGET_${target_upper}_LINKER=${apt_target}-gcc-posix
 CC_${target_lower}=${apt_target}-gcc-posix
 CXX_${target_lower}=${apt_target}-g++-posix
@@ -532,6 +531,7 @@ OBJDUMP=${apt_target}-objdump
 EOF
                         ;;
                 esac
+                echo "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
 
                 case "${target}" in
                     aarch64* | arm64*)
@@ -634,7 +634,7 @@ EOF
 
     qemu_version="${INPUT_QEMU:-"${default_qemu_version}"}"
     case "${target}" in
-        *-unknown-linux-* | *-android*)
+        *-linux-* | *-android*)
             case "${runner}" in
                 '')
                     case "${target}" in

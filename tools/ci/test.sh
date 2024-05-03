@@ -12,6 +12,9 @@ set -x
 
 target="$1"
 target="${target%@*}"
+target_lower="${target//-/_}"
+target_lower="${target_lower//./_}"
+target_upper=$(tr '[:lower:]' '[:upper:]' <<<"${target_lower}")
 wd="$2"
 base_rustflags="${RUSTFLAGS:-}"
 case "${target}" in
@@ -29,12 +32,28 @@ skip_run() {
         *-freebsd* | *-netbsd* | x86_64h-apple-darwin | aarch64*-windows-msvc) return 0 ;;
         aarch64*-darwin* | arm64*-darwin*)
             case "$(uname -m)" in
-                aarch64 | arm64) return 1 ;;
+                aarch64 | arm64) ;;
                 *) return 0 ;;
             esac
             ;;
-        *) return 1 ;;
     esac
+    case "$(uname -m)" in
+        aarch64 | arm64)
+            case "${target}" in
+                aarch64* | arm64* | *-darwin* | *-windows*) return 1 ;;
+            esac
+            ;;
+        *)
+            case "${target}" in
+                i?86-* | x86_64* | arm64ec-*) return 1 ;;
+            esac
+            ;;
+    esac
+    if [[ -z "$(eval "echo \${CARGO_TARGET_${target_upper}_RUNNER:-}")" ]]; then
+        echo "error: runner for ${target} is not set"
+        exit 1
+    fi
+    return 1
 }
 cargo_run() {
     if skip_run; then
