@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.22.0] - 2024-06-01
+
 - Partially support `/system/bin/sh` on Android.
 
 ## [1.21.1] - 2024-05-03
@@ -279,7 +281,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.21.1...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.22.0...HEAD
+[1.22.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.21.1...v1.22.0
 [1.21.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.21.0...v1.21.1
 [1.21.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.20.0...v1.21.0
 [1.20.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.19.0...v1.20.0
