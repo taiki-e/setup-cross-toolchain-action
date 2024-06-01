@@ -477,7 +477,9 @@ EOF
                 # Note that due to the Android SDK license, rust-cross-toolchain cannot redistribute sys-img distributed by Google.
                 retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -O "https://dl.google.com/android/repository/sys-img/android/${file}"
                 unzip -q "${file}" "${arch}/system.img"
-                _sudo e2cp -p "${arch}/system.img:/bin/linker${prefix}" "/system/bin/"
+                for bin in "linker${prefix}" sh; do
+                    _sudo e2cp -p "${arch}/system.img:/bin/${bin}" "/system/bin/"
+                done
                 for lib in "${toolchain_dir}/sysroot/usr/lib/${lib_target}/${img_api_level}"/*.so; do
                     lib=$(basename "${lib}")
                     _sudo e2cp -p "${arch}/system.img:/lib${prefix}/${lib}" "/system/lib${prefix}/"

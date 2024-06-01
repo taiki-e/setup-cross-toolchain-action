@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Partially support `/system/bin/sh` on Android.
+
 ## [1.21.1] - 2024-05-03
 
 - Document support status for ubuntu-24.04.
