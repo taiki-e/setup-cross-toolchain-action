@@ -436,7 +436,7 @@ You can select/pin the version by using `wine` input option, or `@` syntax in `r
 
 | libc | Clang | C++ | test |
 | ---- | ----- | --- | ---- |
-| Mingw-w64 8fdf7c9 | 18.1.5 | ✓ (libc++) | ✓ |
+| Mingw-w64 dbda83c | 18.1.6 | ✓ (libc++) | ✓ |
 
 **Supported targets:**
 
