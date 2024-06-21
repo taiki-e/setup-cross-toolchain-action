@@ -189,9 +189,9 @@ jobs:
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
 | `aarch64-unknown-linux-gnu`            | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `aarch64_be-unknown-linux-gnu`         | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [2] | qemu-user                   | tier3 |
+| `aarch64_be-unknown-linux-gnu`         | Ubuntu (18.04,        22.04),        Debian (10, 11, 12) [2] | qemu-user                   | tier3 |
 | `arm-unknown-linux-gnueabi`            | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `armeb-unknown-linux-gnueabi`          | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [3] | qemu-user                   | tier3 |
+| `armeb-unknown-linux-gnueabi`          | Ubuntu (18.04,        22.04),        Debian (10, 11, 12) [3] | qemu-user                   | tier3 |
 | `armv5te-unknown-linux-gnueabi`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
 | `armv7-unknown-linux-gnueabi`          | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
 | `armv7-unknown-linux-gnueabihf`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |

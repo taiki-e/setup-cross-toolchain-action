@@ -4,6 +4,7 @@ binfmt
 CXXSTDLIB
 distro
 endgroup
+futex
 haswell
 libclang
 libstdc
