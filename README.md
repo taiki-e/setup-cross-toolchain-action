@@ -250,7 +250,7 @@ You can select/pin the version by using `qemu` input option, or `@` syntax in `r
 
 | libc | GCC | C++ | test |
 | ---- | --- | --- | ---- |
-| musl 1.2.3 / 1.1.24 [1] | 9.4.0 | ? (libstdc++) | ✓ |
+| musl 1.2.3 / 1.1.24 [1] | 9 | ? (libstdc++) | ✓ |
 
 [1]: [1.2 on Rust 1.71+](https://github.com/rust-lang/rust/pull/107129), otherwise 1.1. 1.1 toolchain is with a patch that fixes CVE-2020-28928.
 
@@ -296,7 +296,7 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 | clang | C++ | test |
 | ----- | --- | ---- |
-| 14.0.6 | ✓ (libc++) | ✓ |
+| 14 | ✓ (libc++) | ✓ |
 
 **Note:** By making use of these targets you accept the [Android SDK License](https://developer.android.com/studio/terms)
 
@@ -333,9 +333,9 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-freebsd` | 12.4 (default), 13.2, 14.0 | Ubuntu, Debian [1] | tier3 |
-| `i686-unknown-freebsd`    | 12.4 (default), 13.2, 14.0 | Ubuntu, Debian [1] |       |
-| `x86_64-unknown-freebsd`  | 12.4 (default), 13.2, 14.0 | Ubuntu, Debian [1] |       |
+| `aarch64-unknown-freebsd` | 12.4 (default), 13.3, 14.0 | Ubuntu, Debian [1] | tier3 |
+| `i686-unknown-freebsd`    | 12.4 (default), 13.3, 14.0 | Ubuntu, Debian [1] |       |
+| `x86_64-unknown-freebsd`  | 12.4 (default), 13.3, 14.0 | Ubuntu, Debian [1] |       |
 
 [1] Clang 13 for Ubuntu 18.04, otherwise Clang 15<br>
 
@@ -361,8 +361,8 @@ Only specifying a major version is supported.
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-netbsd` | 9.2 (default), 10.0      | x86_64 Linux | tier3 |
-| `x86_64-unknown-netbsd`  | 8.2 (default), 9.2, 10.0 | x86_64 Linux |       |
+| `aarch64-unknown-netbsd` | 9.4 (default), 10.0      | x86_64 Linux | tier3 |
+| `x86_64-unknown-netbsd`  | 8.2 (default), 9.4, 10.0 | x86_64 Linux |       |
 
 (Other NetBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#netbsd) may also work, although this action's CI has not tested them.)
 
@@ -380,7 +380,7 @@ Only specifying a major version is supported.
 
 | libc | Clang | C++ | test |
 | ---- | ----- | --- | ---- |
-| wasi-sdk 22 (wasi-libc 9e8c542) | 18.1.2 | ? (libc++) | ✓ |
+| wasi-sdk 22 (wasi-libc 9e8c542) | 18 | ? (libc++) | ✓ |
 
 **Supported targets:**
 
@@ -436,7 +436,7 @@ You can select/pin the version by using `wine` input option, or `@` syntax in `r
 
 | libc | Clang | C++ | test |
 | ---- | ----- | --- | ---- |
-| Mingw-w64 dbda83c | 18.1.6 | ✓ (libc++) | ✓ |
+| Mingw-w64 7c9cfe6 | 18 | ✓ (libc++) | ✓ |
 
 **Supported targets:**
 
