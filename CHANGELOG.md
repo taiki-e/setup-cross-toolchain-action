@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support x86_64-unknown-illumos (build-only). ([#22](https://github.com/taiki-e/setup-cross-toolchain-action/pull/22), thanks @zeeshanlakhani)
+
 - Update the default QEMU version from 8.2 to 9.0.
 
 ## [1.22.0] - 2024-06-01

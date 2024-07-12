@@ -379,9 +379,9 @@ Only specifying a major version is supported.
 
 ### illumos
 
-| libc | GCC | clang | C++ | test |
-| ---- | --- | ----- | --- | ---- |
-| solaris 2.10 | 8.5.0 | host | ✓ (libstdc++) | |
+| libc | GCC | C++ | test |
+| ---- | --- | --- | ---- |
+| solaris 2.10 | 8.5.0 | ✓ (libstdc++) | |
 
 **Supported targets:**
 
