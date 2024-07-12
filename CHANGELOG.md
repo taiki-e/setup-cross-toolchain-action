@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Update the default QEMU version from 8.2 to 9.0.
+
 ## [1.22.0] - 2024-06-01
 
 - Partially support `/system/bin/sh` on Android.
@@ -37,11 +39,11 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [1.20.0] - 2024-01-25
 
-- Update the default Wine version to 9.0 from 8.0.
+- Update the default Wine version from 8.0 to 9.0.
 
 ## [1.19.0] - 2024-01-25
 
-- Update the default QEMU version to 8.2 from 8.1.
+- Update the default QEMU version from 8.1 to 8.2.
 
 ## [1.18.0] - 2023-09-22
 
@@ -50,7 +52,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [1.17.0] - 2023-08-24
 
-- Update the default QEMU version to 8.1 from 8.0.
+- Update the default QEMU version from 8.0 to 8.1.
 
 ## [1.16.0] - 2023-08-11
 
