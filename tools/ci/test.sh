@@ -29,7 +29,7 @@ esac
 skip_run() {
     case "${target}" in
         # x86_64h-apple-darwin is also x86_64 but build-only due to the CPU of GitHub-provided macOS runners is older than haswell.
-        *-freebsd* | *-netbsd* | x86_64h-apple-darwin | aarch64*-windows-msvc) return 0 ;;
+        *-freebsd* | *-netbsd* | *-illumos* | x86_64h-apple-darwin | aarch64*-windows-msvc) return 0 ;;
         aarch64*-darwin* | arm64*-darwin*)
             case "$(uname -m)" in
                 aarch64 | arm64) ;;

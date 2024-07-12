@@ -18,6 +18,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
   - [Android](#android)
   - [FreeBSD](#freebsd)
   - [NetBSD](#netbsd)
+  - [illumos](#illumos)
   - [WASI](#wasi)
   - [Windows (MinGW)](#windows-mingw)
   - [Windows (LLVM MinGW)](#windows-llvm-mingw)
@@ -375,6 +376,18 @@ You can select/pin the OS version by using `@` syntax in `target` option. For ex
 ```
 
 Only specifying a major version is supported.
+
+### illumos
+
+| libc | GCC | clang | C++ | test |
+| ---- | --- | ----- | --- | ---- |
+| solaris 2.10 | 8.5.0 | host | ✓ (libstdc++) | |
+
+**Supported targets:**
+
+| target | host | note |
+| ------ | ---- | ---- |
+| `x86_64-unknown-illumos` | x86_64 Linux (any libc) | |
 
 ### WASI
 

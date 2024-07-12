@@ -498,7 +498,7 @@ EOF
                 install_rust_cross_toolchain
                 install_llvm
                 ;;
-            *-netbsd*)
+            *-netbsd* | *-illumos*)
                 install_rust_cross_toolchain
                 ;;
             *-wasi*)
@@ -654,8 +654,8 @@ EOF
                 *) bail "unrecognized runner '${runner}'" ;;
             esac
             ;;
-        *-freebsd* | *-netbsd*)
-            # Runners for BSDs are not supported yet.
+        *-freebsd* | *-netbsd* | *-illumos*)
+            # Runners for BSDs and illumos are not supported yet.
             # We are currently testing the uploaded artifacts manually with Cirrus CI and local VM.
             # https://cirrus-ci.org/guide/FreeBSD
             case "${runner}" in
