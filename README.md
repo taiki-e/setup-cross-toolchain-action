@@ -527,8 +527,10 @@ container:
 - [cache-cargo-install-action]: GitHub Action for `cargo install` with cache.
 - [create-gh-release-action]: GitHub Action for creating GitHub Releases based on changelog.
 - [upload-rust-binary-action]: GitHub Action for building and uploading Rust binary to GitHub Releases.
+- [checkout-action]: GitHub Action for checking out a repository. (Simplified actions/checkout alternative that does not depend on Node.js.)
 
 [cache-cargo-install-action]: https://github.com/taiki-e/cache-cargo-install-action
+[checkout-action]: https://github.com/taiki-e/checkout-action
 [create-gh-release-action]: https://github.com/taiki-e/create-gh-release-action
 [install-action]: https://github.com/taiki-e/install-action
 [rust-cross-toolchain]: https://github.com/taiki-e/rust-cross-toolchain
