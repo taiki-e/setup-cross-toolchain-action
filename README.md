@@ -393,7 +393,7 @@ Only specifying a major version is supported.
 
 | libc | Clang | C++ | test |
 | ---- | ----- | --- | ---- |
-| wasi-sdk 22 (wasi-libc 9e8c542) | 18 | ? (libc++) | ✓ |
+| wasi-sdk 23 (wasi-libc 3f43ea9) | 18 | ? (libc++) | ✓ |
 
 **Supported targets:**
 
