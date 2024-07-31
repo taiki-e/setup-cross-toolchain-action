@@ -1,5 +1,4 @@
 armeabi
-BINDGEN
 binfmt
 CXXSTDLIB
 distro
