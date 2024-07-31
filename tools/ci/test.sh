@@ -77,8 +77,9 @@ run_native() {
 }
 run_tests() {
     case "${target}" in
-        # TODO: LLVM bug: Undefined temporary symbol error when building std.
-        mips-*-linux-* | mipsel-*-linux-*) ;;
+        # TODO(mips): LLVM bug: Undefined temporary symbol error when building std.
+        # TODO(sparc): stack overflow
+        mips-*-linux-* | mipsel-*-linux-* | sparc-*-linux-*) ;;
         *)
             profile=debug
             cargo_run
