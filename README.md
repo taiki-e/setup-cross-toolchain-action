@@ -306,13 +306,14 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 | target | api level | host | runner | note |
 | ------ | --------- | ---- | ------ | ---- |
 | `aarch64-linux-android`         | 21 (default), 22-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
-| `arm-linux-androideabi`         | 19 (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
-| `armv7-linux-androideabi`       | 19 (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
-| `i686-linux-android`            | 19 (default), 21-24, 26-33 [1] | x86_64 Linux | native (default), qemu-user |       |
-| `thumbv7neon-linux-androideabi` | 19 (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
+| `arm-linux-androideabi`         | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
+| `armv7-linux-androideabi`       | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
+| `i686-linux-android`            | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | native (default), qemu-user |       |
+| `thumbv7neon-linux-androideabi` | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
 | `x86_64-linux-android`          | 21 (default), 22-24, 26-33 [1] | x86_64 Linux | native (default), qemu-user |       |
 
 [1] This action currently uses the API level 24 system image, so `cargo test` and `cargo run` may not work on API level 26+.
+[2]: [21 on Rust 1.82+](https://github.com/rust-lang/rust/pull/120593), otherwise 19.
 
 You can select/pin the API level version by using `@` syntax in `target` option. For example:
 

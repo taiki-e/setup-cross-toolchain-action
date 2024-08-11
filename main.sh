@@ -55,6 +55,11 @@ fi
 target="${INPUT_TARGET:?}"
 runner="${INPUT_RUNNER:-}"
 
+host=$(rustc -vV | grep '^host:' | cut -d' ' -f2)
+rustc_version=$(rustc -vV | grep '^release:' | cut -d' ' -f2)
+rustc_minor_version="${rustc_version#*.}"
+rustc_minor_version="${rustc_minor_version%%.*}"
+
 if [[ "${target}" == *"@"* ]]; then
     case "${target}" in
         *-android*)
@@ -69,6 +74,13 @@ if [[ "${target}" == *"@"* ]]; then
 else
     # NB: Sync with readme.
     case "${target}" in
+        *-android*)
+            api_level=21
+            # https://github.com/rust-lang/rust/pull/120593 increased min api level of 32-bit targets to 21.
+            if [[ "${rustc_minor_version}" -lt 82 ]]; then
+                api_level=''
+            fi
+            ;;
         *-freebsd*)
             # FreeBSD have binary compatibility with previous releases.
             # Therefore, the default is the minimum supported version.
@@ -93,10 +105,6 @@ fi
 target_lower="${target//-/_}"
 target_lower="${target_lower//./_}"
 target_upper=$(tr '[:lower:]' '[:upper:]' <<<"${target_lower}")
-host=$(rustc -vV | grep '^host:' | cut -d' ' -f2)
-rustc_version=$(rustc -vV | grep '^release:' | cut -d' ' -f2)
-rustc_minor_version="${rustc_version#*.}"
-rustc_minor_version="${rustc_minor_version%%.*}"
 rustup_target_list=$(rustup target list | cut -d' ' -f1)
 
 install_apt_packages() {
