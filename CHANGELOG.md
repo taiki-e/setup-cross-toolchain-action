@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Fix build issue with 32-bit android targets on recent nightly due to [upstream change](https://github.com/rust-lang/rust/pull/120593). ([2068a2d](https://github.com/taiki-e/setup-cross-toolchain-action/commit/2068a2dd8a68fdcf653e4fa1312cbe24475ff07b))
+
 ## [1.23.0] - 2024-07-12
 
 - Support x86_64-unknown-illumos (build-only). ([#22](https://github.com/taiki-e/setup-cross-toolchain-action/pull/22), thanks @zeeshanlakhani)
