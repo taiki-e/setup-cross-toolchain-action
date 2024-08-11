@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.23.1] - 2024-08-11
+
 - Fix build issue with 32-bit android targets on recent nightly due to [upstream change](https://github.com/rust-lang/rust/pull/120593). ([2068a2d](https://github.com/taiki-e/setup-cross-toolchain-action/commit/2068a2dd8a68fdcf653e4fa1312cbe24475ff07b))
 
 ## [1.23.0] - 2024-07-12
@@ -289,7 +291,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.1...HEAD
+[1.23.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.0...v1.23.1
 [1.23.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.21.1...v1.22.0
 [1.21.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.21.0...v1.21.1
