@@ -360,7 +360,7 @@ setup_linux_host() {
         if [[ -n "${REPLY}" ]]; then
             apt_packages+=("${REPLY}")
         fi
-    done <<<"${packages// /,},"
+    done <<<"${packages//[$' \t\n']/,},"
     if [[ "${host}" == "${target}" ]]; then
         # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
         # TODO: other lang? https://packages.ubuntu.com/search?lang=en&suite=jammy&arch=any&searchon=names&keywords=12-aarch64-linux-gnu
