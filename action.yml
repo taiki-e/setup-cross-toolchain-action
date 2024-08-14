@@ -5,6 +5,9 @@ inputs:
   target:
     description: Target name
     required: true
+  packages:
+    description: Packages
+    required: false
   runner:
     description: Test runner
     required: false
@@ -25,6 +28,7 @@ runs:
       shell: bash
       env:
         INPUT_TARGET: ${{ inputs.target }}
+        INPUT_PACKAGES: ${{ inputs.packages }}
         INPUT_RUNNER: ${{ inputs.runner }}
         INPUT_QEMU: ${{ inputs.qemu }}
         INPUT_WINE: ${{ inputs.wine }}

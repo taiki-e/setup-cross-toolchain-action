@@ -53,6 +53,7 @@ if [[ $# -gt 0 ]]; then
 fi
 
 target="${INPUT_TARGET:?}"
+packages="${INPUT_PACKAGES:-}"
 runner="${INPUT_RUNNER:-}"
 
 host=$(rustc -vV | grep '^host:' | cut -d' ' -f2)
@@ -354,7 +355,7 @@ register_binfmt() {
 }
 
 setup_linux_host() {
-    apt_packages=()
+    apt_packages=($packages)
     if [[ "${host}" == "${target}" ]]; then
         # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
         # TODO: other lang? https://packages.ubuntu.com/search?lang=en&suite=jammy&arch=any&searchon=names&keywords=12-aarch64-linux-gnu
