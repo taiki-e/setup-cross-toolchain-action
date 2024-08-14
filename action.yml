@@ -6,7 +6,7 @@ inputs:
     description: Target name
     required: true
   packages:
-    description: Packages
+    description: Packages to install
     required: false
   runner:
     description: Test runner

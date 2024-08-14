@@ -32,10 +32,11 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
 
 ### Inputs
 
-| Name     | Required | Description   | Type   | Default        |
-|----------|:--------:|---------------|--------|----------------|
-| target   | **true** | Target triple | String |                |
-| runner   | false    | Test runner   | String |                |
+| Name     | Required | Description         | Type   | Default |
+|----------|:--------:|---------------------|--------|---------|
+| target   | **true** | Target triple       | String |         |
+| packages | false    | Packages to install | String |         |
+| runner   | false    | Test runner         | String |         |
 
 ### Example workflow: Basic usage
 
@@ -59,6 +60,27 @@ jobs:
       # You can also run the cross-compiled binaries directly (via binfmt).
       - run: ./target/aarch64-unknown-linux-gnu/debug/my-app
 ```
+
+### Example workflow: Installing additional packages
+
+```yaml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        run: rustup update stable
+      - name: Install cross-compilation tools
+        uses: taiki-e/setup-cross-toolchain-action@v1
+        with:
+          target: aarch64-unknown-linux-gnu
+          packages: libgbm-dev libxkbcommon-dev libinput-dev libudev-dev libseat-dev
+      - run: cargo build
+```
+
+> [!NOTE]
+> The list of packages can be space seperated, comma seperated or newline seperated.
 
 ### Example workflow: Multiple targets
 
