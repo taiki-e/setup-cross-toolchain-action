@@ -298,6 +298,12 @@ install_qemu() {
                 ppc64*) qemu_user_tag=@sha256:552a32adda13312fe6a33cf09855ebe46c8de52df927c86f14f727cbe574c7c9 ;;
             esac
             ;;
+        9.0)
+            case "${qemu_arch}" in
+                # Use 9.0.2+ds-1 instead of 9.0.2+ds-2 for armeb. 9.0.2+ds-2 is broken for them.
+                armeb) qemu_user_tag=@sha256:5f5b065ca1db760f33def2602f4f8468f91fd9b11c48393c5d6cd0553800df82 ;;
+            esac
+            ;;
     esac
     # TODO: distribute rust-cross-toolchain without docker
     if ! type -P docker &>/dev/null; then

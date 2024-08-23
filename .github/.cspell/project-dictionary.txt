@@ -10,7 +10,6 @@ Loongson
 multilib
 neoverse
 pkgconfig
-SIGSEGV
 Vger
 wasmtime
 WINEBOOT
