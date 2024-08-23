@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.23.2] - 2024-08-23
+
 - Work around qemu-armeb 9.0 bug.
 
 ## [1.23.1] - 2024-08-11
@@ -293,7 +295,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.1...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.2...HEAD
+[1.23.2]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.1...v1.23.2
 [1.23.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.0...v1.23.1
 [1.23.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.22.0...v1.23.0
 [1.22.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.21.1...v1.22.0
