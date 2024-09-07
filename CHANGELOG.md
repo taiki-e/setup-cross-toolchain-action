@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.24.0] - 2024-09-07
+
 - Support Mac Catalyst targets on macOS host.
 
   - aarch64-apple-ios-macabi
@@ -304,7 +306,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.2...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.24.0...HEAD
+[1.24.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.2...v1.24.0
 [1.23.2]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.1...v1.23.2
 [1.23.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.0...v1.23.1
 [1.23.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.22.0...v1.23.0
