@@ -44,7 +44,7 @@ export RUSTUP_MAX_RETRIES=10
 # version as the default runner version.
 # NB: Sync with readme.
 # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
-default_qemu_version='9.0'
+default_qemu_version='9.1'
 # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
 default_wine_version='9.0.0.0'
 
@@ -289,6 +289,12 @@ install_qemu() {
         rm -f "${qemu_bin_dir}/qemu-${qemu_arch}"
     fi
     echo "::group::Instal QEMU"
+    if [[ -z "${INPUT_QEMU:-}" ]]; then
+        case "${qemu_arch}" in
+            # Unless explicitly specified, use 9.0 instead of 9.1 for armeb. 9.1 is broken for them.
+            armeb) qemu_version=9.0 ;;
+        esac
+    fi
     # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
     qemu_user_tag=":${qemu_version}"
     case "${qemu_version}" in

@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Update the default QEMU version from 9.0 to 9.1.
+
 ## [1.23.2] - 2024-08-23
 
 - Work around qemu-armeb 9.0 bug.
@@ -237,7 +239,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [1.7.0] - 2023-03-12
 
-- setup-cross-toolchain-action no longer sets QEMU_CPU for 32-bit ARM targets by default.
+- setup-cross-toolchain-action no longer sets QEMU_CPU for 32-bit Arm targets by default.
 
   It was causing problems when running tests that create many threads.
 

@@ -229,7 +229,7 @@ jobs:
 <!-- omit in toc -->
 #### <a name="qemu-user-runner"></a>qemu-user runner
 
-The current default QEMU version is 9.0.
+The current default QEMU version is 9.1.
 
 You can select/pin the version by using `qemu` input option, or `@` syntax in `runner` input option (if both are set, the latter is preferred). For example:
 
