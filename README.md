@@ -24,6 +24,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
   - [Windows (LLVM MinGW)](#windows-llvm-mingw)
   - [Windows (MSVC)](#windows-msvc)
   - [macOS](#macos)
+  - [Mac Catalyst](#mac-catalyst)
 - [Compatibility](#compatibility)
 - [Related Projects](#related-projects)
 - [License](#license)
@@ -504,6 +505,23 @@ GitHub-provided Windows runners support cross-compile for other architectures or
 GitHub-provided macOS runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 
 (Other macOS targets may also work, although this action's CI has not tested them.)
+
+### Mac Catalyst
+
+| C++ | test |
+| --- | ---- |
+| ✓ | ✓ [1] |
+
+[1] For x86_64-apple-ios-macabi only x86_64 runners and for aarch64-apple-ios-macabi only arm64 runners.
+
+**Supported targets:**
+
+| target | host | runner | note |
+| ------ | ---- | ------ | ---- |
+| `aarch64-apple-ios-macabi` | *macOS* | native |       |
+| `x86_64-apple-ios-macabi`  | *macOS* | native |       |
+
+GitHub-provided macOS runners support cross-compile for other targets, so this action just runs `rustup target add` and/or sets some environment variables.
 
 ## Compatibility
 

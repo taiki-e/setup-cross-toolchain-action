@@ -10,6 +10,13 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support Mac Catalyst targets on macOS host.
+
+  - aarch64-apple-ios-macabi
+  - x86_64-apple-ios-macabi
+
+  GitHub-provided macOS runners support cross-compile for other targets, so this action just runs `rustup target add` and/or sets some environment variables.
+
 - Update the default QEMU version from 9.0 to 9.1.
 
 ## [1.23.2] - 2024-08-23

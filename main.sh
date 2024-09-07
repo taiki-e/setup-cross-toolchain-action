@@ -809,7 +809,7 @@ case "${host}" in
     # GitHub-provided macOS/Windows runners support cross-compile for other architectures or environments.
     *-darwin*)
         case "${target}" in
-            *-darwin*) ;;
+            *-darwin* | *-macabi*) ;;
             *) bail "target '${target}' is not supported yet on macOS host" ;;
         esac
         case "${runner}" in
