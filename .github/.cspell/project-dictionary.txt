@@ -9,7 +9,6 @@ libstdc
 Loongson
 multilib
 neoverse
-pkgconfig
 Vger
 wasmtime
 WINEBOOT
