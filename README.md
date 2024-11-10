@@ -401,7 +401,7 @@ Only specifying a major version is supported.
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `wasm32-wasi`   | x86_64 Linux | wasmtime |  |
+| `wasm32-wasi`   | x86_64 Linux | wasmtime | [Removed in Rust 1.84](https://blog.rust-lang.org/2024/04/09/updates-to-rusts-wasi-targets.html) |
 | `wasm32-wasip1` | x86_64 Linux | wasmtime |  |
 
 (Other WASI targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#wasi) may also work, although this action's CI has not tested them.)
