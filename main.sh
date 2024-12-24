@@ -230,8 +230,8 @@ READELF=llvm-readelf
 EOF
             fi
             ;;
-        *-wasi*)
-            # Do not use prefixed clang for wasi due to rustc 1.68.0 bug: https://github.com/rust-lang/rust/pull/109156
+        wasm32-wasi)
+            # Do not use prefixed Clang for wasi due to rustc 1.68.0 bug: https://github.com/rust-lang/rust/pull/109156
             cat >>"${GITHUB_ENV}" <<EOF
 CARGO_TARGET_${target_upper}_LINKER=clang
 CC_${target_lower}=clang

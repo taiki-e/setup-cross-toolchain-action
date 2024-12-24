@@ -180,6 +180,8 @@ jobs:
           # rustup target list | grep -e '-wasi'
           # rustc --print target-list | grep -e '-wasi'
           - target: wasm32-wasip1
+          - target: wasm32-wasip1-threads
+          # - target: wasm32-wasip2
 
           # macOS
           # rustup target list | grep -e '-darwin'
@@ -211,6 +213,7 @@ jobs:
           # rustup target list | grep -e '-pc-windows-msvc'
           # rustc --print target-list | grep -e '-pc-windows-msvc'
           - { target: aarch64-pc-windows-msvc, os: windows-latest }
+          # - { target: arm64ec-pc-windows-msvc, os: windows-latest }
           - { target: i586-pc-windows-msvc, os: windows-latest }
           - { target: i686-pc-windows-msvc, os: windows-latest }
           # - { target: thumbv7a-pc-windows-msvc, os: windows-latest } # tier3
