@@ -34,7 +34,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
 ### Inputs
 
 | Name     | Required | Description   | Type   | Default        |
-|----------|:--------:|---------------|--------|----------------|
+| -------- |:--------:| ------------- | ------ | -------------- |
 | target   | **true** | Target triple | String |                |
 | runner   | false    | Test runner   | String |                |
 
@@ -222,7 +222,7 @@ jobs:
 [1] [GCC 7](https://packages.ubuntu.com/en/bionic/gcc), [glibc 2.27](https://packages.ubuntu.com/en/bionic/libc6-dev) for Ubuntu 18.04. [GCC 9](https://packages.ubuntu.com/en/focal/gcc), [glibc 2.31](https://packages.ubuntu.com/en/focal/libc6-dev) for Ubuntu 20.04. [GCC 11](https://packages.ubuntu.com/en/jammy/gcc), [glibc 2.35](https://packages.ubuntu.com/en/jammy/libc6-dev) for Ubuntu 22.04, [glibc 2.39](https://packages.ubuntu.com/en/noble/libc6-dev) for Ubuntu 24.04. [GCC 8](https://packages.debian.org/en/buster/gcc), [glibc 2.28](https://packages.debian.org/en/buster/libc6-dev) for Debian 10. [GCC 10](https://packages.debian.org/en/bullseye/gcc), [glibc 2.31](https://packages.debian.org/en/bullseye/libc6-dev) for Debian 11. [GCC 12](https://packages.debian.org/en/bookworm/gcc), [glibc 2.36](https://packages.debian.org/en/bookworm/libc6-dev) for Debian 12.<br>
 [2] GCC 10, glibc 2.31<br>
 [3] GCC 7, glibc 2.25<br>
-[4] GCC 13, glibc 2.36<br>
+[4] GCC 14, glibc 2.40<br>
 [5] GCC 11, glibc 2.33<br>
 [6] [Since nightly-2023-07-05](https://github.com/rust-lang/compiler-team/issues/648), mips{,el}-unknown-linux-gnu requires release mode for building std<br>
 [7] Not fully supported with containers<br>
@@ -254,7 +254,7 @@ You can select/pin the version by using `qemu` input option, or `@` syntax in `r
 | ---- | --- | --- | ---- |
 | musl 1.2.3 / 1.1.24 [1] | 9 | ? (libstdc++) | ✓ |
 
-[1]: [1.2 on Rust 1.71+](https://github.com/rust-lang/rust/pull/107129), otherwise 1.1. 1.1 toolchain is with a patch that fixes CVE-2020-28928.
+[1] [1.2 on Rust 1.71+](https://github.com/rust-lang/rust/pull/107129), otherwise 1.1. 1.1 toolchain is with a patch that fixes CVE-2020-28928.
 
 **Supported targets:**
 
@@ -296,7 +296,7 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 ### Android
 
-| clang | C++ | test |
+| Clang | C++ | test |
 | ----- | --- | ---- |
 | 14 | ✓ (libc++) | ✓ |
 
@@ -314,7 +314,7 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 | `x86_64-linux-android`          | 21 (default), 22-24, 26-33 [1] | x86_64 Linux | native (default), qemu-user |       |
 
 [1] This action currently uses the API level 24 system image, so `cargo test` and `cargo run` may not work on API level 26+.
-[2]: [21 on Rust 1.82+](https://github.com/rust-lang/rust/pull/120593), otherwise 19.
+[2] [21 on Rust 1.82+](https://github.com/rust-lang/rust/pull/120593), otherwise 19.
 
 You can select/pin the API level version by using `@` syntax in `target` option. For example:
 
@@ -336,9 +336,9 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-freebsd` | 12.4 (default), 13.3, 14.0 | Ubuntu, Debian [1] | tier3 |
-| `i686-unknown-freebsd`    | 12.4 (default), 13.3, 14.0 | Ubuntu, Debian [1] |       |
-| `x86_64-unknown-freebsd`  | 12.4 (default), 13.3, 14.0 | Ubuntu, Debian [1] |       |
+| `aarch64-unknown-freebsd` | 12.4 (default), 13.4, 14.1 | Ubuntu, Debian [1] | tier3 |
+| `i686-unknown-freebsd`    | 12.4 (default), 13.4, 14.1 | Ubuntu, Debian [1] |       |
+| `x86_64-unknown-freebsd`  | 12.4 (default), 13.4, 14.1 | Ubuntu, Debian [1] |       |
 
 [1] Clang 13 for Ubuntu 18.04, otherwise Clang 15<br>
 
@@ -395,7 +395,7 @@ Only specifying a major version is supported.
 
 | libc | Clang | C++ | test |
 | ---- | ----- | --- | ---- |
-| wasi-sdk 23 (wasi-libc 3f43ea9) | 18 | ? (libc++) | ✓ |
+| wasi-sdk 25 (wasi-libc 574b88d) | 19 | ? (libc++) | ✓ |
 
 **Supported targets:**
 
