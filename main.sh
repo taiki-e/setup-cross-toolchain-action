@@ -44,7 +44,7 @@ export RUSTUP_MAX_RETRIES=10
 # version as the default runner version.
 # NB: Sync with readme.
 # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
-default_qemu_version='9.1'
+default_qemu_version='9.2'
 # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
 default_wine_version='9.0.0.0'
 
@@ -289,12 +289,6 @@ install_qemu() {
         rm -f "${qemu_bin_dir}/qemu-${qemu_arch}"
     fi
     echo "::group::Instal QEMU"
-    if [[ -z "${INPUT_QEMU:-}" ]]; then
-        case "${qemu_arch}" in
-            # Unless explicitly specified, use 9.0 instead of 9.1 for armeb. 9.1 is broken for them.
-            armeb) qemu_version=9.0 ;;
-        esac
-    fi
     # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
     qemu_user_tag=":${qemu_version}"
     case "${qemu_version}" in
@@ -325,7 +319,7 @@ install_qemu() {
     echo "::endgroup::"
     x "qemu-${qemu_arch}" --version
 }
-# Refs: https://github.com/qemu/qemu/blob/master/scripts/qemu-binfmt-conf.sh
+# Refs: https://github.com/qemu/qemu/blob/v9.2.0/scripts/qemu-binfmt-conf.sh
 register_binfmt() {
     echo "::group::Register binfmt"
     if [[ ! -d /proc/sys/fs/binfmt_misc ]]; then
@@ -336,7 +330,7 @@ register_binfmt() {
     fi
     case "$1" in
         qemu-user)
-            local url=https://raw.githubusercontent.com/qemu/qemu/a279ca4ea07383314b2d2b2f1d550be9482f148e/scripts/qemu-binfmt-conf.sh
+            local url='https://raw.githubusercontent.com/qemu/qemu/ae35f033b874c627d81d51070187fbf55f0bf1a7/scripts/qemu-binfmt-conf.sh'
             if ! type -P curl &>/dev/null; then
                 apt_packages+=(ca-certificates curl)
                 install_apt_packages

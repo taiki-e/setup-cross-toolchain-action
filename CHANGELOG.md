@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Update the default QEMU version from 9.1 to 9.2.
+
 ## [1.24.0] - 2024-09-07
 
 - Support Mac Catalyst targets on macOS host.
