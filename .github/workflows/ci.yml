@@ -181,7 +181,7 @@ jobs:
           # rustc --print target-list | grep -e '-wasi'
           - target: wasm32-wasip1
           - target: wasm32-wasip1-threads
-          # - target: wasm32-wasip2
+          - target: wasm32-wasip2
 
           # macOS
           # rustup target list | grep -e '-darwin'

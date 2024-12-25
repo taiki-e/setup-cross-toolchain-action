@@ -70,6 +70,10 @@ cargo_test() {
     fi
 }
 run_native() {
+    case "${target}" in
+        # .wasm file is not executable.
+        wasm32-wasip2) return ;;
+    esac
     if skip_run; then
         return
     fi

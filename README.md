@@ -403,9 +403,8 @@ Only specifying a major version is supported.
 | ------ | ---- | ------ | ---- |
 | `wasm32-wasip1`         | Linux | wasmtime |  |
 | `wasm32-wasip1-threads` | Linux | wasmtime |  |
+| `wasm32-wasip2`         | Linux | wasmtime | binfmt does not work due to `.wasm` file in this target is not marked as executable |
 | `wasm32-wasi`           | Linux | wasmtime | [Removed in Rust 1.84](https://blog.rust-lang.org/2024/04/09/updates-to-rusts-wasi-targets.html) |
-
-(Other WASI targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#wasi) may also work, although this action's CI has not tested them.)
 
 ### Windows (MinGW)
 
