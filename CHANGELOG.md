@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support windows-gnu/windows-gnullvm targets on ubuntu-24.04.
+
 ## [1.25.0] - 2024-12-25
 
 - Document that the following targets are also supported.
