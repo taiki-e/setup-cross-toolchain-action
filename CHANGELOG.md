@@ -10,6 +10,11 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Document that the following targets are also supported.
+
+  - wasm32-wasip1-threads (on Linux)
+  - wasm32-wasip2 (on Linux)
+
 - Update the default QEMU version from 9.1 to 9.2.
 
 ## [1.24.0] - 2024-09-07
