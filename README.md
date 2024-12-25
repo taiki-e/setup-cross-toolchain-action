@@ -416,9 +416,9 @@ Only specifying a major version is supported.
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `x86_64-pc-windows-gnu` | *Windows*, Ubuntu (22.04), Debian (11, 12) [1] | native (Windows host) / wine (Linux host) |  |
+| `x86_64-pc-windows-gnu` | *Windows*, Ubuntu (22.04, 24.04), Debian (11, 12) [1] | native (Windows host) / wine (Linux host) |  |
 
-[1] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev) for Ubuntu 22.04. [GCC 10](https://packages.debian.org/en/bullseye/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.debian.org/en/bullseye/mingw-w64-x86-64-dev) for Debian 11. [GCC 12](https://packages.debian.org/en/bookworm/gcc-mingw-w64-base), [MinGW-w64 10](https://packages.debian.org/en/bookworm/mingw-w64-x86-64-dev) for Debian 12.<br>
+[1] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev) for Ubuntu 22.04. [GCC 10](https://packages.debian.org/en/bullseye/gcc-mingw-w64-base), [GCC 13](https://packages.ubuntu.com/en/noble/gcc-mingw-w64-base), [MinGW-w64 11](https://packages.ubuntu.com/en/noble/mingw-w64-x86-64-dev) for Ubuntu 22.04. [GCC 10](https://packages.debian.org/en/bullseye/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.debian.org/en/bullseye/mingw-w64-x86-64-dev) for Debian 11. [GCC 12](https://packages.debian.org/en/bookworm/gcc-mingw-w64-base), [MinGW-w64 10](https://packages.debian.org/en/bookworm/mingw-w64-x86-64-dev) for Debian 12.<br>
 
 On Windows host, GitHub-provided Windows runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 
@@ -457,9 +457,9 @@ You can select/pin the version by using `wine` input option, or `@` syntax in `r
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-pc-windows-gnullvm` | Ubuntu (22.04) | wine |  |
-| `i686-pc-windows-gnullvm` | Ubuntu (22.04) | wine |  |
-| `x86_64-pc-windows-gnullvm` | Ubuntu (22.04) | wine |  |
+| `aarch64-pc-windows-gnullvm` | Ubuntu (22.04, 24.04) | wine |  |
+| `i686-pc-windows-gnullvm` | Ubuntu (22.04, 24.04) | wine |  |
+| `x86_64-pc-windows-gnullvm` | Ubuntu (22.04, 24.04) | wine |  |
 
 For the `wine` runner for {i686,x86_64}-pc-windows-gnullvm, see ["wine runner" section for windows-gnu targets](#wine-runner).
 

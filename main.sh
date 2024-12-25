@@ -574,41 +574,47 @@ EOF
                         # https://wiki.winehq.org/Debian
                         # https://dl.winehq.org/wine-builds
                         # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
-                        _sudo dpkg --add-architecture i386
-                        distro=$(grep '^ID=' /etc/os-release | cut -d= -f2)
                         codename=$(grep '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2)
-                        _sudo mkdir -pm755 /etc/apt/keyrings
-                        if ! type -P curl &>/dev/null; then
-                            apt_packages+=(ca-certificates curl)
-                            install_apt_packages
-                        fi
-                        retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://dl.winehq.org/wine-builds/winehq.key \
-                            | _sudo tee /etc/apt/keyrings/winehq-archive.key >/dev/null
-                        retry curl --proto '=https' --tlsv1.2 -fsSLR --retry 10 --retry-connrefused "https://dl.winehq.org/wine-builds/${distro}/dists/${codename}/winehq-${codename}.sources" \
-                            | _sudo tee "/etc/apt/sources.list.d/winehq-${codename}.sources" >/dev/null
                         case "${runner}" in
                             '' | wine) wine_version="${INPUT_WINE:-"${default_wine_version}"}" ;;
                             wine@*) wine_version="${runner#*@}" ;;
                             *) bail "unrecognized runner '${runner}'" ;;
                         esac
-                        if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
-                            wine_branch=stable
-                        elif [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
-                            wine_branch=devel
+                        _sudo dpkg --add-architecture i386
+                        if [[ "${codename}" == 'noble' ]] && [[ "${wine_version}" == '9.0.0.0' ]]; then
+                            # winehq supports noble but 9.0.0 is not available in it
+                            # https://dl.winehq.org/wine-builds/ubuntu/dists/noble/main/binary-amd64
+                            apt_packages+=(wine wine32 wine64)
                         else
-                            bail "unrecognized Wine version '${wine_version}'"
+                            distro=$(grep '^ID=' /etc/os-release | cut -d= -f2)
+                            _sudo mkdir -pm755 /etc/apt/keyrings
+                            if ! type -P curl &>/dev/null; then
+                                apt_packages+=(ca-certificates curl)
+                                install_apt_packages
+                            fi
+                            retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://dl.winehq.org/wine-builds/winehq.key \
+                                | _sudo tee /etc/apt/keyrings/winehq-archive.key >/dev/null
+                            retry curl --proto '=https' --tlsv1.2 -fsSLR --retry 10 --retry-connrefused "https://dl.winehq.org/wine-builds/${distro}/dists/${codename}/winehq-${codename}.sources" \
+                                | _sudo tee "/etc/apt/sources.list.d/winehq-${codename}.sources" >/dev/null
+                            if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+                                wine_branch=stable
+                            elif [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+                                wine_branch=devel
+                            else
+                                bail "unrecognized Wine version '${wine_version}'"
+                            fi
+                            # The suffix is 1 in most cases, rarely 2.
+                            # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
+                            # https://dl.winehq.org/wine-builds/ubuntu/dists/focal/main/binary-amd64
+                            wine_build_suffix=1
+                            apt_packages+=(
+                                "winehq-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
+                                "wine-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
+                                "wine-${wine_branch}-amd64=${wine_version}~${codename}-${wine_build_suffix}"
+                                "wine-${wine_branch}-i386=${wine_version}~${codename}-${wine_build_suffix}"
+                                "wine-${wine_branch}-dev=${wine_version}~${codename}-${wine_build_suffix}"
+                            )
                         fi
-                        # The suffix is 1 in most cases, rarely 2.
-                        # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
-                        # https://dl.winehq.org/wine-builds/ubuntu/dists/focal/main/binary-amd64
-                        wine_build_suffix=1
-                        apt_packages+=(
-                            "winehq-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
-                            "wine-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
-                            "wine-${wine_branch}-amd64=${wine_version}~${codename}-${wine_build_suffix}"
-                            "wine-${wine_branch}-i386=${wine_version}~${codename}-${wine_build_suffix}"
-                            "wine-${wine_branch}-dev=${wine_version}~${codename}-${wine_build_suffix}"
-                        )
                         install_apt_packages
                         x wine --version
                         wineboot=wineboot
