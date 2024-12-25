@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.26.0] - 2024-12-25
+
 - Support windows-gnu/windows-gnullvm targets on ubuntu-24.04.
 
 ## [1.25.0] - 2024-12-25
@@ -317,7 +319,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.25.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.26.0...HEAD
+[1.26.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.25.0...v1.26.0
 [1.25.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.24.0...v1.25.0
 [1.24.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.2...v1.24.0
 [1.23.2]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.23.1...v1.23.2
