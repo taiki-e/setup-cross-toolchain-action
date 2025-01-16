@@ -437,14 +437,14 @@ You can select/pin the version by using `wine` input option, or `@` syntax in `r
 - uses: taiki-e/setup-cross-toolchain-action@v1
   with:
     target: x86_64-pc-windows-gnu
-    wine: '9.3'
+    wine: '9.22'
 ```
 
 ```yaml
 - uses: taiki-e/setup-cross-toolchain-action@v1
   with:
     target: x86_64-pc-windows-gnu
-    runner: wine@9.3
+    runner: wine@9.22
 ```
 
 ### Windows (LLVM MinGW)
