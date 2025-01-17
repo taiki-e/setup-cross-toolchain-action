@@ -35,8 +35,8 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
 
 | Name     | Required | Description   | Type   | Default        |
 | -------- |:--------:| ------------- | ------ | -------------- |
-| target   | **true** | Target triple | String |                |
-| runner   | false    | Test runner   | String |                |
+| target   | **✓**    | Target triple | String |                |
+| runner   |          | Test runner   | String |                |
 
 ### Example workflow: Basic usage
 
