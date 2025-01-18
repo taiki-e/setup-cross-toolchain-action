@@ -172,7 +172,13 @@ install_rust_cross_toolchain() {
     install_apt_packages
   fi
   # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
-  retry docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}${sys_version}-dev-amd64"
+  local arch
+  case "${host}" in
+    x86_64*) arch=amd64 ;;
+    aarch64-*) arch=arm64v8 ;;
+    *) bail "unrecognized host '${host}'" ;;
+  esac
+  retry docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}${sys_version}-dev-${arch}"
   mkdir -p -- .setup-cross-toolchain-action-tmp
   docker cp -- "rust-cross-toolchain:/${target}" .setup-cross-toolchain-action-tmp/toolchain
   case "${target}" in
@@ -397,6 +403,40 @@ setup_linux_host() {
               *) cc_target="${target/-unknown/}" ;;
             esac
             apt_target="${apt_target:-"${cc_target/i586/i686}"}"
+            case "${target}" in
+              aarch64* | arm64*) dpkg_arch=arm64 ;;
+              arm*hf | thumb*hf) dpkg_arch=armhf ;;
+              arm* | thumb*) dpkg_arch=armel ;;
+              i?86-*) dpkg_arch=i386 ;;
+              m68k-*) dpkg_arch=m68k ;;
+              mips-*) dpkg_arch=mips ;;
+              mips64el-*) dpkg_arch=mips64el ;;
+              mipsel-*) dpkg_arch=mipsel ;;
+              powerpc-*spe) dpkg_arch=powerpcspe ;;
+              powerpc-*) dpkg_arch=powerpc ;;
+              powerpc64-*) dpkg_arch=ppc64 ;;
+              powerpc64le-*) dpkg_arch=ppc64el ;;
+              riscv64gc-*) dpkg_arch=riscv64 ;;
+              s390x-*) dpkg_arch=s390x ;;
+              sparc-*) dpkg_arch=sparc ;;
+              sparc64-*) dpkg_arch=sparc64 ;;
+              x86_64*x32) dpkg_arch=x32 ;;
+              x86_64*) dpkg_arch=amd64 ;;
+            esac
+            if [[ -z "${use_qemu}" ]]; then
+              case "${host}" in
+                aarch64-*)
+                  case "${dpkg_arch}" in
+                    armhf)
+                      _sudo dpkg --add-architecture "${dpkg_arch}"
+                      # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
+                      # TODO: other lang?
+                      apt_packages+=("libstdc++6:${dpkg_arch}")
+                      ;;
+                  esac
+                  ;;
+              esac
+            fi
             # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
             # TODO: other lang? https://packages.ubuntu.com/search?lang=en&suite=noble&arch=any&searchon=names&keywords=13-aarch64-linux-gnu
             apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
@@ -517,10 +557,6 @@ EOF
         ;;
       *-wasi*)
         install_rust_cross_toolchain
-        case "${runner}" in
-          '' | 'wasmtime') ;;
-          *) bail "unrecognized runner '${runner}'" ;;
-        esac
         printf '%s\n' "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
         # https://github.com/taiki-e/rust-cross-toolchain/blob/fcb7a7e6ca14333d93c528f34a1def5a38745b3a/docker/test/entrypoint.sh#L174
         printf 'CXXSTDLIB=c++\n' >>"${GITHUB_ENV}"
@@ -655,37 +691,6 @@ EOF
     printf '%s\n' "BINDGEN_EXTRA_CLANG_ARGS_${target_lower}=--sysroot=${sysroot_dir}" >>"${GITHUB_ENV}"
   fi
 
-  use_qemu=''
-  qemu_version="${INPUT_QEMU:-"${default_qemu_version}"}"
-  case "${target}" in
-    *-linux-* | *-android*)
-      case "${runner}" in
-        '')
-          case "${target}" in
-            # On x86 with SSE2, qemu-user is not used by default.
-            x86_64* | i686-*) ;;
-            *) use_qemu=1 ;;
-          esac
-          ;;
-        native) ;;
-        qemu-user) use_qemu=1 ;;
-        qemu-user@*)
-          use_qemu=1
-          qemu_version="${runner#*@}"
-          ;;
-        *) bail "unrecognized runner '${runner}'" ;;
-      esac
-      ;;
-    *-freebsd* | *-netbsd* | *-illumos*)
-      # Runners for BSDs and illumos are not supported yet.
-      # We are currently testing the uploaded artifacts manually with Cirrus CI and local VM.
-      # https://cirrus-ci.org/guide/FreeBSD
-      case "${runner}" in
-        '') ;;
-        *) bail "unrecognized runner '${runner}'" ;;
-      esac
-      ;;
-  esac
   if [[ -n "${use_qemu}" ]]; then
     # https://github.com/taiki-e/rust-cross-toolchain/blob/fcb7a7e6ca14333d93c528f34a1def5a38745b3a/docker/test/entrypoint.sh#L307
     # We basically set the newer and more powerful CPU as the
@@ -807,11 +812,71 @@ EOF2
 }
 
 case "${host}" in
-  *-linux-gnu*) setup_linux_host ;;
+  *-linux-gnu*)
+    use_qemu=''
+    qemu_version="${INPUT_QEMU:-"${default_qemu_version}"}"
+    case "${target}" in
+      *-linux-* | *-android*)
+        case "${runner}" in
+          '')
+            if [[ "${host}" != "${target}" ]]; then
+              case "${host}" in
+                x86_64*)
+                  case "${target}" in
+                    # On x86 with SSE2, qemu-user is not used by default.
+                    x86_64* | i686-*) ;;
+                    *) use_qemu=1 ;;
+                  esac
+                  ;;
+                aarch64-*)
+                  case "${target}" in
+                    aarch64-*) ;;
+                    armeb*hf | thumbeb*hf) use_qemu=1 ;;
+                    arm*hf | thumb*hf)
+                      if ! lscpu | grep -Eq 'CPU.*32-bit'; then
+                        use_qemu=1
+                      fi
+                      ;;
+                    *) use_qemu=1 ;;
+                  esac
+                  ;;
+                *) bail "unrecognized host '${host}' for target '${target}'" ;;
+              esac
+            fi
+            ;;
+          native) ;;
+          qemu-user) use_qemu=1 ;;
+          qemu-user@*)
+            use_qemu=1
+            qemu_version="${runner#*@}"
+            ;;
+          *) bail "unrecognized runner '${runner}'" ;;
+        esac
+        ;;
+      *-freebsd* | *-netbsd* | *-illumos*)
+        # Runners for BSDs and illumos are not supported yet.
+        # We are currently testing the uploaded artifacts manually with Cirrus CI and local VM.
+        # https://cirrus-ci.org/guide/FreeBSD
+        case "${runner}" in
+          '') ;;
+          *) bail "unrecognized runner '${runner}'" ;;
+        esac
+        ;;
+      *-wasi*)
+        case "${runner}" in
+          '' | wasmtime) ;;
+          *) bail "unrecognized runner '${runner}'" ;;
+        esac
+        ;;
+      *-windows-gnu*) ;; # Checked in setup_linux_host
+      *) bail "target '${target}' is not supported yet on Linux host" ;;
+    esac
+    setup_linux_host
+    ;;
   # GitHub-provided macOS/Windows runners support cross-compile for other architectures or environments.
   *-darwin*)
     case "${target}" in
-      *-darwin* | *-macabi*) ;;
+      *-apple-*) ;;
       *) bail "target '${target}' is not supported yet on macOS host" ;;
     esac
     case "${runner}" in

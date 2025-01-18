@@ -190,34 +190,34 @@ jobs:
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-unknown-linux-gnu`            | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `aarch64_be-unknown-linux-gnu`         | Ubuntu (18.04,        22.04),        Debian (10, 11, 12) [2] | qemu-user                   | tier3 |
-| `arm-unknown-linux-gnueabi`            | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `armeb-unknown-linux-gnueabi`          | Ubuntu (18.04,        22.04),        Debian (10, 11, 12) [3] | qemu-user                   | tier3 |
-| `armv5te-unknown-linux-gnueabi`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `armv7-unknown-linux-gnueabi`          | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `armv7-unknown-linux-gnueabihf`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `i586-unknown-linux-gnu`               | Ubuntu (18.04, 20.04, 22.04, 24.04) [1]                      | qemu-user (default), native | [7]   |
-| `i686-unknown-linux-gnu`               | Ubuntu (18.04, 20.04, 22.04, 24.04) [1]                      | native (default), qemu-user | [7]   |
-| `loongarch64-unknown-linux-gnu`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [4] | qemu-user                   | experimental |
-| `mips-unknown-linux-gnu`               | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   | tier3 [6] |
-| `mips64-unknown-linux-gnuabi64`        | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   | tier3 |
-| `mips64el-unknown-linux-gnuabi64`      | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   | tier3 |
-| `mipsel-unknown-linux-gnu`             | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   | tier3 [6] |
-| `mipsisa32r6-unknown-linux-gnu`        | Ubuntu               (22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   | tier3 |
-| `mipsisa32r6el-unknown-linux-gnu`      | Ubuntu        (20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   | tier3 |
-| `mipsisa64r6-unknown-linux-gnuabi64`   | Ubuntu               (22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   | tier3 |
-| `mipsisa64r6el-unknown-linux-gnuabi64` | Ubuntu        (20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   | tier3 |
-| `powerpc-unknown-linux-gnu`            | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `powerpc64-unknown-linux-gnu`          | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `powerpc64le-unknown-linux-gnu`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `riscv32gc-unknown-linux-gnu`          | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [5] | qemu-user                   |       |
-| `riscv64gc-unknown-linux-gnu`          | ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `s390x-unknown-linux-gnu`              | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `sparc-unknown-linux-gnu`              | Ubuntu (18.04,        22.04, 24.04), Debian (10,     12) [1] | qemu-user                   | tier3, experimental |
-| `sparc64-unknown-linux-gnu`            | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `thumbv7neon-unknown-linux-gnueabihf`  | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user                   |       |
-| `x86_64-unknown-linux-gnu`             | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default), qemu-user |       |
+| `aarch64-unknown-linux-gnu`            | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user |       |
+| `aarch64_be-unknown-linux-gnu`         | Ubuntu (18.04,        22.04),        Debian (10, 11, 12) [2] | qemu-user | tier3 |
+| `arm-unknown-linux-gnueabi`            | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
+| `armeb-unknown-linux-gnueabi`          | Ubuntu (18.04,        22.04),        Debian (10, 11, 12) [3] | qemu-user | tier3 |
+| `armv5te-unknown-linux-gnueabi`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
+| `armv7-unknown-linux-gnueabi`          | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
+| `armv7-unknown-linux-gnueabihf`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user |       |
+| `i586-unknown-linux-gnu`               | Ubuntu (18.04, 20.04, 22.04, 24.04) [1]                      | native (x86_64 host only), qemu-user (default) | [7]   |
+| `i686-unknown-linux-gnu`               | Ubuntu (18.04, 20.04, 22.04, 24.04) [1]                      | native (default, x86_64 host only), qemu-user  | [7]   |
+| `loongarch64-unknown-linux-gnu`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [4] | qemu-user | experimental |
+| `mips-unknown-linux-gnu`               | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 [6] |
+| `mips64-unknown-linux-gnuabi64`        | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
+| `mips64el-unknown-linux-gnuabi64`      | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
+| `mipsel-unknown-linux-gnu`             | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 [6] |
+| `mipsisa32r6-unknown-linux-gnu`        | Ubuntu               (22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
+| `mipsisa32r6el-unknown-linux-gnu`      | Ubuntu        (20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
+| `mipsisa64r6-unknown-linux-gnuabi64`   | Ubuntu               (22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
+| `mipsisa64r6el-unknown-linux-gnuabi64` | Ubuntu        (20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
+| `powerpc-unknown-linux-gnu`            | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
+| `powerpc64-unknown-linux-gnu`          | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
+| `powerpc64le-unknown-linux-gnu`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
+| `riscv32gc-unknown-linux-gnu`          | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [5] | qemu-user |       |
+| `riscv64gc-unknown-linux-gnu`          | ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
+| `s390x-unknown-linux-gnu`              | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
+| `sparc-unknown-linux-gnu`              | Ubuntu (18.04,        22.04, 24.04), Debian (10,     12) [1] | qemu-user | tier3, experimental |
+| `sparc64-unknown-linux-gnu`            | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
+| `thumbv7neon-unknown-linux-gnueabihf`  | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user |       |
+| `x86_64-unknown-linux-gnu`             | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, x86_64 host only), qemu-user  |       |
 
 [1] GCC 7, glibc 2.27 for Ubuntu 18.04. [GCC 9](https://packages.ubuntu.com/en/focal/gcc), [glibc 2.31](https://packages.ubuntu.com/en/focal/libc6-dev) for Ubuntu 20.04. [GCC 11](https://packages.ubuntu.com/en/jammy/gcc), [glibc 2.35](https://packages.ubuntu.com/en/jammy/libc6-dev) for Ubuntu 22.04. [GCC 13](https://packages.ubuntu.com/en/noble/gcc), [glibc 2.39](https://packages.ubuntu.com/en/noble/libc6-dev) for Ubuntu 24.04. [GCC 8](https://packages.debian.org/en/buster/gcc), [glibc 2.28](https://packages.debian.org/en/buster/libc6-dev) for Debian 10. [GCC 10](https://packages.debian.org/en/bullseye/gcc), [glibc 2.31](https://packages.debian.org/en/bullseye/libc6-dev) for Debian 11. [GCC 12](https://packages.debian.org/en/bookworm/gcc), [glibc 2.36](https://packages.debian.org/en/bookworm/libc6-dev) for Debian 12.<br>
 [2] GCC 10, glibc 2.31<br>

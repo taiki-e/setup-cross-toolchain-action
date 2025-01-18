@@ -2,13 +2,14 @@ armeabi
 binfmt
 CXXSTDLIB
 distro
-futex
 haswell
 libclang
 libstdc
 Loongson
 multilib
 neoverse
+powerpcspe
+unikraft
 Vger
 wasmtime
 WINEBOOT
