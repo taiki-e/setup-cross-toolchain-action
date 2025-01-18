@@ -12,7 +12,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [1.27.0] - 2025-01-18
 
-- Support aarch64/armv7hf linux-gnu targets on [new GitHub-hosted AArch64 Linux runners (ubuntu-22.04-arm, ubuntu-24.04-arm)](https://github.blog/changelog/2025-01-16-linux-arm64-hosted-runners-now-available-for-free-in-public-repositories-public-preview/)
+- Support aarch64/armv7hf linux-gnu targets on [new GitHub-hosted AArch64 Linux runners (ubuntu-22.04-arm, ubuntu-24.04-arm)](https://github.blog/changelog/2025-01-16-linux-arm64-hosted-runners-now-available-for-free-in-public-repositories-public-preview/). ([#25](https://github.com/taiki-e/setup-cross-toolchain-action/pull/25))
 
   The following targets are supported and tested for native execution:
 
@@ -22,7 +22,7 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
   Other targets may also be work on GitHub-hosted AArch64 Linux runners using QEMU or other runner, but have not yet been tested and support is not guaranteed.
 
-- Allow cross-compile to arbitrary Apple targets from macOS.
+- Allow cross-compile to arbitrary Apple targets from macOS. ([#25](https://github.com/taiki-e/setup-cross-toolchain-action/pull/25))
 
   GitHub-provided macOS runners support cross-compile for other targets, so this action just runs `rustup target add` and/or sets some environment variables.
 
