@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 # SPDX-License-Identifier: Apache-2.0 OR MIT
 # shellcheck disable=SC2086
-set -eEuo pipefail
+set -CeEuo pipefail
 IFS=$'\n\t'
-cd "$(dirname "$0")"/../..
+trap -- 's=$?; printf >&2 "%s\n" "${0##*/}:${LINENO}: \`${BASH_COMMAND}\` exit with ${s}"; exit ${s}' ERR
+cd -- "$(dirname -- "$0")"/../..
 
-# shellcheck disable=SC2154
-trap 's=$?; echo >&2 "$0: error on line "${LINENO}": ${BASH_COMMAND}"; exit ${s}' ERR
+bail() {
+  printf >&2 'error: %s\n' "$*"
+  exit 1
+}
 
 set -x
 
@@ -17,9 +20,10 @@ target_lower="${target_lower//./_}"
 target_upper=$(tr '[:lower:]' '[:upper:]' <<<"${target_lower}")
 wd="$2"
 base_rustflags="${RUSTFLAGS:-}"
+exe=''
 case "${target}" in
-  *-windows*) exe=".exe" ;;
-  wasm*) exe=".wasm" ;;
+  *-windows*) exe='.exe' ;;
+  wasm*) exe='.wasm' ;;
 esac
 # TODO: Print glibc version
 case "${target}" in
@@ -29,7 +33,7 @@ esac
 skip_run() {
   case "${target}" in
     # x86_64h-apple-darwin is also x86_64 but build-only due to the CPU of GitHub-provided macOS runners is older than haswell.
-    *-freebsd* | *-netbsd* | *-illumos* | x86_64h-apple-darwin | aarch64*-windows-msvc) return 0 ;;
+    *-freebsd* | *-netbsd* | *-illumos* | x86_64h-apple-darwin | aarch64*-windows-msvc | arm64*-windows-msvc) return 0 ;;
     aarch64*-darwin* | arm64*-darwin*)
       case "$(uname -m)" in
         aarch64 | arm64) ;;
@@ -45,13 +49,12 @@ skip_run() {
       ;;
     *)
       case "${target}" in
-        i?86-* | x86_64* | arm64ec-*) return 1 ;;
+        i?86-* | x86_64*) return 1 ;;
       esac
       ;;
   esac
-  if [[ -z "$(eval "echo \${CARGO_TARGET_${target_upper}_RUNNER:-}")" ]]; then
-    echo "error: runner for ${target} is not set"
-    exit 1
+  if [[ -z "$(eval "printf '%s\n' \${CARGO_TARGET_${target_upper}_RUNNER:-}")" ]]; then
+    bail "runner for ${target} is not set"
   fi
   return 1
 }
@@ -77,7 +80,7 @@ run_native() {
   if skip_run; then
     return
   fi
-  "${target_dir}/${target}/${profile}/rust-test${exe:-}"
+  "${target_dir}/${target}/${profile}/rust-test${exe}"
 }
 run_tests() {
   case "${target}" in
@@ -89,8 +92,8 @@ run_tests() {
       cargo_run
       cargo_test
       run_native
-      ls "${target_dir}/${target}/${profile}"
-      cp "${target_dir}/${target}/${profile}/rust-test${exe:-}" "/tmp/artifacts/rust-test1-${profile}${exe:-}"
+      ls -- "${target_dir}/${target}/${profile}"
+      cp -- "${target_dir}/${target}/${profile}/rust-test${exe}" "/tmp/artifacts/rust-test1-${profile}${exe}"
       ;;
   esac
 
@@ -98,14 +101,14 @@ run_tests() {
   cargo_run --release
   cargo_test --release
   run_native
-  ls "${target_dir}/${target}/${profile}"
-  cp "${target_dir}/${target}/${profile}/rust-test${exe:-}" "/tmp/artifacts/rust-test${test_id}-${profile}${exe:-}"
-  ((test_id++))
+  ls -- "${target_dir}/${target}/${profile}"
+  cp -- "${target_dir}/${target}/${profile}/rust-test${exe}" "/tmp/artifacts/rust-test${test_id}-${profile}${exe}"
+  _=$((test_id++))
   cargo clean
 }
 
-cd "${wd}"
-mkdir -p /tmp/artifacts/
+cd -- "${wd}"
+mkdir -p -- /tmp/artifacts/
 target_dir=$(cargo metadata --format-version=1 --no-deps | jq -r '.target_directory')
 test_id=1
 

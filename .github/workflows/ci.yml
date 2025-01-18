@@ -25,7 +25,7 @@ env:
 
 defaults:
   run:
-    shell: bash
+    shell: bash --noprofile --norc -CeEuxo pipefail {0}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
@@ -48,8 +48,8 @@ jobs:
         # https://github.com/taiki-e/rust-cross-toolchain/blob/HEAD/tools/target-list-shared.sh
         target:
           # Linux (GNU)
-          # rustup target list | grep -e '-linux-gnu'
-          # rustc --print target-list | grep -e '-linux-gnu'
+          # rustup target list | grep -F -e '-linux-gnu'
+          # rustc --print target-list | grep -F -e '-linux-gnu'
           - aarch64-unknown-linux-gnu
           # - aarch64-unknown-linux-gnu_ilp32 # tier3
           # TODO: https://github.com/BurntSushi/memchr/pull/162
@@ -92,8 +92,8 @@ jobs:
           - ubuntu-24.04
         include:
           # Linux (musl)
-          # rustup target list | grep -e '-linux-musl'
-          # rustc --print target-list | grep -e '-linux-musl'
+          # rustup target list | grep -F -e '-linux-musl'
+          # rustc --print target-list | grep -F -e '-linux-musl'
           - target: aarch64-unknown-linux-musl
           - target: aarch64-unknown-linux-musl
             runner: qemu-user@7.2
@@ -122,7 +122,7 @@ jobs:
           - target: x86_64-unknown-linux-musl
 
           # Linux (uClibc)
-          # rustc --print target-list | grep -e '-linux-uclibc'
+          # rustc --print target-list | grep -F -e '-linux-uclibc'
           # TODO: https://github.com/rust-lang/rust/issues/118190
           # - target: armv5te-unknown-linux-uclibceabi # tier3
           # - target: armv7-unknown-linux-uclibceabi # tier3
@@ -131,8 +131,8 @@ jobs:
           # - target: mipsel-unknown-linux-uclibc # tier3
 
           # Android
-          # rustup target list | grep -e '-android'
-          # rustc --print target-list | grep -e '-android'
+          # rustup target list | grep -F -e '-android'
+          # rustc --print target-list | grep -F -e '-android'
           - target: aarch64-linux-android
           - target: arm-linux-androideabi
           - target: arm-linux-androideabi@21
@@ -142,8 +142,8 @@ jobs:
           - target: x86_64-linux-android
 
           # FreeBSD
-          # rustup target list | grep -e '-freebsd'
-          # rustc --print target-list | grep -e '-freebsd'
+          # rustup target list | grep -F -e '-freebsd'
+          # rustc --print target-list | grep -F -e '-freebsd'
           - target: aarch64-unknown-freebsd # tier3
           # - target: armv6-unknown-freebsd # tier3
           # - target: armv7-unknown-freebsd # tier3
@@ -156,8 +156,8 @@ jobs:
           - target: x86_64-unknown-freebsd@13
 
           # NetBSD
-          # rustup target list | grep -e '-netbsd'
-          # rustc --print target-list | grep -e '-netbsd'
+          # rustup target list | grep -F -e '-netbsd'
+          # rustc --print target-list | grep -F -e '-netbsd'
           - target: aarch64-unknown-netbsd # tier3
           # - target: aarch64_be-unknown-netbsd # tier3
           # - target: armv6-unknown-netbsd-eabihf # tier3
@@ -170,47 +170,45 @@ jobs:
           - target: x86_64-unknown-netbsd@9
 
           # Illumos
-          # rustup target list | grep -e '-illumos'
-          # rustc --print target-list | grep -e '-illumos'
+          # rustup target list | grep -F -e '-illumos'
+          # rustc --print target-list | grep -F -e '-illumos'
           # - target: aarch64-unknown-illumos # tier3 (not yet supported)
           - target: x86_64-unknown-illumos
 
           # WASI
-          # rustup target list | grep -e '-wasi'
-          # rustc --print target-list | grep -e '-wasi'
+          # rustup target list | grep -F -e '-wasi'
+          # rustc --print target-list | grep -F -e '-wasi'
           - target: wasm32-wasip1
           - target: wasm32-wasip1-threads
           - target: wasm32-wasip2
 
           # macOS
-          # rustup target list | grep -e '-darwin'
-          # rustc --print target-list | grep -e '-darwin'
+          # rustup target list | grep -F -e '-darwin'
+          # rustc --print target-list | grep -F -e '-darwin'
           - target: aarch64-apple-darwin
-            os: macos-14 # aarch64
+            os: macos-latest # AArch64
           - target: aarch64-apple-darwin
             os: macos-13 # x86_64
           # - target: i686-apple-darwin # tier3
           #   os: macos-latest
           - target: x86_64-apple-darwin
-            os: macos-14 # aarch64
+            os: macos-latest # AArch64
           - target: x86_64-apple-darwin
             os: macos-13 # x86_64
-          - target: x86_64-apple-darwin
-            os: macos-latest
           - target: x86_64h-apple-darwin # tier3
             os: macos-latest
 
           # Mac Catalyst
-          # rustup target list | grep -e '-macabi'
-          # rustc --print target-list | grep -e '-macabi'
+          # rustup target list | grep -F -e '-macabi'
+          # rustc --print target-list | grep -F -e '-macabi'
           - target: aarch64-apple-ios-macabi
             os: macos-latest # AArch64
           - target: x86_64-apple-ios-macabi
             os: macos-13 # x86_64
 
           # Windows (MSVC)
-          # rustup target list | grep -e '-pc-windows-msvc'
-          # rustc --print target-list | grep -e '-pc-windows-msvc'
+          # rustup target list | grep -F -e '-pc-windows-msvc'
+          # rustc --print target-list | grep -F -e '-pc-windows-msvc'
           - { target: aarch64-pc-windows-msvc, os: windows-latest }
           # - { target: arm64ec-pc-windows-msvc, os: windows-latest }
           - { target: i586-pc-windows-msvc, os: windows-latest }
@@ -219,8 +217,8 @@ jobs:
           - { target: x86_64-pc-windows-msvc, os: windows-latest }
 
           # Windows (MinGW)
-          # rustup target list | grep -e '-pc-windows-gnu'
-          # rustc --print target-list | grep -e '-pc-windows-gnu'
+          # rustup target list | grep -F -e '-pc-windows-gnu'
+          # rustc --print target-list | grep -F -e '-pc-windows-gnu'
           # Windows host:
           # - target: i686-pc-windows-gnu
           #   os: windows-latest
@@ -260,9 +258,8 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: taiki-e/checkout-action@v1
-      - name: Install Rust
-        run: rustup toolchain add nightly --no-self-update && rustup default nightly
-      - run: echo "QEMU_STRACE=1" >>"${GITHUB_ENV}"
+      - uses: taiki-e/github-actions/install-rust@nightly
+      - run: printf 'QEMU_STRACE=1\n' >>"${GITHUB_ENV}"
         if: matrix.target != 'aarch64-pc-windows-gnullvm'
       - uses: ./
         with:
@@ -271,11 +268,9 @@ jobs:
           qemu: ${{ matrix.qemu }}
           wine: ${{ matrix.wine }}
       - run: git clone --depth 1 https://github.com/taiki-e/rust-cross-toolchain.git
-      - run: tools/ci/test.sh ${{ matrix.target }} rust-cross-toolchain/docker/test/fixtures/rust
+      - run: tools/ci/test.sh "${{ matrix.target }}" rust-cross-toolchain/docker/test/fixtures/rust
         id: test
-      - run: |
-          set -eEuxo pipefail
-          /system/bin/sh -c set
+      - run: /system/bin/sh -c set
         if: contains(matrix.target, '-android')
       # For debugging
       - uses: actions/upload-artifact@v4
@@ -341,25 +336,23 @@ jobs:
     steps:
       - name: Install requirements (ubuntu/debian)
         run: |
-          set -eEuxo pipefail
           apt-get -o Acquire::Retries=10 -qq update
           apt-get -o Acquire::Retries=10 -qq -o Dpkg::Use-Pty=0 install -y --no-install-recommends ca-certificates curl
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain nightly
-          echo "$HOME/.cargo/bin" >>"${GITHUB_PATH}"
-          apt-get -qq -o Dpkg::Use-Pty=0 remove -y curl
         if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
       - uses: taiki-e/checkout-action@v1
+      - uses: taiki-e/github-actions/install-rust@nightly
+      - run: apt-get -qq -o Dpkg::Use-Pty=0 remove -y curl
+        if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
       - uses: ./
         with:
           target: ${{ matrix.target }}
       - name: Install requirements for test (ubuntu/debian)
         run: |
-          set -eEuxo pipefail
           apt-get -o Acquire::Retries=10 -qq update
           apt-get -o Acquire::Retries=10 -qq -o Dpkg::Use-Pty=0 install -y --no-install-recommends gcc libc6-dev jq make cmake
         if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
       - run: git clone --depth 1 https://github.com/taiki-e/rust-cross-toolchain.git
-      - run: tools/ci/test.sh ${{ matrix.target }} rust-cross-toolchain/docker/test/fixtures/rust
+      - run: tools/ci/test.sh "${{ matrix.target }}" rust-cross-toolchain/docker/test/fixtures/rust
         id: test
       # TODO: we should replace ':' from matrix.container: "Error: The artifact name is not valid"
       # # For debugging
