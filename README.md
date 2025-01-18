@@ -268,6 +268,8 @@ You can select/pin the version by using `qemu` input option, or `@` syntax in `r
 | `armv7-unknown-linux-musleabihf`   | x86_64 Linux | qemu-user                   |       |
 | `i586-unknown-linux-musl`          | x86_64 Linux | qemu-user (default), native |       |
 | `i686-unknown-linux-musl`          | x86_64 Linux | native (default), qemu-user |       |
+| `powerpc64le-unknown-linux-musl`   | x86_64 Linux | qemu-user                   |       |
+| `riscv64gc-unknown-linux-musl`     | x86_64 Linux | qemu-user                   |       |
 | `x86_64-unknown-linux-musl`        | x86_64 Linux | native (default), qemu-user |       |
 
 (Other linux-musl targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#linux-musl) may also work, although this action's CI has not tested them.)
