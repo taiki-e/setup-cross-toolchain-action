@@ -10,6 +10,19 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support aarch64/armv7hf linux-musl targets on [new GitHub-hosted AArch64 Linux runners (ubuntu-22.04-arm, ubuntu-24.04-arm)](https://github.blog/changelog/2025-01-16-linux-arm64-hosted-runners-now-available-for-free-in-public-repositories-public-preview/). ([21613a6](https://github.com/taiki-e/setup-cross-toolchain-action/commit/21613a635baac2d556ebddacf9526c8ce529b838))
+
+  The following targets are supported and tested for native execution:
+
+  - aarch64-unknown-linux-musl
+  - armv7-unknown-linux-musleabihf
+
+  Other targets may also be work on GitHub-hosted AArch64 Linux runners using QEMU or other runner, but have not yet been tested and support is not guaranteed.
+
+- Update the default Wine version from 9.0 to 10.0. ([5d22667](https://github.com/taiki-e/setup-cross-toolchain-action/commit/5d22667db85c74ea38f07ad797f44a9965ea4af1))
+
+- Update the default OS version to match upstream on [FreeBSD with rustc 1.86+](https://github.com/rust-lang/rust/pull/132232) and [NetBSD with rustc 1.67+](https://github.com/rust-lang/rust/pull/103709)). ([5de3cd0](https://github.com/taiki-e/setup-cross-toolchain-action/commit/5de3cd06a68e58b76ecf33a7cdb02f354aa9177e))
+
 ## [1.27.0] - 2025-01-18
 
 - Support aarch64/armv7hf linux-gnu targets on [new GitHub-hosted AArch64 Linux runners (ubuntu-22.04-arm, ubuntu-24.04-arm)](https://github.blog/changelog/2025-01-16-linux-arm64-hosted-runners-now-available-for-free-in-public-repositories-public-preview/). ([#25](https://github.com/taiki-e/setup-cross-toolchain-action/pull/25))
