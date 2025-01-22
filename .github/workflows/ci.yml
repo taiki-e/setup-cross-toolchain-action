@@ -260,9 +260,9 @@ jobs:
           # - { target: i686-pc-windows-gnu, os: ubuntu-22.04 }
           # - { target: i686-pc-windows-gnu, os: ubuntu-24.04 }
           - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04 }
-          # - { target: x86_64-pc-windows-gnu, os: ubuntu-24.04 } # TODO: flaky
+          - { target: x86_64-pc-windows-gnu, os: ubuntu-24.04 }
           - { target: x86_64-pc-windows-gnu, os: ubuntu-24.04, runner: wine@9.22 }
-          # - { target: x86_64-pc-windows-gnu, os: ubuntu-24.04, wine: '9.0.0.0' } # TODO: flaky
+          - { target: x86_64-pc-windows-gnu, os: ubuntu-24.04, wine: '10.0.0.0' }
           - { target: x86_64-pc-windows-gnullvm, os: ubuntu-22.04 }
           - { target: x86_64-pc-windows-gnullvm, os: ubuntu-24.04 }
           - { target: i686-pc-windows-gnullvm, os: ubuntu-22.04 }

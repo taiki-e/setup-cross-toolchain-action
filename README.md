@@ -434,7 +434,7 @@ On Linux host, this action installs MinGW toolchain and Wine.
 <!-- omit in toc -->
 #### <a name="wine-runner"></a>wine runner
 
-The current default Wine version is 9.0.
+The current default Wine version is 10.0.
 
 You can select/pin the version by using `wine` input option, or `@` syntax in `runner` input option (if both are set, the latter is preferred). For example:
 
