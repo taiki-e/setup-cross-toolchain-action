@@ -193,7 +193,7 @@ jobs:
           # - { target: powerpc64le-unknown-freebsd } # tier3
           # - { target: riscv64gc-unknown-freebsd } # tier3
           - { target: x86_64-unknown-freebsd }
-          - { target: x86_64-unknown-freebsd@13 }
+          - { target: x86_64-unknown-freebsd@14 }
 
           # NetBSD
           # rustup target list | grep -F -e '-netbsd'
@@ -207,7 +207,7 @@ jobs:
           # - { target: riscv64gc-unknown-netbsd } # tier3
           # - { target: sparc64-unknown-netbsd } # tier3
           - { target: x86_64-unknown-netbsd }
-          - { target: x86_64-unknown-netbsd@9 }
+          - { target: x86_64-unknown-netbsd@10 }
 
           # Illumos
           # rustup target list | grep -F -e '-illumos'

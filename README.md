@@ -338,11 +338,12 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-freebsd` | 12.4 (default), 13.4, 14.1 | Ubuntu, Debian [1] | tier3 |
-| `i686-unknown-freebsd`    | 12.4 (default), 13.4, 14.1 | Ubuntu, Debian [1] |       |
-| `x86_64-unknown-freebsd`  | 12.4 (default), 13.4, 14.1 | Ubuntu, Debian [1] |       |
+| `aarch64-unknown-freebsd` | 13.4 (default [1]), 12.4, 14.1 | Ubuntu, Debian [2] | tier3 |
+| `i686-unknown-freebsd`    | 13.4 (default [1]), 12.4, 14.1 | Ubuntu, Debian [2] |       |
+| `x86_64-unknown-freebsd`  | 13.4 (default [1]), 12.4, 14.1 | Ubuntu, Debian [2] |       |
 
-[1] Clang 13 for Ubuntu 18.04, otherwise Clang 15<br>
+[1] [13.4 on Rust 1.86+](https://github.com/rust-lang/rust/pull/132232), otherwise 12.4.
+[2] Clang 13 for Ubuntu 18.04, otherwise Clang 15<br>
 
 (Other FreeBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#freebsd) may also work, although this action's CI has not tested them.)
 
@@ -351,7 +352,7 @@ You can select/pin the OS version by using `@` syntax in `target` option. For ex
 ```yaml
 - uses: taiki-e/setup-cross-toolchain-action@v1
   with:
-    target: x86_64-unknown-freebsd@13
+    target: x86_64-unknown-freebsd@14
 ```
 
 Only specifying a major version is supported.
@@ -366,8 +367,10 @@ Only specifying a major version is supported.
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-netbsd` | 9.4 (default), 10.0      | x86_64 Linux | tier3 |
-| `x86_64-unknown-netbsd`  | 8.2 (default), 9.4, 10.0 | x86_64 Linux |       |
+| `aarch64-unknown-netbsd` | 9.4 (default), 10.1          | x86_64 Linux | tier3 |
+| `x86_64-unknown-netbsd`  | 9.4 (default [1]), 8.2, 10.1 | x86_64 Linux |       |
+
+[1] [9.4 on Rust 1.67+](https://github.com/rust-lang/rust/pull/103709), otherwise 8.2.
 
 (Other NetBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#netbsd) may also work, although this action's CI has not tested them.)
 
@@ -376,7 +379,7 @@ You can select/pin the OS version by using `@` syntax in `target` option. For ex
 ```yaml
 - uses: taiki-e/setup-cross-toolchain-action@v1
   with:
-    target: x86_64-unknown-netbsd@9
+    target: x86_64-unknown-netbsd@10
 ```
 
 Only specifying a major version is supported.
