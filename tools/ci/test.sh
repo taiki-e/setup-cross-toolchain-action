@@ -129,12 +129,26 @@ cargo_options=()
 case "${target}" in
   *-linux-musl*)
     # With dynamic linking (default for mips{,el}-unknown-linux-musl/mips64-openwrt-linux-musl)
-    case "${target}" in
-      # TODO: No such file or directory
-      i?86-* | x86_64*) ;;
+    case "$(uname -m)" in
+      aarch64 | arm64)
+        case "${target}" in
+          # TODO: No such file or directory
+          armv7*hf | thumbv7*hf | aarch64-*) ;;
+          *)
+            export RUSTFLAGS="${base_rustflags} -C target-feature=-crt-static"
+            run_tests
+            ;;
+        esac
+        ;;
       *)
-        export RUSTFLAGS="${base_rustflags} -C target-feature=-crt-static"
-        run_tests
+        case "${target}" in
+          # TODO: No such file or directory
+          i?86-* | x86_64*) ;;
+          *)
+            export RUSTFLAGS="${base_rustflags} -C target-feature=-crt-static"
+            run_tests
+            ;;
+        esac
         ;;
     esac
     ;;

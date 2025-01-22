@@ -439,8 +439,8 @@ setup_linux_host() {
             if [[ -z "${use_qemu}" ]]; then
               case "${host}" in
                 aarch64-*)
-                  case "${dpkg_arch}" in
-                    armhf)
+                  case "${target}" in
+                    armv7*hf | thumbv7*hf)
                       _sudo dpkg --add-architecture "${dpkg_arch}"
                       # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
                       # TODO: other lang?
@@ -844,8 +844,7 @@ case "${host}" in
                 aarch64-*)
                   case "${target}" in
                     aarch64-*) ;;
-                    armeb*hf | thumbeb*hf) use_qemu=1 ;;
-                    arm*hf | thumb*hf)
+                    armv7*hf | thumbv7*hf)
                       if ! lscpu | grep -Eq 'CPU.*32-bit'; then
                         use_qemu=1
                       fi
