@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.28.0] - 2025-01-22
+
 - Support aarch64/armv7hf linux-musl targets on [new GitHub-hosted AArch64 Linux runners (ubuntu-22.04-arm, ubuntu-24.04-arm)](https://github.blog/changelog/2025-01-16-linux-arm64-hosted-runners-now-available-for-free-in-public-repositories-public-preview/). ([21613a6](https://github.com/taiki-e/setup-cross-toolchain-action/commit/21613a635baac2d556ebddacf9526c8ce529b838))
 
   The following targets are supported and tested for native execution:
@@ -348,7 +350,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.27.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.0...HEAD
+[1.28.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.27.0...v1.28.0
 [1.27.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.26.0...v1.27.0
 [1.26.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.25.0...v1.26.0
 [1.25.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.24.0...v1.25.0
