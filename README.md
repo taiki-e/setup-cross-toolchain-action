@@ -224,8 +224,8 @@ jobs:
 [3] GCC 7, glibc 2.25<br>
 [4] GCC 14, glibc 2.40<br>
 [5] GCC 11, glibc 2.33<br>
-[6] [Since nightly-2023-07-05](https://github.com/rust-lang/compiler-team/issues/648), mips{,el}-unknown-linux-gnu requires release mode for building std<br>
-[7] Not fully supported with containers<br>
+[6] [Since nightly-2023-07-05](https://github.com/rust-lang/compiler-team/issues/648), mips{,el}-unknown-linux-gnu requires release mode for building std.<br>
+[7] Not fully supported with containers.<br>
 
 <!-- omit in toc -->
 #### <a name="qemu-user-runner"></a>qemu-user runner
@@ -254,7 +254,7 @@ You can select/pin the version by using `qemu` input option, or `@` syntax in `r
 | ---- | --- | --- | ---- |
 | musl 1.2.3 / 1.1.24 [1] | 9 | ? (libstdc++) | ✓ |
 
-[1] [1.2 on Rust 1.71+](https://github.com/rust-lang/rust/pull/107129), otherwise 1.1. 1.1 toolchain is with a patch that fixes CVE-2020-28928.
+[1] [1.2 on Rust 1.71+](https://github.com/rust-lang/rust/pull/107129), otherwise 1.1. 1.1 toolchain is with a patch that fixes CVE-2020-28928.<br>
 
 **Supported targets:**
 
@@ -292,7 +292,7 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 | `mips-unknown-linux-uclibc`        | x86_64 Linux | qemu-user | tier3 [1] |
 | `mipsel-unknown-linux-uclibc`      | x86_64 Linux | qemu-user | tier3 [1] |
 
-[1] mips{,el}-unknown-linux-uclibc requires release mode for building std<br>
+[1] mips{,el}-unknown-linux-uclibc requires release mode for building std.<br>
 
 For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu targets](#qemu-user-runner).
 
@@ -315,8 +315,8 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 | `thumbv7neon-linux-androideabi` | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
 | `x86_64-linux-android`          | 21 (default), 22-24, 26-33 [1] | x86_64 Linux | native (default), qemu-user |       |
 
-[1] This action currently uses the API level 24 system image, so `cargo test` and `cargo run` may not work on API level 26+.
-[2] [21 on Rust 1.82+](https://github.com/rust-lang/rust/pull/120593), otherwise 19.
+[1] This action currently uses the API level 24 system image, so `cargo test` and `cargo run` may not work on API level 26+.<br>
+[2] [21 on Rust 1.82+](https://github.com/rust-lang/rust/pull/120593), otherwise 19.<br>
 
 You can select/pin the API level version by using `@` syntax in `target` option. For example:
 
@@ -342,8 +342,8 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 | `i686-unknown-freebsd`    | 13.4 (default [1]), 12.4, 14.1 | Ubuntu, Debian [2] |       |
 | `x86_64-unknown-freebsd`  | 13.4 (default [1]), 12.4, 14.1 | Ubuntu, Debian [2] |       |
 
-[1] [13.4 on Rust 1.86+](https://github.com/rust-lang/rust/pull/132232), otherwise 12.4.
-[2] Clang 13 for Ubuntu 18.04, otherwise Clang 15<br>
+[1] [13 on Rust 1.86+](https://github.com/rust-lang/rust/pull/132232), otherwise 12.<br>
+[2] Clang 13 for Ubuntu 18.04, otherwise Clang 15.<br>
 
 (Other FreeBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#freebsd) may also work, although this action's CI has not tested them.)
 
@@ -370,7 +370,7 @@ Only specifying a major version is supported.
 | `aarch64-unknown-netbsd` | 9.4 (default), 10.1          | x86_64 Linux | tier3 |
 | `x86_64-unknown-netbsd`  | 9.4 (default [1]), 8.2, 10.1 | x86_64 Linux |       |
 
-[1] [9.4 on Rust 1.67+](https://github.com/rust-lang/rust/pull/103709), otherwise 8.2.
+[1] [9 on Rust 1.67+](https://github.com/rust-lang/rust/pull/103709), otherwise 8.<br>
 
 (Other NetBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#netbsd) may also work, although this action's CI has not tested them.)
 
@@ -476,7 +476,7 @@ The `wine` runner for aarch64-pc-windows-gnullvm is AArch64 Wine running on qemu
 | --- | ---- |
 | ✓ | ✓ [1] |
 
-[1] Only x86/x86_64 targets
+[1] Only x86/x86_64 targets.<br>
 
 **Supported targets:**
 
@@ -497,7 +497,7 @@ GitHub-provided Windows runners support cross-compile for other architectures or
 | --- | ---- |
 | ✓ | ✓ [1] |
 
-[1] For x86_64-apple-darwin all runners and for aarch64-apple-darwin only arm64 runners. (x86_64h-apple-darwin is also x86_64 but build-only because the CPU of GitHub-provided macOS runners is older than Haswell. If you use a large runner or self-hosted runner, you may be able to run the test.)
+[1] For x86_64-apple-darwin all runners and for aarch64-apple-darwin only arm64 runners. (x86_64h-apple-darwin is also x86_64 but build-only because the CPU of GitHub-provided macOS runners is older than Haswell. If you use a large runner or self-hosted runner, you may be able to run the test.)<br>
 
 **Supported targets:**
 
@@ -517,7 +517,7 @@ GitHub-provided macOS runners support cross-compile for other architectures or e
 | --- | ---- |
 | ✓ | ✓ [1] |
 
-[1] For x86_64-apple-ios-macabi only x86_64 runners and for aarch64-apple-ios-macabi only arm64 runners.
+[1] For x86_64-apple-ios-macabi only x86_64 runners and for aarch64-apple-ios-macabi only arm64 runners.<br>
 
 **Supported targets:**
 
@@ -531,12 +531,13 @@ GitHub-provided macOS runners support cross-compile for other targets, so this a
 ## Compatibility
 
 This action has been tested for GitHub-hosted runners (Ubuntu, macOS, Windows) and containers (Ubuntu, Debian).
+
 To use this action in self-hosted runners or in containers, at least the following tools are required:
 
 - bash
 - rustup, cargo
 
-`--privileged` option is currently required when using with containers (due to binfmt).
+Currently, when using this action with containers, `--privileged` option is required (due to binfmt).
 
 ```yaml
 container:
