@@ -54,7 +54,7 @@ jobs:
           - { target: aarch64-unknown-linux-gnu, os: ubuntu-22.04 }
           - { target: aarch64-unknown-linux-gnu, os: ubuntu-22.04-arm }
           - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04 }
-          - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04-arm }
+          # - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04-arm } # TODO: re-enable when https://github.com/rust-lang/rust/issues/135867 solved
           # - { target: aarch64-unknown-linux-gnu_ilp32, os: ubuntu-22.04 } # tier3
           # - { target: aarch64-unknown-linux-gnu_ilp32, os: ubuntu-24.04 } # tier3
           # TODO: https://github.com/BurntSushi/memchr/pull/162
@@ -77,7 +77,7 @@ jobs:
           - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-22.04 }
           - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-22.04-arm }
           - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04 }
-          - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04-arm }
+          # - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04-arm } # TODO: re-enable when https://github.com/rust-lang/rust/issues/135867 solved
           - { target: i586-unknown-linux-gnu, os: ubuntu-22.04 }
           - { target: i586-unknown-linux-gnu, os: ubuntu-24.04 }
           - { target: i686-unknown-linux-gnu, os: ubuntu-22.04 }
@@ -124,7 +124,7 @@ jobs:
           - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-22.04 }
           - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-22.04-arm }
           - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-24.04 }
-          - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-24.04-arm }
+          # - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-24.04-arm } # TODO: re-enable when https://github.com/rust-lang/rust/issues/135867 solved
           - { target: x86_64-unknown-linux-gnu, os: ubuntu-22.04 }
           - { target: x86_64-unknown-linux-gnu, os: ubuntu-24.04 }
           # - { target: x86_64-unknown-linux-gnux32, os: ubuntu-22.04 }
@@ -134,7 +134,7 @@ jobs:
           # rustup target list | grep -F -e '-linux-musl'
           # rustc --print target-list | grep -F -e '-linux-musl'
           - { target: aarch64-unknown-linux-musl }
-          - { target: aarch64-unknown-linux-musl, os: ubuntu-24.04-arm }
+          - { target: aarch64-unknown-linux-musl, os: ubuntu-22.04-arm } # TODO: update to 24.04 when https://github.com/rust-lang/rust/issues/135867 solved
           - { target: aarch64-unknown-linux-musl, runner: qemu-user@7.2 }
           - { target: aarch64-unknown-linux-musl, qemu: '7.2' }
           - { target: arm-unknown-linux-musleabi }
@@ -142,7 +142,7 @@ jobs:
           - { target: armv5te-unknown-linux-musleabi }
           - { target: armv7-unknown-linux-musleabi }
           - { target: armv7-unknown-linux-musleabihf }
-          - { target: armv7-unknown-linux-musleabihf, os: ubuntu-24.04-arm }
+          - { target: armv7-unknown-linux-musleabihf, os: ubuntu-22.04-arm } # TODO: update to 24.04 when https://github.com/rust-lang/rust/issues/135867 solved
           # - { target: hexagon-unknown-linux-musl } # tier3
           - { target: i586-unknown-linux-musl }
           - { target: i686-unknown-linux-musl }
