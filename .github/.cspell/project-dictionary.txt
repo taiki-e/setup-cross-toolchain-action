@@ -4,10 +4,10 @@ CXXSTDLIB
 distro
 haswell
 libclang
-libstdc
 Loongson
 multilib
 neoverse
+objcopy
 powerpcspe
 unikraft
 Vger
