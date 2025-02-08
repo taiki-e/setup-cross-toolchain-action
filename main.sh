@@ -85,15 +85,10 @@ else
       # FreeBSD have binary compatibility with previous releases.
       # Therefore, the default is the minimum supported version.
       # https://github.com/taiki-e/rust-cross-toolchain/blob/HEAD/tools/build-docker.sh
-      # https://github.com/rust-lang/rust/pull/132232 increased version used for prebuilt artifacts to 13.4.
-      if [[ "${rustc_minor_version}" -ge 86 ]]; then
-        sys_version=13
-      else
-        case "${target}" in
-          powerpc* | riscv64*) sys_version=13 ;;
-          *) sys_version=12 ;;
-        esac
-      fi
+      case "${target}" in
+        powerpc* | riscv64*) sys_version=13 ;;
+        *) sys_version=12 ;;
+      esac
       ;;
     *-netbsd*)
       # NetBSD have binary compatibility with previous releases.

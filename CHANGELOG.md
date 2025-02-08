@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Revert the default FreeBSD version update for rustc 1.86 (the current nightly) or later to reflect the [revert in upstream](https://github.com/rust-lang/rust/pull/136582).
+
 ## [1.28.0] - 2025-01-22
 
 - Support aarch64/armv7hf linux-musl targets on [new GitHub-hosted AArch64 Linux runners (ubuntu-22.04-arm, ubuntu-24.04-arm)](https://github.blog/changelog/2025-01-16-linux-arm64-hosted-runners-now-available-for-free-in-public-repositories-public-preview/). ([21613a6](https://github.com/taiki-e/setup-cross-toolchain-action/commit/21613a635baac2d556ebddacf9526c8ce529b838))

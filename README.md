@@ -338,12 +338,11 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-freebsd` | 13.4 (default [1]), 12.4, 14.1 | Ubuntu, Debian [2] | tier3 |
-| `i686-unknown-freebsd`    | 13.4 (default [1]), 12.4, 14.1 | Ubuntu, Debian [2] |       |
-| `x86_64-unknown-freebsd`  | 13.4 (default [1]), 12.4, 14.1 | Ubuntu, Debian [2] |       |
+| `aarch64-unknown-freebsd` | 12.4 (default), 13.4, 14.1 | Ubuntu, Debian [1] | tier3 |
+| `i686-unknown-freebsd`    | 12.4 (default), 13.4, 14.1 | Ubuntu, Debian [1] |       |
+| `x86_64-unknown-freebsd`  | 12.4 (default), 13.4, 14.1 | Ubuntu, Debian [1] |       |
 
-[1] [13 on Rust 1.86+](https://github.com/rust-lang/rust/pull/132232), otherwise 12.<br>
-[2] Clang 13 for Ubuntu 18.04, otherwise Clang 15.<br>
+[1] Clang 13 for Ubuntu 18.04, otherwise Clang 15.<br>
 
 (Other FreeBSD targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#freebsd) may also work, although this action's CI has not tested them.)
 
