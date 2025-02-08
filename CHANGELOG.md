@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.28.1] - 2025-02-08
+
 - Revert the default FreeBSD version update for rustc 1.86 (the current nightly) or later to reflect the [revert in upstream](https://github.com/rust-lang/rust/pull/136582).
 
 ## [1.28.0] - 2025-01-22
@@ -352,7 +354,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.1...HEAD
+[1.28.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.0...v1.28.1
 [1.28.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.27.0...v1.28.0
 [1.27.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.26.0...v1.27.0
 [1.26.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.25.0...v1.26.0
