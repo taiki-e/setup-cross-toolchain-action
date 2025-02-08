@@ -1,2 +1,2 @@
-# Change indent size of shell scripts
+# Change indent size of shell script files to match scripts in CI config
 fa21170d6741063ca22368db8ab5b55fe7ed382d
