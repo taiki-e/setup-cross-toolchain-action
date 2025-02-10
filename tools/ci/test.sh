@@ -57,18 +57,12 @@ run_native() {
     "${target_dir}/${target}/${profile}/rust-test${exe:-}"
 }
 run_tests() {
-    case "${target}" in
-        # TODO: LLVM bug: Undefined temporary symbol error when building std.
-        mips-*-linux-* | mipsel-*-linux-*) ;;
-        *)
-            profile=debug
-            cargo_run
-            cargo_test
-            run_native
-            ls "${target_dir}/${target}/${profile}"
-            cp "${target_dir}/${target}/${profile}/rust-test${exe:-}" "/tmp/artifacts/rust-test1-${profile}${exe:-}"
-            ;;
-    esac
+    profile=debug
+    cargo_run
+    cargo_test
+    run_native
+    ls "${target_dir}/${target}/${profile}"
+    cp "${target_dir}/${target}/${profile}/rust-test${exe:-}" "/tmp/artifacts/rust-test1-${profile}${exe:-}"
 
     profile=release
     cargo_run --release
