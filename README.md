@@ -12,6 +12,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
   - [Example workflow: Doctest](#example-workflow-doctest)
   - [Example workflow: Tier 3 targets](#example-workflow-tier-3-targets)
 - [Platform Support](#platform-support)
+  - [Requirements for "Supported targets"](#requirements-for-supported-targets)
   - [Linux (GNU)](#linux-gnu)
   - [Linux (musl)](#linux-musl)
   - [FreeBSD](#freebsd)
@@ -170,6 +171,10 @@ jobs:
 ```
 
 ## Platform Support
+
+### Requirements for "Supported targets"
+
+The requirement for a target to be added to the list of "supported targets" is that the target can compile a simple example using the toolchain installed using this action and that the compiled binary can actually be executed on a real machine/VM/emulator/etc.
 
 ### Linux (GNU)
 
