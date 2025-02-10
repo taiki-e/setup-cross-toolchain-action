@@ -244,7 +244,7 @@ jobs:
           # rustup target list | grep -F -e '-pc-windows-msvc'
           # rustc --print target-list | grep -F -e '-pc-windows-msvc'
           - { target: aarch64-pc-windows-msvc, os: windows-latest }
-          # - { target: arm64ec-pc-windows-msvc, os: windows-latest }
+          # - { target: arm64ec-pc-windows-msvc, os: windows-latest } # TODO: https://github.com/ilammy/msvc-dev-cmd / https://github.com/microsoft/UVAtlas/blob/2bcf1653c145dae2d815a42a48616d409e59d1ad/.github/workflows/test.yml#L71
           - { target: i586-pc-windows-msvc, os: windows-latest }
           - { target: i686-pc-windows-msvc, os: windows-latest }
           # - { target: thumbv7a-pc-windows-msvc, os: windows-latest } # tier3
@@ -268,9 +268,9 @@ jobs:
           - { target: i686-pc-windows-gnullvm, os: ubuntu-22.04 }
           - { target: i686-pc-windows-gnullvm, os: ubuntu-24.04 }
           - { target: aarch64-pc-windows-gnullvm, os: ubuntu-22.04 }
-          # - { target: aarch64-pc-windows-gnullvm, os: ubuntu-22.04-arm } # TODO: docker pull hang
+          - { target: aarch64-pc-windows-gnullvm, os: ubuntu-22.04-arm } # TODO: docker pull hang
           - { target: aarch64-pc-windows-gnullvm, os: ubuntu-24.04 }
-          # - { target: aarch64-pc-windows-gnullvm, os: ubuntu-24.04-arm } # TODO: docker pull hang
+          # - { target: aarch64-pc-windows-gnullvm, os: ubuntu-24.04-arm } # TODO: re-enable when https://github.com/rust-lang/rust/issues/135867 solved
     runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     timeout-minutes: 60
     steps:

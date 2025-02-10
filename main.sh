@@ -139,12 +139,9 @@ install_llvm() {
   codename=$(grep -E '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2)
   case "${codename}" in
     bionic) llvm_version=13 ;;
-    noble) llvm_version=18 ;;
-    # TODO: update to 18
-    *) llvm_version=15 ;;
+    *) llvm_version=19 ;;
   esac
   case "${codename}" in
-    noble) ;;
     *)
       _sudo mkdir -pm755 -- /etc/apt/keyrings
       retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://apt.llvm.org/llvm-snapshot.gpg.key \
@@ -345,6 +342,7 @@ register_binfmt() {
   fi
   case "$1" in
     qemu-user)
+      # TODO: inline magics and masks (see also csky branch)
       local url='https://raw.githubusercontent.com/qemu/qemu/ae35f033b874c627d81d51070187fbf55f0bf1a7/scripts/qemu-binfmt-conf.sh'
       if ! type -P curl >/dev/null; then
         apt_packages+=(ca-certificates curl)
@@ -729,6 +727,7 @@ EOF
       mips-* | mipsel-*) qemu_arch="${target%%-*}" ;;
       mips64-* | mips64el-*)
         qemu_arch="${target%%-*}"
+        # TODO: info on QEMU 9.2
         # As of QEMU 6.1, only Loongson-3A4000 supports MSA instructions with mips64r5.
         default_qemu_cpu=Loongson-3A4000
         ;;
@@ -919,4 +918,5 @@ else
   retry rustup component add rust-src
   printf 'BUILD_STD=-Zbuild-std\n' >>"${GITHUB_ENV}"
 fi
+# TODO: only set if "${target}" != "${host}"?
 printf 'CARGO_BUILD_TARGET=%s\n' "${target}" >>"${GITHUB_ENV}"

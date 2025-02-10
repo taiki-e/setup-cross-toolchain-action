@@ -420,6 +420,7 @@ Only specifying a major version is supported.
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
+| `i686-pc-windows-gnu`   | *Windows*                                             | native                                    |  |
 | `x86_64-pc-windows-gnu` | *Windows*, Ubuntu (22.04, 24.04), Debian (11, 12) [1] | native (Windows host) / wine (Linux host) |  |
 
 [1] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev) for Ubuntu 22.04. [GCC 13](https://packages.ubuntu.com/en/noble/gcc-mingw-w64-base), [MinGW-w64 11](https://packages.ubuntu.com/en/noble/mingw-w64-x86-64-dev) for Ubuntu 24.04. [GCC 10](https://packages.debian.org/en/bullseye/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.debian.org/en/bullseye/mingw-w64-x86-64-dev) for Debian 11. [GCC 12](https://packages.debian.org/en/bookworm/gcc-mingw-w64-base), [MinGW-w64 10](https://packages.debian.org/en/bookworm/mingw-w64-x86-64-dev) for Debian 12.<br>
@@ -455,7 +456,7 @@ You can select/pin the version by using `wine` input option, or `@` syntax in `r
 
 | libc | Clang | C++ | test |
 | ---- | ----- | --- | ---- |
-| Mingw-w64 7c9cfe6 | 18 | ✓ (libc++) | ✓ |
+| Mingw-w64 03d8a40 | 19 | ✓ (libc++) | ✓ |
 
 **Supported targets:**
 
@@ -482,6 +483,7 @@ The `wine` runner for aarch64-pc-windows-gnullvm is AArch64 Wine running on qemu
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
 | `aarch64-pc-windows-msvc` | *Windows* |        |  |
+| `arm64ec-pc-windows-msvc` | *Windows* |        |  |
 | `i586-pc-windows-msvc`    | *Windows* | native |  |
 | `i686-pc-windows-msvc`    | *Windows* | native |  |
 | `x86_64-pc-windows-msvc`  | *Windows* | native |  |
