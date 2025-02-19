@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.28.2] - 2025-02-19
+
 - Work around [configure script issue on `riscv64gc-unknown-linux-musl`](https://github.com/taiki-e/upload-rust-binary-action/issues/94#issuecomment-2666590422). ([9547f73](https://github.com/taiki-e/setup-cross-toolchain-action/commit/9547f7321b5533797e04789a9fb6602c2554e8ce))
 
 ## [1.28.1] - 2025-02-08
@@ -356,7 +358,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.1...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.2...HEAD
+[1.28.2]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.1...v1.28.2
 [1.28.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.0...v1.28.1
 [1.28.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.27.0...v1.28.0
 [1.27.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.26.0...v1.27.0
