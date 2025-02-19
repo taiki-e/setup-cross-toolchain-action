@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Work around [configure script issue on `riscv64gc-unknown-linux-musl`](https://github.com/taiki-e/upload-rust-binary-action/issues/94#issuecomment-2666590422). ([9547f73](https://github.com/taiki-e/setup-cross-toolchain-action/commit/9547f7321b5533797e04789a9fb6602c2554e8ce))
+
 ## [1.28.1] - 2025-02-08
 
 - Revert the default FreeBSD version update for rustc 1.86 (the current nightly) or later to reflect the [revert in upstream](https://github.com/rust-lang/rust/pull/136582).
