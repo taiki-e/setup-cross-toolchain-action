@@ -238,7 +238,8 @@ jobs:
           # rustup target list | grep -F -e '-macabi'
           # rustc --print target-list | grep -F -e '-macabi'
           - { target: aarch64-apple-ios-macabi, os: macos-latest } # AArch64
-          - { target: x86_64-apple-ios-macabi, os: macos-13 } # x86_64
+          # TODO: SIGILL with LLVM 20
+          # - { target: x86_64-apple-ios-macabi, os: macos-13 } # x86_64
 
           # Windows (MSVC)
           # rustup target list | grep -F -e '-pc-windows-msvc'
