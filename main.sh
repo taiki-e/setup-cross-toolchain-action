@@ -209,6 +209,27 @@ install_rust_cross_toolchain() {
     *) sysroot_dir="${toolchain_dir}/${target}" ;;
   esac
   case "${target}" in
+    *-linux-musl*)
+      # https://github.com/taiki-e/rust-cross-toolchain/blob/d03985a569b6d753296e8467842daf0dd409970d/docker/base/linux-musl.Dockerfile#L37
+      case "${target}" in
+        arm*hf | thumb*hf) cc_target=arm-linux-musleabihf ;;
+        arm* | thumb*) cc_target=arm-linux-musleabi ;;
+        hexagon-*) cc_target="${target}" ;;
+        mips-*) cc_target=mips-linux-muslsf ;;
+        mipsel-*) cc_target=mipsel-linux-muslsf ;;
+        riscv??gc-*) cc_target="${target/gc-unknown/}" ;;
+        *) cc_target="${target/-unknown/}" ;;
+      esac
+      cat >>"${GITHUB_ENV}" <<EOF
+CARGO_TARGET_${target_upper}_LINKER=${cc_target}-gcc
+CC_${target_lower}=${cc_target}-gcc
+CXX_${target_lower}=${cc_target}-g++
+AR_${target_lower}=${cc_target}-ar
+RANLIB_${target_lower}=${cc_target}-ranlib
+STRIP=${cc_target}-strip
+OBJDUMP=${cc_target}-objdump
+EOF
+      ;;
     *-android*)
       if [[ -n "${api_level}" ]]; then
         case "${target}" in
