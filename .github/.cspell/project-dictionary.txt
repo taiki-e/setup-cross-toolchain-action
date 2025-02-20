@@ -6,7 +6,6 @@ haswell
 libclang
 Loongson
 multilib
-muslsf
 neoverse
 objcopy
 powerpcspe
