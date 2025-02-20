@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Revert the change in 1.28.2 as [it was found to be ineffective in practice](https://github.com/taiki-e/upload-rust-binary-action/issues/94#issuecomment-2669416110).
+
 ## [1.28.2] - 2025-02-19
 
 - Work around [configure script issue on `riscv64gc-unknown-linux-musl`](https://github.com/taiki-e/upload-rust-binary-action/issues/94#issuecomment-2666590422). ([9547f73](https://github.com/taiki-e/setup-cross-toolchain-action/commit/9547f7321b5533797e04789a9fb6602c2554e8ce))
