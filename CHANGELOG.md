@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.28.3] - 2025-02-20
+
 - Revert the change in 1.28.2 as [it was found to be ineffective in practice](https://github.com/taiki-e/upload-rust-binary-action/issues/94#issuecomment-2669416110).
 
 ## [1.28.2] - 2025-02-19
@@ -360,7 +362,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.2...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.3...HEAD
+[1.28.3]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.2...v1.28.3
 [1.28.2]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.1...v1.28.2
 [1.28.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.0...v1.28.1
 [1.28.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.27.0...v1.28.0
