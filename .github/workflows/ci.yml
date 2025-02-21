@@ -77,10 +77,10 @@ jobs:
           - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-22.04-arm }
           - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04 }
           - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04-arm }
-          # - { target: csky-unknown-linux-gnuabiv2, os: ubuntu-22.04 } # tier3
-          # - { target: csky-unknown-linux-gnuabiv2, os: ubuntu-24.04 } # tier3
-          # - { target: csky-unknown-linux-gnuabiv2hf, os: ubuntu-22.04 } # tier3
-          # - { target: csky-unknown-linux-gnuabiv2hf, os: ubuntu-24.04 } # tier3
+          - { target: csky-unknown-linux-gnuabiv2, os: ubuntu-22.04 } # tier3
+          - { target: csky-unknown-linux-gnuabiv2, os: ubuntu-24.04 } # tier3
+          - { target: csky-unknown-linux-gnuabiv2hf, os: ubuntu-22.04 } # tier3
+          - { target: csky-unknown-linux-gnuabiv2hf, os: ubuntu-24.04 } # tier3
           - { target: i586-unknown-linux-gnu, os: ubuntu-22.04 }
           - { target: i586-unknown-linux-gnu, os: ubuntu-24.04 }
           - { target: i686-unknown-linux-gnu, os: ubuntu-22.04 }

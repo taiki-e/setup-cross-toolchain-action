@@ -124,6 +124,8 @@ esac
 case "${target}" in
   # With static linking (default for target other than mips{,el}-unknown-linux-musl/mips64-openwrt-linux-musl)
   *-linux-musl*) export RUSTFLAGS="${base_rustflags} -C target-feature=+crt-static -C link-self-contained=yes" ;;
+  # Workaround for C-SKY QEMU issue
+  csky-*) export RUSTFLAGS="${base_rustflags} -C target-feature=+crt-static" ;;
 esac
 run_tests
 

@@ -214,6 +214,14 @@ install_rust_cross_toolchain() {
       sysroot_dir="${toolchain_dir}/target/usr"
       printf '%s\n' "LD_LIBRARY_PATH=${toolchain_dir}/target/usr/lib64:${toolchain_dir}/${target}/lib:${LD_LIBRARY_PATH:-}" >>"${GITHUB_ENV}"
       ;;
+    csky-unknown-linux-gnuabiv2)
+      sysroot_dir="/usr/local/${target}/libc"
+      printf '%s\n' "LD_LIBRARY_PATH=${toolchain_dir}/${target}/lib:${LD_LIBRARY_PATH:-}" >>"${GITHUB_ENV}"
+      ;;
+    csky-unknown-linux-gnuabiv2hf)
+      sysroot_dir="/usr/local/${target}/libc/ck860v"
+      printf '%s\n' "LD_LIBRARY_PATH=${toolchain_dir}/${target}/lib/ck860v:${LD_LIBRARY_PATH:-}" >>"${GITHUB_ENV}"
+      ;;
     *) sysroot_dir="${toolchain_dir}/${target}" ;;
   esac
   case "${target}" in
@@ -308,6 +316,12 @@ install_qemu() {
     qemu_bin_dir=/usr/bin
   else
     qemu_bin_dir="${toolchain_dir}/bin"
+    case "${qemu_arch}" in
+      cskyv2)
+        x "${qemu_bin_dir}/qemu-${qemu_arch}" --version
+        return
+        ;;
+    esac
     rm -f -- "${qemu_bin_dir}/qemu-${qemu_arch}"
   fi
   printf '::group::Instal QEMU\n'
@@ -360,18 +374,29 @@ register_binfmt() {
   fi
   case "$1" in
     qemu-user)
-      local url='https://raw.githubusercontent.com/qemu/qemu/f8b2f64e2336a28bf0d50b6ef8a7d8c013e9bcf3/scripts/qemu-binfmt-conf.sh'
-      if ! type -P curl >/dev/null; then
-        apt_packages+=(ca-certificates curl)
-        install_apt_packages
-      fi
-      retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -o __qemu-binfmt-conf.sh "${url}"
-      sed -Ei "s/i386_magic/qemu_target_list=\"${qemu_arch}\"\\ni386_magic/" ./__qemu-binfmt-conf.sh
-      chmod +x ./__qemu-binfmt-conf.sh
-      _sudo ./__qemu-binfmt-conf.sh --qemu-path "${qemu_bin_dir}" --persistent yes
-      rm -- ./__qemu-binfmt-conf.sh
-      printf '::endgroup::\n'
-      return
+      case "${qemu_arch}" in
+        cskyv2)
+          # TODO
+          # local magic='\x7fELF\x45\x4c\x46\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+          # local mask='\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff'
+          return
+          ;;
+        *)
+          local url='https://raw.githubusercontent.com/qemu/qemu/f8b2f64e2336a28bf0d50b6ef8a7d8c013e9bcf3/scripts/qemu-binfmt-conf.sh'
+          if ! type -P curl >/dev/null; then
+            apt_packages+=(ca-certificates curl)
+            install_apt_packages
+          fi
+          retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -o __qemu-binfmt-conf.sh "${url}"
+          sed -Ei "s/i386_magic/qemu_target_list=\"${qemu_arch}\"\\ni386_magic/" ./__qemu-binfmt-conf.sh
+          chmod +x ./__qemu-binfmt-conf.sh
+          _sudo ./__qemu-binfmt-conf.sh --qemu-path "${qemu_bin_dir}" --persistent yes
+          rm -- ./__qemu-binfmt-conf.sh
+          printf '::endgroup::\n'
+          return
+          ;;
+      esac
+      # runner_path="${qemu_bin_dir}/qemu-${qemu_arch}"
       ;;
     wasmtime)
       local magic='\x00asm'
@@ -402,9 +427,9 @@ setup_linux_host() {
       *-linux-gnu*)
         # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.sh
         case "${target}" in
-          # (tier3) Toolchains for aarch64_be-linux-gnu/armeb-linux-gnueabi/riscv32-linux-gnu is not available in APT.
+          # (tier3) Toolchains for aarch64_be-linux-gnu/armeb-linux-gnueabi/csky-linux-gnuabiv2*/riscv32-linux-gnu is not available in APT.
           # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.sh#L17
-          aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | riscv32gc-unknown-linux-gnu | loongarch64-unknown-linux-gnu) install_rust_cross_toolchain ;;
+          aarch64_be-* | armeb-* | csky-* | riscv32* | loongarch64-unknown-linux-gnu) install_rust_cross_toolchain ;;
           arm-unknown-linux-gnueabihf)
             # (tier2) Ubuntu's gcc-arm-linux-gnueabihf is v7
             # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.sh#L55
@@ -754,6 +779,14 @@ EOF
         case "${target}" in
           armeb* | thumbeb*) qemu_arch=armeb ;;
           *) qemu_arch=arm ;;
+        esac
+        ;;
+      csky-*v2*)
+        qemu_arch=cskyv2
+        case "${RUST_TARGET}" in
+          *hf) default_qemu_cpu=ck860fv ;;
+          # TODO: https://github.com/taiki-e/atomic-maybe-uninit/pull/32#issuecomment-3341287749
+          *) default_qemu_cpu=ck860 ;;
         esac
         ;;
       i?86-*) qemu_arch=i386 ;;
