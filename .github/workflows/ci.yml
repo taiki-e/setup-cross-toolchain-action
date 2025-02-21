@@ -9,6 +9,7 @@ on:
     branches:
       - main
       - dev*
+      - csky
   schedule:
     - cron: '0 2 * * *'
   workflow_dispatch:
@@ -32,259 +33,259 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tidy:
-    uses: taiki-e/github-actions/.github/workflows/tidy.yml@main
-    permissions:
-      contents: read
-      pull-requests: write # for gh pr edit --add-assignee
-      repository-projects: read # for gh pr edit --add-assignee
-    secrets: inherit
+  # tidy:
+  #   uses: taiki-e/github-actions/.github/workflows/tidy.yml@main
+  #   permissions:
+  #     contents: read
+  #     pull-requests: write # for gh pr edit --add-assignee
+  #     repository-projects: read # for gh pr edit --add-assignee
+  #   secrets: inherit
 
   test:
-    needs: tidy
+    # needs: tidy
     strategy:
       fail-fast: false
       matrix:
         # See also https://github.com/taiki-e/rust-cross-toolchain/blob/HEAD/tools/target-list-shared.sh
         # prettier-ignore
         include:
-          # Linux (GNU)
-          # rustup target list | grep -F -e '-linux-gnu'
-          # rustc --print target-list | grep -F -e '-linux-gnu'
-          - { target: aarch64-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: aarch64-unknown-linux-gnu, os: ubuntu-22.04-arm }
-          - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04 }
-          - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04-arm }
-          # - { target: aarch64-unknown-linux-gnu_ilp32, os: ubuntu-22.04 } # tier3
-          # - { target: aarch64-unknown-linux-gnu_ilp32, os: ubuntu-24.04 } # tier3
-          - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
-          - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
-          # - { target: aarch64_be-unknown-linux-gnu_ilp32, os: ubuntu-22.04 } # tier3
-          # - { target: aarch64_be-unknown-linux-gnu_ilp32, os: ubuntu-24.04 } # tier3
-          - { target: arm-unknown-linux-gnueabi, os: ubuntu-22.04 }
-          - { target: arm-unknown-linux-gnueabi, os: ubuntu-24.04 }
-          # - { target: arm-unknown-linux-gnueabihf, os: ubuntu-22.04 } # supported in rust-cross-toolchain but not ported to this action
-          # - { target: arm-unknown-linux-gnueabihf, os: ubuntu-24.04 } # supported in rust-cross-toolchain but not ported to this action
-          - { target: armeb-unknown-linux-gnueabi, os: ubuntu-22.04 } # tier3
-          # - { target: armeb-unknown-linux-gnueabi, os: ubuntu-24.04 } # tier3, Segmentation fault on ubuntu 24.04: https://github.com/taiki-e/setup-cross-toolchain-action/issues/1
-          # - { target: armv4t-unknown-linux-gnueabi, os: ubuntu-22.04 } # tier3
-          # - { target: armv4t-unknown-linux-gnueabi, os: ubuntu-24.04 } # tier3
-          - { target: armv5te-unknown-linux-gnueabi, os: ubuntu-22.04 }
-          - { target: armv5te-unknown-linux-gnueabi, os: ubuntu-24.04 }
-          - { target: armv7-unknown-linux-gnueabi, os: ubuntu-22.04 }
-          - { target: armv7-unknown-linux-gnueabi, os: ubuntu-24.04 }
-          - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-22.04 }
-          - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-22.04-arm }
-          - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04 }
-          - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04-arm }
+          # # Linux (GNU)
+          # # rustup target list | grep -F -e '-linux-gnu'
+          # # rustc --print target-list | grep -F -e '-linux-gnu'
+          # - { target: aarch64-unknown-linux-gnu, os: ubuntu-22.04 }
+          # - { target: aarch64-unknown-linux-gnu, os: ubuntu-22.04-arm }
+          # - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04 }
+          # - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04-arm }
+          # # - { target: aarch64-unknown-linux-gnu_ilp32, os: ubuntu-22.04 } # tier3
+          # # - { target: aarch64-unknown-linux-gnu_ilp32, os: ubuntu-24.04 } # tier3
+          # - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
+          # - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
+          # # - { target: aarch64_be-unknown-linux-gnu_ilp32, os: ubuntu-22.04 } # tier3
+          # # - { target: aarch64_be-unknown-linux-gnu_ilp32, os: ubuntu-24.04 } # tier3
+          # - { target: arm-unknown-linux-gnueabi, os: ubuntu-22.04 }
+          # - { target: arm-unknown-linux-gnueabi, os: ubuntu-24.04 }
+          # # - { target: arm-unknown-linux-gnueabihf, os: ubuntu-22.04 } # supported in rust-cross-toolchain but not ported to this action
+          # # - { target: arm-unknown-linux-gnueabihf, os: ubuntu-24.04 } # supported in rust-cross-toolchain but not ported to this action
+          # - { target: armeb-unknown-linux-gnueabi, os: ubuntu-22.04 } # tier3
+          # # - { target: armeb-unknown-linux-gnueabi, os: ubuntu-24.04 } # tier3, Segmentation fault on ubuntu 24.04: https://github.com/taiki-e/setup-cross-toolchain-action/issues/1
+          # # - { target: armv4t-unknown-linux-gnueabi, os: ubuntu-22.04 } # tier3
+          # # - { target: armv4t-unknown-linux-gnueabi, os: ubuntu-24.04 } # tier3
+          # - { target: armv5te-unknown-linux-gnueabi, os: ubuntu-22.04 }
+          # - { target: armv5te-unknown-linux-gnueabi, os: ubuntu-24.04 }
+          # - { target: armv7-unknown-linux-gnueabi, os: ubuntu-22.04 }
+          # - { target: armv7-unknown-linux-gnueabi, os: ubuntu-24.04 }
+          # - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-22.04 }
+          # - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-22.04-arm }
+          # - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04 }
+          # - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04-arm }
           - { target: csky-unknown-linux-gnuabiv2, os: ubuntu-22.04 } # tier3
           - { target: csky-unknown-linux-gnuabiv2, os: ubuntu-24.04 } # tier3
           - { target: csky-unknown-linux-gnuabiv2hf, os: ubuntu-22.04 } # tier3
           - { target: csky-unknown-linux-gnuabiv2hf, os: ubuntu-24.04 } # tier3
-          - { target: i586-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: i586-unknown-linux-gnu, os: ubuntu-24.04 }
-          - { target: i686-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: i686-unknown-linux-gnu, os: ubuntu-24.04 }
-          - { target: loongarch64-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: loongarch64-unknown-linux-gnu, os: ubuntu-24.04 }
-          # - { target: m68k-unknown-linux-gnu, os: ubuntu-22.04 } # tier3, build fail: https://github.com/rust-lang/rust/issues/89498
-          # - { target: m68k-unknown-linux-gnu, os: ubuntu-24.04 } # tier3, build fail: https://github.com/rust-lang/rust/issues/89498
-          - { target: mips-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
-          - { target: mips-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
-          - { target: mips64-unknown-linux-gnuabi64, os: ubuntu-22.04 } # tier3
-          - { target: mips64-unknown-linux-gnuabi64, os: ubuntu-24.04 } # tier3
-          - { target: mips64el-unknown-linux-gnuabi64, os: ubuntu-22.04 } # tier3
-          - { target: mips64el-unknown-linux-gnuabi64, os: ubuntu-24.04 } # tier3
-          - { target: mipsel-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
-          - { target: mipsel-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
-          - { target: mipsisa32r6-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
-          - { target: mipsisa32r6-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
-          - { target: mipsisa32r6el-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
-          - { target: mipsisa32r6el-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
-          - { target: mipsisa64r6-unknown-linux-gnuabi64, os: ubuntu-22.04 } # tier3
-          - { target: mipsisa64r6-unknown-linux-gnuabi64, os: ubuntu-24.04 } # tier3
-          - { target: mipsisa64r6el-unknown-linux-gnuabi64, os: ubuntu-22.04 } # tier3
-          - { target: mipsisa64r6el-unknown-linux-gnuabi64, os: ubuntu-24.04 } # tier3
-          - { target: powerpc-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: powerpc-unknown-linux-gnu, os: ubuntu-24.04 }
-          # - { target: powerpc-unknown-linux-gnuspe, os: ubuntu-22.04 } # tier3, fails to run test, and GCC 9 removed support for this target
-          # - { target: powerpc-unknown-linux-gnuspe, os: ubuntu-24.04 } # tier3, fails to run test, and GCC 9 removed support for this target
-          - { target: powerpc64-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: powerpc64-unknown-linux-gnu, os: ubuntu-24.04 }
-          - { target: powerpc64le-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: powerpc64le-unknown-linux-gnu, os: ubuntu-24.04 }
-          - { target: riscv32gc-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
-          - { target: riscv32gc-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
-          # - { target: riscv64a23-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
-          # - { target: riscv64a23-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
-          - { target: riscv64gc-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: riscv64gc-unknown-linux-gnu, os: ubuntu-24.04 }
-          - { target: s390x-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: s390x-unknown-linux-gnu, os: ubuntu-24.04 }
-          # TODO: relocations in generic ELF (EM: 18)
-          # - { target: sparc-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
-          # - { target: sparc-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
-          - { target: sparc64-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: sparc64-unknown-linux-gnu, os: ubuntu-24.04 }
-          - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-22.04 }
-          - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-22.04-arm }
-          - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-24.04 }
-          - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-24.04-arm }
-          - { target: x86_64-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: x86_64-unknown-linux-gnu, os: ubuntu-24.04 }
-          # - { target: x86_64-unknown-linux-gnux32, os: ubuntu-22.04 }
-          # - { target: x86_64-unknown-linux-gnux32, os: ubuntu-24.04 }
+          # - { target: i586-unknown-linux-gnu, os: ubuntu-22.04 }
+          # - { target: i586-unknown-linux-gnu, os: ubuntu-24.04 }
+          # - { target: i686-unknown-linux-gnu, os: ubuntu-22.04 }
+          # - { target: i686-unknown-linux-gnu, os: ubuntu-24.04 }
+          # - { target: loongarch64-unknown-linux-gnu, os: ubuntu-22.04 }
+          # - { target: loongarch64-unknown-linux-gnu, os: ubuntu-24.04 }
+          # # - { target: m68k-unknown-linux-gnu, os: ubuntu-22.04 } # tier3, build fail: https://github.com/rust-lang/rust/issues/89498
+          # # - { target: m68k-unknown-linux-gnu, os: ubuntu-24.04 } # tier3, build fail: https://github.com/rust-lang/rust/issues/89498
+          # - { target: mips-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
+          # - { target: mips-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
+          # - { target: mips64-unknown-linux-gnuabi64, os: ubuntu-22.04 } # tier3
+          # - { target: mips64-unknown-linux-gnuabi64, os: ubuntu-24.04 } # tier3
+          # - { target: mips64el-unknown-linux-gnuabi64, os: ubuntu-22.04 } # tier3
+          # - { target: mips64el-unknown-linux-gnuabi64, os: ubuntu-24.04 } # tier3
+          # - { target: mipsel-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
+          # - { target: mipsel-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
+          # - { target: mipsisa32r6-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
+          # - { target: mipsisa32r6-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
+          # - { target: mipsisa32r6el-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
+          # - { target: mipsisa32r6el-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
+          # - { target: mipsisa64r6-unknown-linux-gnuabi64, os: ubuntu-22.04 } # tier3
+          # - { target: mipsisa64r6-unknown-linux-gnuabi64, os: ubuntu-24.04 } # tier3
+          # - { target: mipsisa64r6el-unknown-linux-gnuabi64, os: ubuntu-22.04 } # tier3
+          # - { target: mipsisa64r6el-unknown-linux-gnuabi64, os: ubuntu-24.04 } # tier3
+          # - { target: powerpc-unknown-linux-gnu, os: ubuntu-22.04 }
+          # - { target: powerpc-unknown-linux-gnu, os: ubuntu-24.04 }
+          # # - { target: powerpc-unknown-linux-gnuspe, os: ubuntu-22.04 } # tier3, fails to run test, and GCC 9 removed support for this target
+          # # - { target: powerpc-unknown-linux-gnuspe, os: ubuntu-24.04 } # tier3, fails to run test, and GCC 9 removed support for this target
+          # - { target: powerpc64-unknown-linux-gnu, os: ubuntu-22.04 }
+          # - { target: powerpc64-unknown-linux-gnu, os: ubuntu-24.04 }
+          # - { target: powerpc64le-unknown-linux-gnu, os: ubuntu-22.04 }
+          # - { target: powerpc64le-unknown-linux-gnu, os: ubuntu-24.04 }
+          # - { target: riscv32gc-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
+          # - { target: riscv32gc-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
+          # # - { target: riscv64a23-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
+          # # - { target: riscv64a23-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
+          # - { target: riscv64gc-unknown-linux-gnu, os: ubuntu-22.04 }
+          # - { target: riscv64gc-unknown-linux-gnu, os: ubuntu-24.04 }
+          # - { target: s390x-unknown-linux-gnu, os: ubuntu-22.04 }
+          # - { target: s390x-unknown-linux-gnu, os: ubuntu-24.04 }
+          # # TODO: relocations in generic ELF (EM: 18)
+          # # - { target: sparc-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
+          # # - { target: sparc-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
+          # - { target: sparc64-unknown-linux-gnu, os: ubuntu-22.04 }
+          # - { target: sparc64-unknown-linux-gnu, os: ubuntu-24.04 }
+          # - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-22.04 }
+          # - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-22.04-arm }
+          # - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-24.04 }
+          # - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-24.04-arm }
+          # - { target: x86_64-unknown-linux-gnu, os: ubuntu-22.04 }
+          # - { target: x86_64-unknown-linux-gnu, os: ubuntu-24.04 }
+          # # - { target: x86_64-unknown-linux-gnux32, os: ubuntu-22.04 }
+          # # - { target: x86_64-unknown-linux-gnux32, os: ubuntu-24.04 }
 
-          # Linux (musl)
-          # rustup target list | grep -F -e '-linux-musl'
-          # rustc --print target-list | grep -F -e '-linux-musl'
-          - { target: aarch64-unknown-linux-musl }
-          - { target: aarch64-unknown-linux-musl, os: ubuntu-24.04-arm }
-          - { target: aarch64-unknown-linux-musl, runner: qemu-user@7.2 }
-          - { target: aarch64-unknown-linux-musl, qemu: '7.2' }
-          # - { target: aarch64_be-unknown-linux-musl } # tier3
-          - { target: arm-unknown-linux-musleabi }
-          - { target: arm-unknown-linux-musleabihf }
-          - { target: armv5te-unknown-linux-musleabi }
-          - { target: armv7-unknown-linux-musleabi }
-          - { target: armv7-unknown-linux-musleabihf }
-          - { target: armv7-unknown-linux-musleabihf, os: ubuntu-24.04-arm }
-          # - { target: hexagon-unknown-linux-musl } # tier3
-          - { target: i586-unknown-linux-musl }
-          - { target: i686-unknown-linux-musl }
-          # - { target: loongarch64-unknown-linux-musl }
-          # - { target: mips-unknown-linux-musl } # tier3
-          # - { target: mips64-openwrt-linux-musl } # tier3
-          # - { target: mips64-unknown-linux-muslabi64 } # tier3
-          # - { target: mips64el-unknown-linux-muslabi64 } # tier3
-          # - { target: mipsel-unknown-linux-musl } # tier3
-          # - { target: powerpc-unknown-linux-musl } # tier3
-          # - { target: powerpc-unknown-linux-muslspe } # tier3
-          # - { target: powerpc64-unknown-linux-musl } # tier3
-          - { target: powerpc64le-unknown-linux-musl }
-          # - { target: riscv32gc-unknown-linux-musl } # tier3
-          - { target: riscv64gc-unknown-linux-musl }
-          # - { target: s390x-unknown-linux-musl } # tier3
-          # - { target: thumbv7neon-unknown-linux-musleabihf } # tier3
-          # - { target: wasm32-wali-linux-musl } # tier3
-          # - { target: x86_64-unikraft-linux-musl } # tier3
-          - { target: x86_64-unknown-linux-musl }
+          # # Linux (musl)
+          # # rustup target list | grep -F -e '-linux-musl'
+          # # rustc --print target-list | grep -F -e '-linux-musl'
+          # - { target: aarch64-unknown-linux-musl }
+          # - { target: aarch64-unknown-linux-musl, os: ubuntu-24.04-arm }
+          # - { target: aarch64-unknown-linux-musl, runner: qemu-user@7.2 }
+          # - { target: aarch64-unknown-linux-musl, qemu: '7.2' }
+          # # - { target: aarch64_be-unknown-linux-musl } # tier3
+          # - { target: arm-unknown-linux-musleabi }
+          # - { target: arm-unknown-linux-musleabihf }
+          # - { target: armv5te-unknown-linux-musleabi }
+          # - { target: armv7-unknown-linux-musleabi }
+          # - { target: armv7-unknown-linux-musleabihf }
+          # - { target: armv7-unknown-linux-musleabihf, os: ubuntu-24.04-arm }
+          # # - { target: hexagon-unknown-linux-musl } # tier3
+          # - { target: i586-unknown-linux-musl }
+          # - { target: i686-unknown-linux-musl }
+          # # - { target: loongarch64-unknown-linux-musl }
+          # # - { target: mips-unknown-linux-musl } # tier3
+          # # - { target: mips64-openwrt-linux-musl } # tier3
+          # # - { target: mips64-unknown-linux-muslabi64 } # tier3
+          # # - { target: mips64el-unknown-linux-muslabi64 } # tier3
+          # # - { target: mipsel-unknown-linux-musl } # tier3
+          # # - { target: powerpc-unknown-linux-musl } # tier3
+          # # - { target: powerpc-unknown-linux-muslspe } # tier3
+          # # - { target: powerpc64-unknown-linux-musl } # tier3
+          # - { target: powerpc64le-unknown-linux-musl }
+          # # - { target: riscv32gc-unknown-linux-musl } # tier3
+          # - { target: riscv64gc-unknown-linux-musl }
+          # # - { target: s390x-unknown-linux-musl } # tier3
+          # # - { target: thumbv7neon-unknown-linux-musleabihf } # tier3
+          # # - { target: wasm32-wali-linux-musl } # tier3
+          # # - { target: x86_64-unikraft-linux-musl } # tier3
+          # - { target: x86_64-unknown-linux-musl }
 
-          # Linux (uClibc)
-          # rustc --print target-list | grep -F -e '-linux-uclibc'
-          # TODO: https://github.com/rust-lang/rust/issues/118190
-          # - { target: armv5te-unknown-linux-uclibceabi } # tier3
-          # - { target: armv7-unknown-linux-uclibceabi } # tier3
-          # - { target: armv7-unknown-linux-uclibceabihf } # tier3
-          # - { target: mips-unknown-linux-uclibc } # tier3
-          # - { target: mipsel-unknown-linux-uclibc } # tier3
+          # # # Linux (uClibc)
+          # # # rustc --print target-list | grep -F -e '-linux-uclibc'
+          # # # TODO: https://github.com/rust-lang/rust/issues/118190
+          # # # - { target: armv5te-unknown-linux-uclibceabi } # tier3
+          # # # - { target: armv7-unknown-linux-uclibceabi } # tier3
+          # # # - { target: armv7-unknown-linux-uclibceabihf } # tier3
+          # # # - { target: mips-unknown-linux-uclibc } # tier3
+          # # # - { target: mipsel-unknown-linux-uclibc } # tier3
 
-          # Android
-          # rustup target list | grep -F -e '-android'
-          # rustc --print target-list | grep -F -e '-android'
-          - { target: aarch64-linux-android }
-          - { target: arm-linux-androideabi }
-          - { target: arm-linux-androideabi@21 }
-          - { target: armv7-linux-androideabi }
-          - { target: i686-linux-android }
-          # - { target: riscv64-linux-android } # tier3
-          - { target: thumbv7neon-linux-androideabi }
-          - { target: x86_64-linux-android }
+          # # Android
+          # # rustup target list | grep -F -e '-android'
+          # # rustc --print target-list | grep -F -e '-android'
+          # - { target: aarch64-linux-android }
+          # - { target: arm-linux-androideabi }
+          # - { target: arm-linux-androideabi@21 }
+          # - { target: armv7-linux-androideabi }
+          # - { target: i686-linux-android }
+          # # - { target: riscv64-linux-android } # tier3
+          # - { target: thumbv7neon-linux-androideabi }
+          # - { target: x86_64-linux-android }
 
-          # FreeBSD
-          # rustup target list | grep -F -e '-freebsd'
-          # rustc --print target-list | grep -F -e '-freebsd'
-          - { target: aarch64-unknown-freebsd } # tier3
-          # - { target: armv6-unknown-freebsd } # tier3
-          # - { target: armv7-unknown-freebsd } # tier3
-          - { target: i686-unknown-freebsd }
-          # - { target: powerpc-unknown-freebsd } # tier3
-          # - { target: powerpc64-unknown-freebsd } # tier3
-          # - { target: powerpc64le-unknown-freebsd } # tier3
-          # - { target: riscv64gc-unknown-freebsd } # tier3
-          - { target: x86_64-unknown-freebsd }
-          - { target: x86_64-unknown-freebsd@14 }
+          # # # FreeBSD
+          # # # rustup target list | grep -F -e '-freebsd'
+          # # # rustc --print target-list | grep -F -e '-freebsd'
+          # # - { target: aarch64-unknown-freebsd } # tier3
+          # # # - { target: armv6-unknown-freebsd } # tier3
+          # # # - { target: armv7-unknown-freebsd } # tier3
+          # # - { target: i686-unknown-freebsd }
+          # # # - { target: powerpc-unknown-freebsd } # tier3
+          # # # - { target: powerpc64-unknown-freebsd } # tier3
+          # # # - { target: powerpc64le-unknown-freebsd } # tier3
+          # # # - { target: riscv64gc-unknown-freebsd } # tier3
+          # # - { target: x86_64-unknown-freebsd }
+          # # - { target: x86_64-unknown-freebsd@14 }
 
-          # NetBSD
-          # rustup target list | grep -F -e '-netbsd'
-          # rustc --print target-list | grep -F -e '-netbsd'
-          - { target: aarch64-unknown-netbsd } # tier3
-          # - { target: aarch64_be-unknown-netbsd } # tier3
-          # - { target: armv6-unknown-netbsd-eabihf } # tier3
-          # - { target: armv7-unknown-netbsd-eabihf } # tier3
-          # - { target: i586-unknown-netbsd } # tier3
-          # - { target: i686-unknown-netbsd } # tier3
-          # - { target: mipsel-unknown-netbsd } # tier3
-          # - { target: powerpc-unknown-netbsd } # tier3
-          # - { target: riscv64gc-unknown-netbsd } # tier3
-          # - { target: sparc64-unknown-netbsd } # tier3
-          - { target: x86_64-unknown-netbsd }
-          - { target: x86_64-unknown-netbsd@10 }
+          # # NetBSD
+          # # rustup target list | grep -F -e '-netbsd'
+          # # rustc --print target-list | grep -F -e '-netbsd'
+          # - { target: aarch64-unknown-netbsd } # tier3
+          # # - { target: aarch64_be-unknown-netbsd } # tier3
+          # # - { target: armv6-unknown-netbsd-eabihf } # tier3
+          # # - { target: armv7-unknown-netbsd-eabihf } # tier3
+          # # - { target: i586-unknown-netbsd } # tier3
+          # # - { target: i686-unknown-netbsd } # tier3
+          # # - { target: mipsel-unknown-netbsd } # tier3
+          # # - { target: powerpc-unknown-netbsd } # tier3
+          # # - { target: riscv64gc-unknown-netbsd } # tier3
+          # # - { target: sparc64-unknown-netbsd } # tier3
+          # - { target: x86_64-unknown-netbsd }
+          # - { target: x86_64-unknown-netbsd@10 }
 
-          # Illumos
-          # rustup target list | grep -F -e '-illumos'
-          # rustc --print target-list | grep -F -e '-illumos'
-          # - { target: aarch64-unknown-illumos } # tier3 (not yet supported)
-          - { target: x86_64-unknown-illumos }
+          # # # Illumos
+          # # # rustup target list | grep -F -e '-illumos'
+          # # # rustc --print target-list | grep -F -e '-illumos'
+          # # # - { target: aarch64-unknown-illumos } # tier3 (not yet supported)
+          # # - { target: x86_64-unknown-illumos }
 
-          # WASI
-          # rustup target list | grep -F -e '-wasi'
-          # rustc --print target-list | grep -F -e '-wasi'
-          - { target: wasm32-wasip1 }
-          # - { target: wasm32-wasip1-threads } # TODO: memory allocation of 1664 bytes failed
-          - { target: wasm32-wasip2 }
+          # # WASI
+          # # rustup target list | grep -F -e '-wasi'
+          # # rustc --print target-list | grep -F -e '-wasi'
+          # - { target: wasm32-wasip1 }
+          # # - { target: wasm32-wasip1-threads } # TODO: memory allocation of 1664 bytes failed
+          # - { target: wasm32-wasip2 }
 
-          # macOS
-          # rustup target list | grep -F -e '-darwin'
-          # rustc --print target-list | grep -F -e '-darwin'
-          - { target: aarch64-apple-darwin, os: macos-latest }
-          # - { target: arm64e-apple-darwin, os: macos-latest } # tier3
-          # - { target: i686-apple-darwin, os: macos-latest } # tier3
-          - { target: x86_64-apple-darwin, os: macos-latest }
-          - { target: x86_64h-apple-darwin, os: macos-latest } # tier3
+          # # macOS
+          # # rustup target list | grep -F -e '-darwin'
+          # # rustc --print target-list | grep -F -e '-darwin'
+          # - { target: aarch64-apple-darwin, os: macos-latest }
+          # # - { target: arm64e-apple-darwin, os: macos-latest } # tier3
+          # # - { target: i686-apple-darwin, os: macos-latest } # tier3
+          # - { target: x86_64-apple-darwin, os: macos-latest }
+          # - { target: x86_64h-apple-darwin, os: macos-latest } # tier3
 
-          # Mac Catalyst
-          # rustup target list | grep -F -e '-macabi'
-          # rustc --print target-list | grep -F -e '-macabi'
-          - { target: aarch64-apple-ios-macabi, os: macos-latest }
-          # TODO: SIGILL with LLVM 20 on x86_64 host
-          # - { target: x86_64-apple-ios-macabi, os: macos-latest }
+          # # Mac Catalyst
+          # # rustup target list | grep -F -e '-macabi'
+          # # rustc --print target-list | grep -F -e '-macabi'
+          # - { target: aarch64-apple-ios-macabi, os: macos-latest }
+          # # TODO: SIGILL with LLVM 20 on x86_64 host
+          # # - { target: x86_64-apple-ios-macabi, os: macos-latest }
 
-          # Windows (MSVC)
-          # rustup target list | grep -F -e '-pc-windows-msvc'
-          # rustc --print target-list | grep -F -e '-pc-windows-msvc'
-          - { target: aarch64-pc-windows-msvc, os: windows-latest }
-          - { target: aarch64-pc-windows-msvc, os: windows-11-arm }
-          # - { target: arm64ec-pc-windows-msvc, os: windows-latest }
-          # - { target: arm64ec-pc-windows-msvc, os: windows-11-arm }
-          - { target: i686-pc-windows-msvc, os: windows-latest }
-          - { target: i686-pc-windows-msvc, os: windows-11-arm }
-          # - { target: thumbv7a-pc-windows-msvc, os: windows-latest } # tier3
-          # - { target: thumbv7a-pc-windows-msvc, os: windows-11-arm } # tier3
-          - { target: x86_64-pc-windows-msvc, os: windows-latest }
-          - { target: x86_64-pc-windows-msvc, os: windows-11-arm }
+          # # Windows (MSVC)
+          # # rustup target list | grep -F -e '-pc-windows-msvc'
+          # # rustc --print target-list | grep -F -e '-pc-windows-msvc'
+          # - { target: aarch64-pc-windows-msvc, os: windows-latest }
+          # - { target: aarch64-pc-windows-msvc, os: windows-11-arm }
+          # # - { target: arm64ec-pc-windows-msvc, os: windows-latest }
+          # # - { target: arm64ec-pc-windows-msvc, os: windows-11-arm }
+          # - { target: i686-pc-windows-msvc, os: windows-latest }
+          # - { target: i686-pc-windows-msvc, os: windows-11-arm }
+          # # - { target: thumbv7a-pc-windows-msvc, os: windows-latest } # tier3
+          # # - { target: thumbv7a-pc-windows-msvc, os: windows-11-arm } # tier3
+          # - { target: x86_64-pc-windows-msvc, os: windows-latest }
+          # - { target: x86_64-pc-windows-msvc, os: windows-11-arm }
 
-          # Windows (MinGW)
-          # rustup target list | grep -F -e '-pc-windows-gnu'
-          # rustc --print target-list | grep -F -e '-pc-windows-gnu'
-          # Windows host:
-          # - { target: i686-pc-windows-gnu, os: windows-latest } # TODO: cmake error
-          - { target: x86_64-pc-windows-gnu, os: windows-latest }
-          # Linux host:
-          # - { target: i686-pc-windows-gnu, os: ubuntu-22.04 }
-          # - { target: i686-pc-windows-gnu, os: ubuntu-24.04 }
-          - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04 }
-          - { target: x86_64-pc-windows-gnu, os: ubuntu-24.04 }
-          - { target: x86_64-pc-windows-gnu, os: ubuntu-24.04, runner: wine@9.22 }
-          - { target: x86_64-pc-windows-gnu, os: ubuntu-24.04, wine: '10.0.0.0' }
-          - { target: x86_64-pc-windows-gnullvm, os: ubuntu-22.04 }
-          - { target: x86_64-pc-windows-gnullvm, os: ubuntu-24.04 }
-          - { target: i686-pc-windows-gnullvm, os: ubuntu-22.04 }
-          - { target: i686-pc-windows-gnullvm, os: ubuntu-24.04 }
-          - { target: aarch64-pc-windows-gnullvm, os: ubuntu-22.04 }
-          # - { target: aarch64-pc-windows-gnullvm, os: ubuntu-22.04-arm } # TODO: docker pull hang
-          - { target: aarch64-pc-windows-gnullvm, os: ubuntu-24.04 }
-          # - { target: aarch64-pc-windows-gnullvm, os: ubuntu-24.04-arm } # TODO: docker pull hang
+          # # Windows (MinGW)
+          # # rustup target list | grep -F -e '-pc-windows-gnu'
+          # # rustc --print target-list | grep -F -e '-pc-windows-gnu'
+          # # Windows host:
+          # # - { target: i686-pc-windows-gnu, os: windows-latest } # TODO: cmake error
+          # - { target: x86_64-pc-windows-gnu, os: windows-latest }
+          # # Linux host:
+          # # - { target: i686-pc-windows-gnu, os: ubuntu-22.04 }
+          # # - { target: i686-pc-windows-gnu, os: ubuntu-24.04 }
+          # - { target: x86_64-pc-windows-gnu, os: ubuntu-22.04 }
+          # - { target: x86_64-pc-windows-gnu, os: ubuntu-24.04 }
+          # - { target: x86_64-pc-windows-gnu, os: ubuntu-24.04, runner: wine@9.22 }
+          # - { target: x86_64-pc-windows-gnu, os: ubuntu-24.04, wine: '10.0.0.0' }
+          # - { target: x86_64-pc-windows-gnullvm, os: ubuntu-22.04 }
+          # - { target: x86_64-pc-windows-gnullvm, os: ubuntu-24.04 }
+          # - { target: i686-pc-windows-gnullvm, os: ubuntu-22.04 }
+          # - { target: i686-pc-windows-gnullvm, os: ubuntu-24.04 }
+          # - { target: aarch64-pc-windows-gnullvm, os: ubuntu-22.04 }
+          # # - { target: aarch64-pc-windows-gnullvm, os: ubuntu-22.04-arm } # TODO: docker pull hang
+          # - { target: aarch64-pc-windows-gnullvm, os: ubuntu-24.04 }
+          # # - { target: aarch64-pc-windows-gnullvm, os: ubuntu-24.04-arm } # TODO: docker pull hang
     runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     timeout-minutes: 60
     steps:
@@ -329,109 +330,109 @@ jobs:
           path: /tmp/artifacts/
         if: matrix.runner == '' && matrix.qemu == '' && matrix.wine == ''
 
-  test-container:
-    needs: tidy
-    strategy:
-      fail-fast: false
-      matrix:
-        container:
-          # NB: Sync list with https://github.com/taiki-e/checkout-action/blob/HEAD/.github/workflows/ci.yml
-          # - ubuntu:14.04 # glibc 2.19
-          # - ubuntu:16.04 # glibc 2.23
-          - ubuntu:18.04 # glibc 2.27
-          - ubuntu:20.04 # glibc 2.31
-          - ubuntu:22.04 # glibc 2.35
-          - ubuntu:24.04 # glibc 2.39
-          # - debian:9-slim # glibc 2.24
-          - debian:10-slim # glibc 2.28
-          - debian:11-slim # glibc 2.31
-          - debian:12-slim # glibc 2.36
-          - debian:13-slim # glibc 2.41
-        target:
-          - x86_64-unknown-linux-gnu
-          - aarch64-unknown-linux-gnu
-          # TODO: No such file or directory
-          # - i586-unknown-linux-gnu
-          # - i686-unknown-linux-gnu
-          - x86_64-unknown-linux-musl
-          - aarch64-unknown-linux-musl
-          - aarch64-linux-android
-          - x86_64-unknown-freebsd
-          - x86_64-unknown-netbsd
-          - x86_64-unknown-illumos
-          - wasm32-wasip1
-          - x86_64-pc-windows-gnu
-          - x86_64-pc-windows-gnullvm
-        # prettier-ignore
-        exclude:
-          # Toolchains not available on ubuntu 18.04
-          - { target: mipsisa32r6-unknown-linux-gnu, container: 'ubuntu:18.04' }
-          - { target: mipsisa32r6el-unknown-linux-gnu, container: 'ubuntu:18.04' }
-          - { target: mipsisa64r6-unknown-linux-gnuabi64, container: 'ubuntu:18.04' }
-          - { target: mipsisa64r6el-unknown-linux-gnuabi64, container: 'ubuntu:18.04' }
-          # "Bad EXE format" error with wine 10.0
-          - { target: x86_64-pc-windows-gnu, container: 'ubuntu:20.04' }
-          - { target: x86_64-pc-windows-gnu, container: 'debian:11-slim' }
-          # The latest Wine not available
-          - { target: x86_64-pc-windows-gnu, container: 'ubuntu:18.04' }
-          - { target: x86_64-pc-windows-gnu, container: 'debian:10-slim' }
-          - { target: x86_64-pc-windows-gnullvm, container: 'ubuntu:18.04' }
-          - { target: x86_64-pc-windows-gnullvm, container: 'debian:10-slim' }
-          # Linker error "unsupported ISA subset `z'" since nightly-2023-08-09 (LLVM 17)
-          - { target: riscv64gc-unknown-linux-gnu, container: 'ubuntu:20.04' }
-          # sparc64-linux-gnu-gcc: error: 20210110/32: No such file or directory
-          - { target: sparc-unknown-linux-gnu, container: 'debian:11-slim' }
-          # precompiled binary of latest wasmtime requires glibc 2.29+
-          - { target: wasm32-wasip1, container: 'ubuntu:18.04' }
-          - { target: wasm32-wasip1, container: 'debian:10-slim' }
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    container:
-      image: ${{ matrix.container }}
-      options: --privileged
-    steps:
-      - name: Install requirements (old debian)
-        run: |
-          # In Debian, the old repositories is removed from the main mirrors some time after EoL.
-          codename=$(grep -E '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2)
-          sed -i /etc/apt/sources.list -e 's/deb.debian.org/archive.debian.org/g' \
-            -e 's|security.debian.org|archive.debian.org/|g' \
-            -e "/${codename}-updates/d"
-        if: startsWith(matrix.container, 'debian:10')
-      - name: Install requirements (ubuntu/debian)
-        run: |
-          apt-get -o Acquire::Retries=10 -qq update
-          apt-get -o Acquire::Retries=10 -qq -o Dpkg::Use-Pty=0 install -y --no-install-recommends ca-certificates curl
-        if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
-      - uses: taiki-e/checkout-action@v1
-      - uses: taiki-e/github-actions/install-rust@nightly
-      - run: apt-get -qq -o Dpkg::Use-Pty=0 purge -y curl
-        if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
-      - uses: ./
-        with:
-          target: ${{ matrix.target }}
-      - name: Install requirements for test (ubuntu/debian)
-        run: |
-          apt-get -o Acquire::Retries=10 -qq update
-          apt-get -o Acquire::Retries=10 -qq -o Dpkg::Use-Pty=0 install -y --no-install-recommends gcc libc6-dev jq make cmake
-        if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
-      - run: |
-          retry() {
-            for i in {1..10}; do
-              if "$@"; then
-                return 0
-              else
-                sleep "${i}"
-              fi
-            done
-            "$@"
-          }
-          retry git clone --depth 1 https://github.com/taiki-e/rust-cross-toolchain.git
-      - run: tools/ci/test.sh "${{ matrix.target }}" rust-cross-toolchain/docker/test/fixtures/rust
-        id: test
-      # TODO: we should replace ':' from matrix.container: "Error: The artifact name is not valid"
-      # # For debugging
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: ${{ matrix.target }}-${{ matrix.container }}
-      #     path: /tmp/artifacts/
+  # test-container:
+  #   needs: tidy
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       container:
+  #         # NB: Sync list with https://github.com/taiki-e/checkout-action/blob/HEAD/.github/workflows/ci.yml
+  #         # - ubuntu:14.04 # glibc 2.19
+  #         # - ubuntu:16.04 # glibc 2.23
+  #         - ubuntu:18.04 # glibc 2.27
+  #         - ubuntu:20.04 # glibc 2.31
+  #         - ubuntu:22.04 # glibc 2.35
+  #         - ubuntu:24.04 # glibc 2.39
+  #         # - debian:9-slim # glibc 2.24
+  #         - debian:10-slim # glibc 2.28
+  #         - debian:11-slim # glibc 2.31
+  #         - debian:12-slim # glibc 2.36
+  #         - debian:13-slim # glibc 2.41
+  #       target:
+  #         - x86_64-unknown-linux-gnu
+  #         - aarch64-unknown-linux-gnu
+  #         # TODO: No such file or directory
+  #         # - i586-unknown-linux-gnu
+  #         # - i686-unknown-linux-gnu
+  #         - x86_64-unknown-linux-musl
+  #         - aarch64-unknown-linux-musl
+  #         - aarch64-linux-android
+  #         - x86_64-unknown-freebsd
+  #         - x86_64-unknown-netbsd
+  #         - x86_64-unknown-illumos
+  #         - wasm32-wasip1
+  #         - x86_64-pc-windows-gnu
+  #         - x86_64-pc-windows-gnullvm
+  #       # prettier-ignore
+  #       exclude:
+  #         # Toolchains not available on ubuntu 18.04
+  #         - { target: mipsisa32r6-unknown-linux-gnu, container: 'ubuntu:18.04' }
+  #         - { target: mipsisa32r6el-unknown-linux-gnu, container: 'ubuntu:18.04' }
+  #         - { target: mipsisa64r6-unknown-linux-gnuabi64, container: 'ubuntu:18.04' }
+  #         - { target: mipsisa64r6el-unknown-linux-gnuabi64, container: 'ubuntu:18.04' }
+  #         # "Bad EXE format" error with wine 10.0
+  #         - { target: x86_64-pc-windows-gnu, container: 'ubuntu:20.04' }
+  #         - { target: x86_64-pc-windows-gnu, container: 'debian:11-slim' }
+  #         # The latest Wine not available
+  #         - { target: x86_64-pc-windows-gnu, container: 'ubuntu:18.04' }
+  #         - { target: x86_64-pc-windows-gnu, container: 'debian:10-slim' }
+  #         - { target: x86_64-pc-windows-gnullvm, container: 'ubuntu:18.04' }
+  #         - { target: x86_64-pc-windows-gnullvm, container: 'debian:10-slim' }
+  #         # Linker error "unsupported ISA subset `z'" since nightly-2023-08-09 (LLVM 17)
+  #         - { target: riscv64gc-unknown-linux-gnu, container: 'ubuntu:20.04' }
+  #         # sparc64-linux-gnu-gcc: error: 20210110/32: No such file or directory
+  #         - { target: sparc-unknown-linux-gnu, container: 'debian:11-slim' }
+  #         # precompiled binary of latest wasmtime requires glibc 2.29+
+  #         - { target: wasm32-wasip1, container: 'ubuntu:18.04' }
+  #         - { target: wasm32-wasip1, container: 'debian:10-slim' }
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 60
+  #   container:
+  #     image: ${{ matrix.container }}
+  #     options: --privileged
+  #   steps:
+  #     - name: Install requirements (old debian)
+  #       run: |
+  #         # In Debian, the old repositories is removed from the main mirrors some time after EoL.
+  #         codename=$(grep -E '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2)
+  #         sed -i /etc/apt/sources.list -e 's/deb.debian.org/archive.debian.org/g' \
+  #           -e 's|security.debian.org|archive.debian.org/|g' \
+  #           -e "/${codename}-updates/d"
+  #       if: startsWith(matrix.container, 'debian:10')
+  #     - name: Install requirements (ubuntu/debian)
+  #       run: |
+  #         apt-get -o Acquire::Retries=10 -qq update
+  #         apt-get -o Acquire::Retries=10 -qq -o Dpkg::Use-Pty=0 install -y --no-install-recommends ca-certificates curl
+  #       if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
+  #     - uses: taiki-e/checkout-action@v1
+  #     - uses: taiki-e/github-actions/install-rust@nightly
+  #     - run: apt-get -qq -o Dpkg::Use-Pty=0 purge -y curl
+  #       if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
+  #     - uses: ./
+  #       with:
+  #         target: ${{ matrix.target }}
+  #     - name: Install requirements for test (ubuntu/debian)
+  #       run: |
+  #         apt-get -o Acquire::Retries=10 -qq update
+  #         apt-get -o Acquire::Retries=10 -qq -o Dpkg::Use-Pty=0 install -y --no-install-recommends gcc libc6-dev jq make cmake
+  #       if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
+  #     - run: |
+  #         retry() {
+  #           for i in {1..10}; do
+  #             if "$@"; then
+  #               return 0
+  #             else
+  #               sleep "${i}"
+  #             fi
+  #           done
+  #           "$@"
+  #         }
+  #         retry git clone --depth 1 https://github.com/taiki-e/rust-cross-toolchain.git
+  #     - run: tools/ci/test.sh "${{ matrix.target }}" rust-cross-toolchain/docker/test/fixtures/rust
+  #       id: test
+  #     # TODO: we should replace ':' from matrix.container: "Error: The artifact name is not valid"
+  #     # # For debugging
+  #     # - uses: actions/upload-artifact@v4
+  #     #   with:
+  #     #     name: ${{ matrix.target }}-${{ matrix.container }}
+  #     #     path: /tmp/artifacts/
