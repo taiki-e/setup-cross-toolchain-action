@@ -122,6 +122,11 @@ esac
 case "${target}" in
   # With static linking (default for target other than mips{,el}-unknown-linux-musl/mips64-openwrt-linux-musl)
   *-linux-musl*) export RUSTFLAGS="${base_rustflags} -C target-feature=+crt-static -C link-self-contained=yes" ;;
+  # TODO
+  # = note: /usr/local/bin/../csky-linux-gnuabiv2/libc//usr/lib/libpthread.a(lowlevellock.o): In function `__lll_lock_wait_private':
+  #       (.text+0x0): multiple definition of `__lll_lock_wait_private'
+  #       /usr/local/bin/../csky-linux-gnuabiv2/libc//usr/lib/libc.a(libc-lowlevellock.o):(.text+0x0): first defined here
+  # csky-*) export RUSTFLAGS="${base_rustflags} -C target-feature=+crt-static" ;;
 esac
 run_tests
 
