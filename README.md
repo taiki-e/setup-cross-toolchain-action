@@ -482,9 +482,9 @@ The `wine` runner for aarch64-pc-windows-gnullvm is AArch64 Wine running on qemu
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
 | `aarch64-pc-windows-msvc` | *Windows* |        |  |
-| `i586-pc-windows-msvc`    | *Windows* | native |  |
 | `i686-pc-windows-msvc`    | *Windows* | native |  |
 | `x86_64-pc-windows-msvc`  | *Windows* | native |  |
+| `i586-pc-windows-msvc`    | *Windows* | native | [Removed in Rust 1.87](https://github.com/rust-lang/rust/pull/137957) |
 
 GitHub-provided Windows runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 

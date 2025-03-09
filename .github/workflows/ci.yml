@@ -246,7 +246,6 @@ jobs:
           # rustc --print target-list | grep -F -e '-pc-windows-msvc'
           - { target: aarch64-pc-windows-msvc, os: windows-latest }
           # - { target: arm64ec-pc-windows-msvc, os: windows-latest }
-          - { target: i586-pc-windows-msvc, os: windows-latest }
           - { target: i686-pc-windows-msvc, os: windows-latest }
           # - { target: thumbv7a-pc-windows-msvc, os: windows-latest } # tier3
           - { target: x86_64-pc-windows-msvc, os: windows-latest }
