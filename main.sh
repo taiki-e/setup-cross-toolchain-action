@@ -472,6 +472,7 @@ RANLIB_${target_lower}=${apt_target}-ranlib
 STRIP=${apt_target}-strip
 OBJDUMP=${apt_target}-objdump
 PKG_CONFIG_PATH=/usr/lib/${apt_target}/pkgconfig:${PKG_CONFIG_PATH:-}
+PKG_CONFIG_SYSROOT=/
 EOF
             ;;
         esac
