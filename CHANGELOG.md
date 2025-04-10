@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.29.0] - 2025-04-10
+
 - Set `PKG_CONFIG_SYSROOT` for most linux-gnu targets. ([#27](https://github.com/taiki-e/setup-cross-toolchain-action/pull/27), thanks @AsherJingkongChen)
 
 ## [1.28.3] - 2025-02-20
@@ -364,7 +366,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.3...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.29.0...HEAD
+[1.29.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.3...v1.29.0
 [1.28.3]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.2...v1.28.3
 [1.28.2]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.1...v1.28.2
 [1.28.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.0...v1.28.1
