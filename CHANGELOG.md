@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Set `PKG_CONFIG_SYSROOT` for most linux-gnu targets. ([#27](https://github.com/taiki-e/setup-cross-toolchain-action/pull/27), thanks @AsherJingkongChen)
+
 ## [1.28.3] - 2025-02-20
 
 - Revert the change in 1.28.2 as [it was found to be ineffective in practice](https://github.com/taiki-e/upload-rust-binary-action/issues/94#issuecomment-2669416110).
