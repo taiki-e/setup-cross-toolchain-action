@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.29.1] - 2025-04-12
+
 - Set `PKG_CONFIG_SYSROOT_DIR` instead of `PKG_CONFIG_SYSROOT` which is not actually referred.
 
 ## [1.29.0] - 2025-04-10
@@ -368,7 +370,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.29.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.29.1...HEAD
+[1.29.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.29.0...v1.29.1
 [1.29.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.3...v1.29.0
 [1.28.3]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.2...v1.28.3
 [1.28.2]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.1...v1.28.2
