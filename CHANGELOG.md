@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Set `PKG_CONFIG_SYSROOT_DIR` instead of `PKG_CONFIG_SYSROOT` which is not actually referred.
+
 ## [1.29.0] - 2025-04-10
 
 - Set `PKG_CONFIG_SYSROOT` for most linux-gnu targets. ([#27](https://github.com/taiki-e/setup-cross-toolchain-action/pull/27), thanks @AsherJingkongChen)
