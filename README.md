@@ -475,13 +475,13 @@ The `wine` runner for aarch64-pc-windows-gnullvm is AArch64 Wine running on qemu
 | --- | ---- |
 | ✓ | ✓ [1] |
 
-[1] Only x86/x86_64 targets.<br>
+[1] For x86/x86_64 targets all runners and for aarch64 targets only arm64 runners.<br>
 
 **Supported targets:**
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-pc-windows-msvc` | *Windows* |        |  |
+| `aarch64-pc-windows-msvc` | *Windows* | native |  |
 | `i686-pc-windows-msvc`    | *Windows* | native |  |
 | `x86_64-pc-windows-msvc`  | *Windows* | native |  |
 | `i586-pc-windows-msvc`    | *Windows* | native | [Removed in Rust 1.87](https://github.com/rust-lang/rust/pull/137957) |

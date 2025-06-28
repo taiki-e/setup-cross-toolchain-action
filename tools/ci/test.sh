@@ -13,6 +13,8 @@ bail() {
 
 set -x
 
+# We cannot use uname -m here because uname -m on windows-11-arm returns "x86_64".
+host=$(rustc -vV | grep -E '^host:' | cut -d' ' -f2)
 target="$1"
 target="${target%@*}"
 target_lower="${target//-/_}"
@@ -26,6 +28,7 @@ case "${target}" in
   wasm*) exe='.wasm' ;;
 esac
 # TODO: Print glibc version
+uname -m
 case "${target}" in
   *-freebsd*) freebsd-version ;;
 esac
@@ -35,14 +38,14 @@ skip_run() {
     # x86_64h-apple-darwin is also x86_64 but build-only due to the CPU of GitHub-provided macOS runners is older than haswell.
     *-freebsd* | *-netbsd* | *-illumos* | x86_64h-apple-darwin) return 0 ;;
     aarch64*-darwin* | arm64*-darwin* | aarch64*-windows-msvc | arm64*-windows-msvc)
-      case "$(uname -m)" in
-        aarch64 | arm64) ;;
+      case "${host}" in
+        aarch64* | arm64*) ;;
         *) return 0 ;;
       esac
       ;;
   esac
-  case "$(uname -m)" in
-    aarch64 | arm64)
+  case "${host}" in
+    aarch64* | arm64*)
       case "${target}" in
         aarch64* | arm64* | arm*hf | thumb*hf | *-darwin* | *-windows*) return 1 ;;
       esac
@@ -129,8 +132,8 @@ cargo_options=()
 case "${target}" in
   *-linux-musl*)
     # With dynamic linking (default for mips{,el}-unknown-linux-musl/mips64-openwrt-linux-musl)
-    case "$(uname -m)" in
-      aarch64 | arm64)
+    case "${host}" in
+      aarch64* | arm64*)
         case "${target}" in
           # TODO: No such file or directory
           armv7*hf | thumbv7*hf | aarch64-*) ;;

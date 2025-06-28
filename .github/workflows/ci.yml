@@ -245,10 +245,15 @@ jobs:
           # rustup target list | grep -F -e '-pc-windows-msvc'
           # rustc --print target-list | grep -F -e '-pc-windows-msvc'
           - { target: aarch64-pc-windows-msvc, os: windows-latest }
+          - { target: aarch64-pc-windows-msvc, os: windows-11-arm }
           # - { target: arm64ec-pc-windows-msvc, os: windows-latest }
+          # - { target: arm64ec-pc-windows-msvc, os: windows-11-arm }
           - { target: i686-pc-windows-msvc, os: windows-latest }
+          - { target: i686-pc-windows-msvc, os: windows-11-arm }
           # - { target: thumbv7a-pc-windows-msvc, os: windows-latest } # tier3
+          # - { target: thumbv7a-pc-windows-msvc, os: windows-11-arm } # tier3
           - { target: x86_64-pc-windows-msvc, os: windows-latest }
+          - { target: x86_64-pc-windows-msvc, os: windows-11-arm }
 
           # Windows (MinGW)
           # rustup target list | grep -F -e '-pc-windows-gnu'
