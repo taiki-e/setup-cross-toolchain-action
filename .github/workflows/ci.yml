@@ -368,6 +368,14 @@ jobs:
       image: ${{ matrix.container }}
       options: --privileged
     steps:
+      - name: Install requirements (old debian)
+        run: |
+          # In Debian, the old repositories is removed from the main mirrors some time after EoL.
+          codename=$(grep -E '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2)
+          sed -i /etc/apt/sources.list -e 's/deb.debian.org/archive.debian.org/g' \
+            -e 's|security.debian.org|archive.debian.org/|g' \
+            -e "/${codename}-updates/d"
+        if: startsWith(matrix.container, 'debian:10')
       - name: Install requirements (ubuntu/debian)
         run: |
           apt-get -o Acquire::Retries=10 -qq update
