@@ -227,19 +227,17 @@ jobs:
           # macOS
           # rustup target list | grep -F -e '-darwin'
           # rustc --print target-list | grep -F -e '-darwin'
-          - { target: aarch64-apple-darwin, os: macos-latest } # AArch64
-          - { target: aarch64-apple-darwin, os: macos-13 } # x86_64
+          - { target: aarch64-apple-darwin, os: macos-latest }
           # - { target: i686-apple-darwin, os: macos-latest } # tier3
-          - { target: x86_64-apple-darwin, os: macos-latest } # AArch64
-          - { target: x86_64-apple-darwin, os: macos-13 } # x86_64
+          - { target: x86_64-apple-darwin, os: macos-latest }
           - { target: x86_64h-apple-darwin, os: macos-latest } # tier3
 
           # Mac Catalyst
           # rustup target list | grep -F -e '-macabi'
           # rustc --print target-list | grep -F -e '-macabi'
-          - { target: aarch64-apple-ios-macabi, os: macos-latest } # AArch64
-          # TODO: SIGILL with LLVM 20
-          # - { target: x86_64-apple-ios-macabi, os: macos-13 } # x86_64
+          - { target: aarch64-apple-ios-macabi, os: macos-latest }
+          # TODO: SIGILL with LLVM 20 on x86_64 host
+          # - { target: x86_64-apple-ios-macabi, os: macos-latest }
 
           # Windows (MSVC)
           # rustup target list | grep -F -e '-pc-windows-msvc'
