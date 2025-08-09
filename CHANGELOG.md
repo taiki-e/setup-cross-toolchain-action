@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Update the default QEMU version from 9.2 to 10.0.
+
 ## [1.29.1] - 2025-04-12
 
 - Set `PKG_CONFIG_SYSROOT_DIR` instead of `PKG_CONFIG_SYSROOT` which is not actually referred.

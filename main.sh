@@ -42,8 +42,8 @@ export RUSTUP_MAX_RETRIES=10
 # version as the default runner version.
 # NB: Sync with readme.
 # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
-default_qemu_version='9.2'
-# https://dl.winehq.org/wine-builds/ubuntu/dists/noble/main/binary-amd64
+default_qemu_version='10.0'
+# https://dl.winehq.org/wine-builds/ubuntu/pool/main/w/wine/
 default_wine_version='10.0.0.0'
 
 if [[ $# -gt 0 ]]; then
