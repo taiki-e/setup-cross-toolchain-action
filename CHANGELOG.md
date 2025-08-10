@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.30.0] - 2025-08-10
+
 - Update the default QEMU version from 9.2 to 10.0.
 
 - Update documentation to reflect that doctest is now cross-tested by default in Rust 1.89.
@@ -374,7 +376,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.29.1...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.30.0...HEAD
+[1.30.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.29.1...v1.30.0
 [1.29.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.29.0...v1.29.1
 [1.29.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.3...v1.29.0
 [1.28.3]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.28.2...v1.28.3
