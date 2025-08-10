@@ -85,23 +85,12 @@ jobs:
 
 ### Example workflow: Doctest
 
-```yaml
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Rust
-        run: rustup update nightly && rustup default nightly
-      - name: Install cross-compilation tools
-        uses: taiki-e/setup-cross-toolchain-action@v1
-        with:
-          target: aarch64-unknown-linux-gnu
-      - run: cargo test --verbose -Z doctest-xcompile
-```
+Since Rust 1.89, doctest is cross-tested by default.
 
-Cross-testing of doctest is currently available only on nightly.
-If you want to use stable and nightly in the same matrix, you can use the `DOCTEST_XCOMPILE` environment variable set by this action to enable doctest only in nightly.
+<details><summary>For old Rust versions.</summary>
+
+For old Rust versions, cross-testing of doctest is available only on nightly.
+If you want to use new, old stable, and old nightly in the same matrix, you can use the `DOCTEST_XCOMPILE` environment variable set by this action to enable doctest only in Rust 1.89+ and old nightly.
 
 ```yaml
 jobs:
@@ -122,14 +111,14 @@ jobs:
         uses: taiki-e/setup-cross-toolchain-action@v1
         with:
           target: ${{ matrix.target }}
-      # On nightly and `-Z doctest-xcompile` is available,
+      # On old nightly and `-Z doctest-xcompile` is available,
       # `$DOCTEST_XCOMPILE` is `-Zdoctest-xcompile`.
       #
-      # On stable, `$DOCTEST_XCOMPILE` is not set.
-      # Once `-Z doctest-xcompile` is stabilized, the corresponding flag
-      # will be set to `$DOCTEST_XCOMPILE` (if it is available).
+      # On stable, and nightly since Rust 1.89, `$DOCTEST_XCOMPILE` is not set.
       - run: cargo test --verbose $DOCTEST_XCOMPILE
 ```
+
+</details>
 
 ### Example workflow: Tier 3 targets
 
@@ -317,6 +306,8 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 [1] This action currently uses the API level 24 system image, so `cargo test` and `cargo run` may not work on API level 26+.<br>
 [2] [21 on Rust 1.82+](https://github.com/rust-lang/rust/pull/120593), otherwise 19.<br>
+
+(Other android targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#linux-musl) may also work, although this action's CI has not tested them.)
 
 You can select/pin the API level version by using `@` syntax in `target` option. For example:
 
