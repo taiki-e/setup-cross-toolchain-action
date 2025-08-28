@@ -42,7 +42,7 @@ export RUSTUP_MAX_RETRIES=10
 # version as the default runner version.
 # NB: Sync with readme.
 # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
-default_qemu_version='10.0'
+default_qemu_version='10.1'
 # https://dl.winehq.org/wine-builds/ubuntu/pool/main/w/wine/
 default_wine_version='10.0.0.0'
 
@@ -333,7 +333,7 @@ install_qemu() {
   printf '::endgroup::\n'
   x "qemu-${qemu_arch}" --version
 }
-# Refs: https://github.com/qemu/qemu/blob/v9.2.0/scripts/qemu-binfmt-conf.sh
+# Refs: https://github.com/qemu/qemu/blob/v10.1.0/scripts/qemu-binfmt-conf.sh
 register_binfmt() {
   printf '::group::Register binfmt\n'
   if [[ ! -d /proc/sys/fs/binfmt_misc ]]; then
@@ -345,7 +345,7 @@ register_binfmt() {
   fi
   case "$1" in
     qemu-user)
-      local url='https://raw.githubusercontent.com/qemu/qemu/ae35f033b874c627d81d51070187fbf55f0bf1a7/scripts/qemu-binfmt-conf.sh'
+      local url='https://raw.githubusercontent.com/qemu/qemu/f8b2f64e2336a28bf0d50b6ef8a7d8c013e9bcf3/scripts/qemu-binfmt-conf.sh'
       if ! type -P curl >/dev/null; then
         apt_packages+=(ca-certificates curl)
         install_apt_packages
