@@ -57,9 +57,8 @@ jobs:
           - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04-arm }
           # - { target: aarch64-unknown-linux-gnu_ilp32, os: ubuntu-22.04 } # tier3
           # - { target: aarch64-unknown-linux-gnu_ilp32, os: ubuntu-24.04 } # tier3
-          # TODO: https://github.com/BurntSushi/memchr/pull/162
-          # - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
-          # # - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-24.04 } # tier3 # Segmentation fault on ubuntu 24.04: https://github.com/taiki-e/setup-cross-toolchain-action/issues/1
+          - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
+          # - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-24.04 } # tier3 # Segmentation fault on ubuntu 24.04: https://github.com/taiki-e/setup-cross-toolchain-action/issues/1
           # - { target: aarch64_be-unknown-linux-gnu_ilp32, os: ubuntu-22.04 } # tier3
           # - { target: aarch64_be-unknown-linux-gnu_ilp32, os: ubuntu-24.04 } # tier3
           - { target: arm-unknown-linux-gnueabi, os: ubuntu-22.04 }
