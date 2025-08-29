@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Improve support for Debian 13+.
+
 ## [1.31.0] - 2025-08-28
 
 - Update the default QEMU version from 10.0 to 10.1.

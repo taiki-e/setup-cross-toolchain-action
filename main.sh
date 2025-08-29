@@ -140,11 +140,12 @@ install_llvm() {
   case "${codename}" in
     bionic) llvm_version=13 ;;
     noble) llvm_version=18 ;;
-    # TODO: update to 18
+    trixie) llvm_version=19 ;;
+    # TODO: update to 21
     *) llvm_version=15 ;;
   esac
   case "${codename}" in
-    noble) ;;
+    noble | trixie) ;;
     *)
       _sudo mkdir -pm755 -- /etc/apt/keyrings
       retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://apt.llvm.org/llvm-snapshot.gpg.key \
@@ -177,6 +178,13 @@ install_rust_cross_toolchain() {
   # TODO: distribute rust-cross-toolchain without docker
   if ! type -P docker >/dev/null; then
     apt_packages+=(docker.io)
+    if grep -Eq '^ID=debian$' /etc/os-release; then
+      version_id=$(grep -E '^VERSION_ID=' /etc/os-release | cut -d= -f2)
+      case "${version_id//\"/}" in
+        [0-9] | 1[0-2]) ;;
+        *) apt_packages+=(docker-cli) ;;
+      esac
+    fi
     install_apt_packages
   fi
   # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
@@ -322,6 +330,13 @@ install_qemu() {
   # TODO: distribute rust-cross-toolchain without docker
   if ! type -P docker >/dev/null; then
     apt_packages+=(docker.io)
+    if grep -Eq '^ID=debian$' /etc/os-release; then
+      version_id=$(grep -E '^VERSION_ID=' /etc/os-release | cut -d= -f2)
+      case "${version_id//\"/}" in
+        [0-9] | 1[0-2]) ;;
+        *) apt_packages+=(docker-cli) ;;
+      esac
+    fi
     install_apt_packages
   fi
   retry docker create --name qemu-user "ghcr.io/taiki-e/qemu-user${qemu_user_tag}"

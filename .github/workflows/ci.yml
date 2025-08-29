@@ -328,13 +328,18 @@ jobs:
       fail-fast: false
       matrix:
         container:
+          # NB: Sync list with https://github.com/taiki-e/checkout-action/blob/HEAD/.github/workflows/ci.yml
+          # - ubuntu:14.04 # glibc 2.19
+          # - ubuntu:16.04 # glibc 2.23
           - ubuntu:18.04 # glibc 2.27
           - ubuntu:20.04 # glibc 2.31
           - ubuntu:22.04 # glibc 2.35
           - ubuntu:24.04 # glibc 2.39
+          # - debian:9-slim # glibc 2.24
           - debian:10-slim # glibc 2.28
           - debian:11-slim # glibc 2.31
           - debian:12-slim # glibc 2.36
+          - debian:13-slim # glibc 2.41
         target:
           - x86_64-unknown-linux-gnu
           - aarch64-unknown-linux-gnu
@@ -369,8 +374,9 @@ jobs:
           - { target: riscv64gc-unknown-linux-gnu, container: 'ubuntu:20.04' }
           # sparc64-linux-gnu-gcc: error: 20210110/32: No such file or directory
           - { target: sparc-unknown-linux-gnu, container: 'debian:11-slim' }
-          # precompiled binary of latest wasmtime requires glibc 2.28+
+          # precompiled binary of latest wasmtime requires glibc 2.29+
           - { target: wasm32-wasip1, container: 'ubuntu:18.04' }
+          - { target: wasm32-wasip1, container: 'debian:10-slim' }
     runs-on: ubuntu-latest
     timeout-minutes: 60
     container:

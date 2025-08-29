@@ -9,6 +9,7 @@ multilib
 neoverse
 objcopy
 powerpcspe
+trixie
 unikraft
 Vger
 wasmtime
