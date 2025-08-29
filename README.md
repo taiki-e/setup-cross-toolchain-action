@@ -209,7 +209,7 @@ jobs:
 | `x86_64-unknown-linux-gnu`             | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, x86_64 host only), qemu-user  |       |
 
 [1] GCC 7, glibc 2.27 for Ubuntu 18.04. [GCC 9](https://packages.ubuntu.com/en/focal/gcc), [glibc 2.31](https://packages.ubuntu.com/en/focal/libc6-dev) for Ubuntu 20.04. [GCC 11](https://packages.ubuntu.com/en/jammy/gcc), [glibc 2.35](https://packages.ubuntu.com/en/jammy/libc6-dev) for Ubuntu 22.04. [GCC 13](https://packages.ubuntu.com/en/noble/gcc), [glibc 2.39](https://packages.ubuntu.com/en/noble/libc6-dev) for Ubuntu 24.04. [GCC 8](https://packages.debian.org/en/buster/gcc), [glibc 2.28](https://packages.debian.org/en/buster/libc6-dev) for Debian 10. [GCC 10](https://packages.debian.org/en/bullseye/gcc), [glibc 2.31](https://packages.debian.org/en/bullseye/libc6-dev) for Debian 11. [GCC 12](https://packages.debian.org/en/bookworm/gcc), [glibc 2.36](https://packages.debian.org/en/bookworm/libc6-dev) for Debian 12.<br>
-[2] GCC 10, glibc 2.31<br>
+[2] GCC 14, glibc 2.40<br>
 [3] GCC 7, glibc 2.25<br>
 [4] GCC 14, glibc 2.40<br>
 [5] GCC 11, glibc 2.33<br>
@@ -329,9 +329,9 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-freebsd` | 12.4 (default), 13.4, 14.1 | Ubuntu, Debian [1] | tier3 |
-| `i686-unknown-freebsd`    | 12.4 (default), 13.4, 14.1 | Ubuntu, Debian [1] |       |
-| `x86_64-unknown-freebsd`  | 12.4 (default), 13.4, 14.1 | Ubuntu, Debian [1] |       |
+| `aarch64-unknown-freebsd` | 12.4 (default), 13.5, 14.3 | Ubuntu, Debian [1] | tier3 |
+| `i686-unknown-freebsd`    | 12.4 (default), 13.5, 14.3 | Ubuntu, Debian [1] |       |
+| `x86_64-unknown-freebsd`  | 12.4 (default), 13.5, 14.3 | Ubuntu, Debian [1] |       |
 
 [1] Clang 13 for Ubuntu 18.04, otherwise Clang 15.<br>
 
@@ -390,7 +390,7 @@ Only specifying a major version is supported.
 
 | libc | Clang | C++ | test |
 | ---- | ----- | --- | ---- |
-| wasi-sdk 25 (wasi-libc 574b88d) | 19 | ? (libc++) | ✓ |
+| wasi-sdk 27 (wasi-libc 3f7eb4c) | 20 | ? (libc++) | ✓ |
 
 **Supported targets:**
 
