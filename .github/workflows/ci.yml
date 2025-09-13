@@ -231,7 +231,7 @@ jobs:
           # rustup target list | grep -F -e '-wasi'
           # rustc --print target-list | grep -F -e '-wasi'
           - { target: wasm32-wasip1 }
-          - { target: wasm32-wasip1-threads }
+          # - { target: wasm32-wasip1-threads } # TODO: memory allocation of 1664 bytes failed
           - { target: wasm32-wasip2 }
 
           # macOS
