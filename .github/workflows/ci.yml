@@ -310,6 +310,13 @@ jobs:
             "$@"
           }
           retry git clone --depth 1 https://github.com/taiki-e/rust-cross-toolchain.git
+          # TODO: workaround for error on the recent CMake.
+          if { sed --help 2>&1 || true; } | grep -Eq -e '-i extension'; then
+            in_place=(-i '')
+          else
+            in_place=(-i)
+          fi
+          sed -E "${in_place[@]}" 's/2\.0/3.5/g' rust-cross-toolchain/docker/test/fixtures/rust/libhello_cmake/CMakeLists.txt
       - run: tools/ci/test.sh "${{ matrix.target }}" rust-cross-toolchain/docker/test/fixtures/rust
         id: test
       - run: /system/bin/sh -c set

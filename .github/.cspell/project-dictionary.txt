@@ -4,6 +4,7 @@ CXXSTDLIB
 distro
 haswell
 libclang
+libhello
 Loongson
 multilib
 neoverse
