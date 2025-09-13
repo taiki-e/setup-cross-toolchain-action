@@ -509,68 +509,73 @@ EOF
       *-android*)
         # https://dl.google.com/android/repository/sys-img/android/sys-img.xml
         install_rust_cross_toolchain
-        if ! type -P curl >/dev/null; then
-          apt_packages+=(ca-certificates curl)
-        fi
-        if ! type -P unzip >/dev/null; then
-          apt_packages+=(unzip)
-        fi
-        if ! type -P e2cp >/dev/null; then
-          apt_packages+=(e2tools)
-        fi
-        install_apt_packages
-        _sudo mkdir -p -- /system/{bin,lib,lib64}
-        # /data may conflict with the existing directory.
-        data_dir="${HOME}/.setup-cross-toolchain-action/data"
-        mkdir -p -- "${data_dir}"
-        case "${target}" in
-          aarch64* | arm64*)
-            lib_target=aarch64-linux-android
-            arch=arm64-v8a
-            ;;
-          arm* | thumb*)
-            lib_target=arm-linux-androideabi
-            arch=armeabi-v7a
-            ;;
-          i686-*)
-            lib_target=i686-linux-android
-            arch=x86
-            ;;
-          x86_64*)
-            lib_target=x86_64-linux-android
-            arch=x86_64
-            ;;
-          *) bail "unrecognized target '${target}'" ;;
-        esac
-        img_api_level=24
-        case "${target}" in
-          aarch64* | arm* | thumb*) revision=r07 ;;
-          i686-* | x86_64*) revision=r08 ;;
-          *) bail "unrecognized target '${target}'" ;;
-        esac
-        file="${arch}-${img_api_level}_${revision}.zip"
-        prefix=''
-        case "${target}" in
-          x86_64* | aarch64* | arm64*) prefix='64' ;;
-        esac
-        # Note that due to the Android SDK license, rust-cross-toolchain cannot redistribute sys-img distributed by Google.
-        retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -O "https://dl.google.com/android/repository/sys-img/android/${file}"
-        unzip -q "${file}" "${arch}/system.img"
-        for bin in "linker${prefix}" sh; do
-          _sudo e2cp -p "${arch}/system.img:/bin/${bin}" "/system/bin/"
-        done
-        for lib in "${toolchain_dir}/sysroot/usr/lib/${lib_target}/${img_api_level}"/*.so; do
-          _sudo e2cp -p "${arch}/system.img:/lib${prefix}/${lib##*/}" "/system/lib${prefix}/"
-        done
-        _sudo cp -- "${toolchain_dir}/sysroot/usr/lib/${lib_target}/libc++_shared.so" "/system/lib${prefix}/"
-        rm -- "${file}"
-        rm -rf -- "${arch}"
-        cat >>"${GITHUB_ENV}" <<EOF
+        case "${runner}" in
+          none) ;;
+          *)
+            if ! type -P curl >/dev/null; then
+              apt_packages+=(ca-certificates curl)
+            fi
+            if ! type -P unzip >/dev/null; then
+              apt_packages+=(unzip)
+            fi
+            if ! type -P e2cp >/dev/null; then
+              apt_packages+=(e2tools)
+            fi
+            install_apt_packages
+            _sudo mkdir -p -- /system/{bin,lib,lib64}
+            # /data may conflict with the existing directory.
+            data_dir="${HOME}/.setup-cross-toolchain-action/data"
+            mkdir -p -- "${data_dir}"
+            case "${target}" in
+              aarch64* | arm64*)
+                lib_target=aarch64-linux-android
+                arch=arm64-v8a
+                ;;
+              arm* | thumb*)
+                lib_target=arm-linux-androideabi
+                arch=armeabi-v7a
+                ;;
+              i686-*)
+                lib_target=i686-linux-android
+                arch=x86
+                ;;
+              x86_64*)
+                lib_target=x86_64-linux-android
+                arch=x86_64
+                ;;
+              *) bail "unrecognized target '${target}'" ;;
+            esac
+            img_api_level=24
+            case "${target}" in
+              aarch64* | arm* | thumb*) revision=r07 ;;
+              i686-* | x86_64*) revision=r08 ;;
+              *) bail "unrecognized target '${target}'" ;;
+            esac
+            file="${arch}-${img_api_level}_${revision}.zip"
+            prefix=''
+            case "${target}" in
+              x86_64* | aarch64* | arm64*) prefix='64' ;;
+            esac
+            # Note that due to the Android SDK license, rust-cross-toolchain cannot redistribute sys-img distributed by Google.
+            retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -O "https://dl.google.com/android/repository/sys-img/android/${file}"
+            unzip -q "${file}" "${arch}/system.img"
+            for bin in "linker${prefix}" sh; do
+              _sudo e2cp -p "${arch}/system.img:/bin/${bin}" "/system/bin/"
+            done
+            for lib in "${toolchain_dir}/sysroot/usr/lib/${lib_target}/${img_api_level}"/*.so; do
+              _sudo e2cp -p "${arch}/system.img:/lib${prefix}/${lib##*/}" "/system/lib${prefix}/"
+            done
+            _sudo cp -- "${toolchain_dir}/sysroot/usr/lib/${lib_target}/libc++_shared.so" "/system/lib${prefix}/"
+            rm -- "${file}"
+            rm -rf -- "${arch}"
+            cat >>"${GITHUB_ENV}" <<EOF
 ANDROID_DATA=${data_dir}
 ANDROID_DNS_MODE=local
 ANDROID_ROOT=/system
 TMPDIR=/tmp
 EOF
+            ;;
+        esac
         ;;
       *-freebsd*)
         install_rust_cross_toolchain
@@ -581,12 +586,18 @@ EOF
         ;;
       *-wasi*)
         install_rust_cross_toolchain
-        printf '%s\n' "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
         # https://github.com/taiki-e/rust-cross-toolchain/blob/fcb7a7e6ca14333d93c528f34a1def5a38745b3a/docker/test/entrypoint.sh#L174
         printf 'CXXSTDLIB=c++\n' >>"${GITHUB_ENV}"
-        x wasmtime --version
-        runner_path="${toolchain_dir}/bin/${target}-runner"
-        register_binfmt wasmtime
+        case "${runner}" in
+          '' | wasmtime)
+            printf '%s\n' "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
+            x wasmtime --version
+            runner_path="${toolchain_dir}/bin/${target}-runner"
+            register_binfmt wasmtime
+            ;;
+          none) ;;
+          *) bail "unrecognized runner '${runner}'" ;;
+        esac
         ;;
       *-windows-gnu*)
         arch="${target%%-*}"
@@ -607,90 +618,92 @@ OBJDUMP=${apt_target}-objdump
 EOF
             ;;
         esac
-        printf '%s\n' "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
-
-        case "${target}" in
-          aarch64* | arm64*)
-            wine_root=/opt/wine-arm64
-            wine_exe="${wine_root}"/bin/wine
-            qemu_arch=aarch64
-            if [[ -n "${INPUT_WINE:-}" ]]; then
-              warn "specifying Wine version for AArch64 Windows is not yet supported"
-            fi
-            case "${runner}" in
-              '' | wine) ;;
-              wine@*) bail "specifying Wine version for AArch64 Windows is not yet supported" ;;
-              *) bail "unrecognized runner '${runner}'" ;;
-            esac
-            _sudo cp -- "${wine_root}"/lib/ld-linux-aarch64.so.1 /lib/
-            qemu_version="${INPUT_QEMU:-"${default_qemu_version}"}"
-            install_qemu
-            x "${wine_exe}" --version
-            wineboot="${wine_root}/bin/wineserver"
-            ;;
-          i686-* | x86_64*)
-            wine_exe=wine
-            # https://wiki.winehq.org/Ubuntu
-            # https://wiki.winehq.org/Debian
-            # https://dl.winehq.org/wine-builds
-            # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
-            codename=$(grep -E '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2)
-            case "${runner}" in
-              '' | wine) wine_version="${INPUT_WINE:-"${default_wine_version}"}" ;;
-              wine@*) wine_version="${runner#*@}" ;;
-              *) bail "unrecognized runner '${runner}'" ;;
-            esac
-            _sudo dpkg --add-architecture i386
-            if [[ "${codename}" == 'noble' ]] && [[ "${wine_version}" == '9.0.0.0' ]]; then
-              # winehq supports Ubuntu 24.04 but Wine 9.0.0 is not available in it
-              # https://dl.winehq.org/wine-builds/ubuntu/dists/noble/main/binary-amd64
-              apt_packages+=(wine wine32 wine64)
-            else
-              distro=$(grep -E '^ID=' /etc/os-release | cut -d= -f2)
-              _sudo mkdir -pm755 -- /etc/apt/keyrings
-              if ! type -P curl >/dev/null; then
-                apt_packages+=(ca-certificates curl)
-                install_apt_packages
-              fi
-              retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://dl.winehq.org/wine-builds/winehq.key \
-                | _sudo tee -- /etc/apt/keyrings/winehq-archive.key >/dev/null
-              retry curl --proto '=https' --tlsv1.2 -fsSLR --retry 10 --retry-connrefused "https://dl.winehq.org/wine-builds/${distro}/dists/${codename}/winehq-${codename}.sources" \
-                | _sudo tee -- "/etc/apt/sources.list.d/winehq-${codename}.sources" >/dev/null
-              if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
-                wine_branch=stable
-              elif [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
-                wine_branch=devel
-              else
-                bail "unrecognized Wine version '${wine_version}'"
-              fi
-              # The suffix is 1 in most cases, rarely 2.
-              # https://dl.winehq.org/wine-builds/ubuntu/dists/noble/main/binary-amd64
-              # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
-              # https://dl.winehq.org/wine-builds/ubuntu/dists/focal/main/binary-amd64
-              wine_build_suffix=1
-              apt_packages+=(
-                "winehq-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
-                "wine-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
-                "wine-${wine_branch}-amd64=${wine_version}~${codename}-${wine_build_suffix}"
-                "wine-${wine_branch}-i386=${wine_version}~${codename}-${wine_build_suffix}"
-                "wine-${wine_branch}-dev=${wine_version}~${codename}-${wine_build_suffix}"
-              )
-            fi
-            install_apt_packages
-            x wine --version
-            wineboot=wineboot
-            ;;
-          *) bail "internal error: unrecognized target '${target}'" ;;
-        esac
-        case "${target}" in
-          *-gnullvm*) winepath="${toolchain_dir}/${target}/bin" ;;
+        case "${runner}" in
+          none) ;;
           *)
-            gcc_lib=$(basename -- "$(ls -d -- "/usr/lib/gcc/${apt_target}"/*posix)")
-            winepath="/usr/lib/gcc/${apt_target}/${gcc_lib};/usr/${apt_target}/lib"
-            ;;
-        esac
-        runner_path="/usr/local/bin/${target}-runner"
-        cat >".${target}-runner.tmp" <<EOF
+            printf '%s\n' "CARGO_TARGET_${target_upper}_RUNNER=${target}-runner" >>"${GITHUB_ENV}"
+            case "${target}" in
+              aarch64* | arm64*)
+                wine_root=/opt/wine-arm64
+                wine_exe="${wine_root}"/bin/wine
+                qemu_arch=aarch64
+                if [[ -n "${INPUT_WINE:-}" ]]; then
+                  warn "specifying Wine version for AArch64 Windows is not yet supported"
+                fi
+                case "${runner}" in
+                  '' | wine) ;;
+                  wine@*) bail "specifying Wine version for AArch64 Windows is not yet supported" ;;
+                  *) bail "unrecognized runner '${runner}'" ;;
+                esac
+                _sudo cp -- "${wine_root}"/lib/ld-linux-aarch64.so.1 /lib/
+                qemu_version="${INPUT_QEMU:-"${default_qemu_version}"}"
+                install_qemu
+                x "${wine_exe}" --version
+                wineboot="${wine_root}/bin/wineserver"
+                ;;
+              i686-* | x86_64*)
+                wine_exe=wine
+                # https://wiki.winehq.org/Ubuntu
+                # https://wiki.winehq.org/Debian
+                # https://dl.winehq.org/wine-builds
+                # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
+                codename=$(grep -E '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2)
+                case "${runner}" in
+                  '' | wine) wine_version="${INPUT_WINE:-"${default_wine_version}"}" ;;
+                  wine@*) wine_version="${runner#*@}" ;;
+                  *) bail "unrecognized runner '${runner}'" ;;
+                esac
+                _sudo dpkg --add-architecture i386
+                if [[ "${codename}" == 'noble' ]] && [[ "${wine_version}" == '9.0.0.0' ]]; then
+                  # winehq supports Ubuntu 24.04 but Wine 9.0.0 is not available in it
+                  # https://dl.winehq.org/wine-builds/ubuntu/dists/noble/main/binary-amd64
+                  apt_packages+=(wine wine32 wine64)
+                else
+                  distro=$(grep -E '^ID=' /etc/os-release | cut -d= -f2)
+                  _sudo mkdir -pm755 -- /etc/apt/keyrings
+                  if ! type -P curl >/dev/null; then
+                    apt_packages+=(ca-certificates curl)
+                    install_apt_packages
+                  fi
+                  retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused https://dl.winehq.org/wine-builds/winehq.key \
+                    | _sudo tee -- /etc/apt/keyrings/winehq-archive.key >/dev/null
+                  retry curl --proto '=https' --tlsv1.2 -fsSLR --retry 10 --retry-connrefused "https://dl.winehq.org/wine-builds/${distro}/dists/${codename}/winehq-${codename}.sources" \
+                    | _sudo tee -- "/etc/apt/sources.list.d/winehq-${codename}.sources" >/dev/null
+                  if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
+                    wine_branch=stable
+                  elif [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+                    wine_branch=devel
+                  else
+                    bail "unrecognized Wine version '${wine_version}'"
+                  fi
+                  # The suffix is 1 in most cases, rarely 2.
+                  # https://dl.winehq.org/wine-builds/ubuntu/dists/noble/main/binary-amd64
+                  # https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/main/binary-amd64
+                  # https://dl.winehq.org/wine-builds/ubuntu/dists/focal/main/binary-amd64
+                  wine_build_suffix=1
+                  apt_packages+=(
+                    "winehq-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
+                    "wine-${wine_branch}=${wine_version}~${codename}-${wine_build_suffix}"
+                    "wine-${wine_branch}-amd64=${wine_version}~${codename}-${wine_build_suffix}"
+                    "wine-${wine_branch}-i386=${wine_version}~${codename}-${wine_build_suffix}"
+                    "wine-${wine_branch}-dev=${wine_version}~${codename}-${wine_build_suffix}"
+                  )
+                fi
+                install_apt_packages
+                x wine --version
+                wineboot=wineboot
+                ;;
+              *) bail "internal error: unrecognized target '${target}'" ;;
+            esac
+            case "${target}" in
+              *-gnullvm*) winepath="${toolchain_dir}/${target}/bin" ;;
+              *)
+                gcc_lib=$(basename -- "$(ls -d -- "/usr/lib/gcc/${apt_target}"/*posix)")
+                winepath="/usr/lib/gcc/${apt_target}/${gcc_lib};/usr/${apt_target}/lib"
+                ;;
+            esac
+            runner_path="/usr/local/bin/${target}-runner"
+            cat >".${target}-runner.tmp" <<EOF
 #!/bin/sh
 set -eu
 export HOME=/tmp/home
@@ -704,9 +717,11 @@ fi
 export WINEPATH="${winepath};\${WINEPATH:-}"
 exec ${wine_exe} "\$@"
 EOF
-        chmod +x ".${target}-runner.tmp"
-        _sudo mv -- ".${target}-runner.tmp" "${runner_path}"
-        register_binfmt wine
+            chmod +x ".${target}-runner.tmp"
+            _sudo mv -- ".${target}-runner.tmp" "${runner_path}"
+            register_binfmt wine
+            ;;
+        esac
         ;;
       *) bail "target '${target}' is not supported yet on Linux host" ;;
     esac
@@ -867,7 +882,7 @@ case "${host}" in
               esac
             fi
             ;;
-          native) ;;
+          native | none) ;;
           qemu-user) use_qemu=1 ;;
           qemu-user@*)
             use_qemu=1
@@ -881,16 +896,11 @@ case "${host}" in
         # We are currently testing the uploaded artifacts manually with Cirrus CI and local VM.
         # https://cirrus-ci.org/guide/FreeBSD
         case "${runner}" in
-          '') ;;
+          '' | none) ;;
           *) bail "unrecognized runner '${runner}'" ;;
         esac
         ;;
-      *-wasi*)
-        case "${runner}" in
-          '' | wasmtime) ;;
-          *) bail "unrecognized runner '${runner}'" ;;
-        esac
-        ;;
+      *-wasi*) ;;        # Checked in setup_linux_host
       *-windows-gnu*) ;; # Checked in setup_linux_host
       *) bail "target '${target}' is not supported yet on Linux host" ;;
     esac
@@ -903,7 +913,7 @@ case "${host}" in
       *) bail "target '${target}' is not supported yet on macOS host" ;;
     esac
     case "${runner}" in
-      '' | native) ;;
+      '' | native | none) ;;
       *) bail "unrecognized runner '${runner}'" ;;
     esac
     ;;
@@ -913,7 +923,7 @@ case "${host}" in
       *) bail "target '${target}' is not supported yet on Windows host" ;;
     esac
     case "${runner}" in
-      '' | native) ;;
+      '' | native | none) ;;
       *) bail "unrecognized runner '${runner}'" ;;
     esac
     ;;

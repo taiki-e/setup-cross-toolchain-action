@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Add `runner: none` input option for all targets to skip installation of runner. ([#28](https://github.com/taiki-e/setup-cross-toolchain-action/issues/28))
+
 ## [1.31.1] - 2025-08-29
 
 - Improve support for Debian 13+.

@@ -36,7 +36,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
 | Name     | Required | Description   | Type   | Default        |
 | -------- |:--------:| ------------- | ------ | -------------- |
 | target   | **✓**    | Target triple | String |                |
-| runner   |          | Test runner   | String |                |
+| runner   |          | Test runner (`none` or platform specific runner described in [Platform Support](#platform-support) section)  | String |                |
 
 ### Example workflow: Basic usage
 
