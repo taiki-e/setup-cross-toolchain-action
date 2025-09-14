@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.32.1] - 2025-09-14
+
 - Performance Improvements.
 
 ## [1.32.0] - 2025-09-13
@@ -390,7 +392,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.32.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.32.1...HEAD
+[1.32.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.32.0...v1.32.1
 [1.32.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.31.1...v1.32.0
 [1.31.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.31.0...v1.31.1
 [1.31.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.30.0...v1.31.0
