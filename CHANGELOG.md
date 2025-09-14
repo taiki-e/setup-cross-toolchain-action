@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Performance Improvements.
+
 ## [1.32.0] - 2025-09-13
 
 - Add `runner: none` input option for all targets to skip installation of runner. ([#28](https://github.com/taiki-e/setup-cross-toolchain-action/issues/28))
