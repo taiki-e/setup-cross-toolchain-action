@@ -396,7 +396,6 @@ setup_linux_host() {
     # TODO: other lang? https://packages.ubuntu.com/search?lang=en&suite=noble&arch=any&searchon=names&keywords=13-aarch64-linux-gnu
     if ! type -P g++ >/dev/null; then
       apt_packages+=(g++)
-      install_apt_packages
     fi
   else
     case "${target}" in
@@ -439,8 +438,8 @@ setup_linux_host() {
               powerpc-*) dpkg_arch=powerpc ;;
               powerpc64-*) dpkg_arch=ppc64 ;;
               powerpc64le-*) dpkg_arch=ppc64el ;;
-              riscv64gc-*) dpkg_arch=riscv64 ;;
-              s390x-*) dpkg_arch=s390x ;;
+              riscv64*) dpkg_arch=riscv64 ;;
+              s390x*) dpkg_arch=s390x ;;
               sparc-*) dpkg_arch=sparc ;;
               sparc64-*) dpkg_arch=sparc64 ;;
               x86_64*x32) dpkg_arch=x32 ;;
@@ -451,18 +450,22 @@ setup_linux_host() {
                 aarch64-*)
                   case "${target}" in
                     armv7*hf | thumbv7*hf)
-                      _sudo dpkg --add-architecture "${dpkg_arch}"
-                      # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
-                      # TODO: other lang?
-                      apt_packages+=("libstdc++6:${dpkg_arch}")
+                      if [[ ! -f "/usr/lib/${apt_target}/libstdc++.so.6" ]]; then
+                        _sudo dpkg --add-architecture "${dpkg_arch}"
+                        # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
+                        # TODO: other lang?
+                        apt_packages+=("libstdc++6:${dpkg_arch}")
+                      fi
                       ;;
                   esac
                   ;;
               esac
             fi
-            # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
-            # TODO: other lang? https://packages.ubuntu.com/search?lang=en&suite=noble&arch=any&searchon=names&keywords=13-aarch64-linux-gnu
-            apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
+            if ! type -P "${apt_target}-g++" >/dev/null; then
+              # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
+              # TODO: other lang? https://packages.ubuntu.com/search?lang=en&suite=noble&arch=any&searchon=names&keywords=13-aarch64-linux-gnu
+              apt_packages+=("g++-${multilib:+multilib-}${apt_target/_/-}")
+            fi
             # https://github.com/taiki-e/rust-cross-toolchain/blob/fcb7a7e6ca14333d93c528f34a1def5a38745b3a/docker/test/entrypoint.sh
             sysroot_dir="/usr/${apt_target}"
             case "${target}" in
@@ -788,7 +791,7 @@ EOF
         ;;
       riscv32*) qemu_arch=riscv32 ;;
       riscv64*) qemu_arch=riscv64 ;;
-      s390x-*) qemu_arch=s390x ;;
+      s390x*) qemu_arch=s390x ;;
       sparc-*) qemu_arch=sparc32plus ;;
       sparc64-* | sparcv9-*) qemu_arch=sparc64 ;;
       x86_64*)
