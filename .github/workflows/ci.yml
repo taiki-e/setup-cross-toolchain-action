@@ -405,7 +405,7 @@ jobs:
         if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
       - uses: taiki-e/checkout-action@v1
       - uses: taiki-e/github-actions/install-rust@nightly
-      - run: apt-get -qq -o Dpkg::Use-Pty=0 remove -y curl
+      - run: apt-get -qq -o Dpkg::Use-Pty=0 purge -y curl
         if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
       - uses: ./
         with:
