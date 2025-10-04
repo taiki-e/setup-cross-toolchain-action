@@ -216,11 +216,9 @@ install_rust_cross_toolchain() {
       ;;
     csky-unknown-linux-gnuabiv2)
       sysroot_dir="/usr/local/${target}/libc"
-      printf '%s\n' "LD_LIBRARY_PATH=${toolchain_dir}/${target}/lib:${LD_LIBRARY_PATH:-}" >>"${GITHUB_ENV}"
       ;;
     csky-unknown-linux-gnuabiv2hf)
       sysroot_dir="/usr/local/${target}/libc/ck860v"
-      printf '%s\n' "LD_LIBRARY_PATH=${toolchain_dir}/${target}/lib/ck860v:${LD_LIBRARY_PATH:-}" >>"${GITHUB_ENV}"
       ;;
     *) sysroot_dir="${toolchain_dir}/${target}" ;;
   esac
@@ -783,7 +781,7 @@ EOF
         ;;
       csky-*v2*)
         qemu_arch=cskyv2
-        case "${RUST_TARGET}" in
+        case "${target}" in
           *hf) default_qemu_cpu=ck860fv ;;
           # TODO: https://github.com/taiki-e/atomic-maybe-uninit/pull/32#issuecomment-3341287749
           *) default_qemu_cpu=ck860 ;;

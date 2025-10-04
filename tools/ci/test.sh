@@ -87,6 +87,8 @@ run_native() {
 }
 run_tests() {
   case "${target}" in
+    # multiple definition of `__lll_lock_wait_private'
+    csky-*) ;;
     # TODO(sparc): stack overflow
     sparc-*-linux-*) ;;
     *)
