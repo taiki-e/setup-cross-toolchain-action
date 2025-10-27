@@ -322,7 +322,7 @@ jobs:
       - run: /system/bin/sh -c set
         if: contains(matrix.target, '-android')
       # For debugging
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: ${{ matrix.target }}-${{ matrix.os }}
           # TODO(windows host): No files were found with the provided path: /tmp/artifacts/. No artifacts will be uploaded.
@@ -431,7 +431,7 @@ jobs:
         id: test
       # TODO: we should replace ':' from matrix.container: "Error: The artifact name is not valid"
       # # For debugging
-      # - uses: actions/upload-artifact@v4
+      # - uses: actions/upload-artifact@v5
       #   with:
       #     name: ${{ matrix.target }}-${{ matrix.container }}
       #     path: /tmp/artifacts/
