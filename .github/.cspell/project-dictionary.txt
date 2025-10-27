@@ -1,7 +1,6 @@
 armeabi
 binfmt
 CXXSTDLIB
-distro
 haswell
 libclang
 libhello
