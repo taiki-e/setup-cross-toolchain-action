@@ -33,10 +33,10 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
 
 ### Inputs
 
-| Name     | Required | Description   | Type   | Default        |
-| -------- |:--------:| ------------- | ------ | -------------- |
-| target   | **✓**    | Target triple | String |                |
-| runner   |          | Test runner (`none` or platform specific runner described in [Platform Support](#platform-support) section)  | String |                |
+| Name | Required | Description | Type | Default |
+| ---- | :------: | ----------- | ---- | ------- |
+| target | **✓** | Target triple | String | |
+| runner | | Test runner (`none` or platform specific runner described in [Platform Support](#platform-support) section) | String | |
 
 ### Example workflow: Basic usage
 
@@ -171,7 +171,7 @@ jobs:
 
 | C++ | test |
 | --- | ---- |
-| ✓ (libstdc++) [1] | ✓    |
+| ✓ (libstdc++) [1] | ✓ |
 
 [1] Except for loongarch64-unknown-linux-gnu
 
@@ -179,34 +179,34 @@ jobs:
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-unknown-linux-gnu`            | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user |       |
-| `aarch64_be-unknown-linux-gnu`         | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [2] | qemu-user | tier3 |
-| `arm-unknown-linux-gnueabi`            | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
-| `armeb-unknown-linux-gnueabi`          | Ubuntu (18.04,        22.04),        Debian (10, 11, 12) [3] | qemu-user | tier3 |
-| `armv5te-unknown-linux-gnueabi`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
-| `armv7-unknown-linux-gnueabi`          | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
-| `armv7-unknown-linux-gnueabihf`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user |       |
-| `i586-unknown-linux-gnu`               | Ubuntu (18.04, 20.04, 22.04, 24.04) [1]                      | native (x86_64 host only), qemu-user (default) | [7]   |
-| `i686-unknown-linux-gnu`               | Ubuntu (18.04, 20.04, 22.04, 24.04) [1]                      | native (default, x86_64 host only), qemu-user  | [7]   |
-| `loongarch64-unknown-linux-gnu`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [4] | qemu-user | experimental |
-| `mips-unknown-linux-gnu`               | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 [6] |
-| `mips64-unknown-linux-gnuabi64`        | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
-| `mips64el-unknown-linux-gnuabi64`      | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
-| `mipsel-unknown-linux-gnu`             | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 [6] |
-| `mipsisa32r6-unknown-linux-gnu`        | Ubuntu               (22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
-| `mipsisa32r6el-unknown-linux-gnu`      | Ubuntu        (20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
-| `mipsisa64r6-unknown-linux-gnuabi64`   | Ubuntu               (22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
+| `aarch64-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user | |
+| `aarch64_be-unknown-linux-gnu` | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [2] | qemu-user | tier3 |
+| `arm-unknown-linux-gnueabi` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
+| `armeb-unknown-linux-gnueabi` | Ubuntu (18.04,        22.04),        Debian (10, 11, 12) [3] | qemu-user | tier3 |
+| `armv5te-unknown-linux-gnueabi` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
+| `armv7-unknown-linux-gnueabi` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
+| `armv7-unknown-linux-gnueabihf` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user | |
+| `i586-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04) [1] | native (x86_64 host only), qemu-user (default) | [7] |
+| `i686-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04) [1] | native (default, x86_64 host only), qemu-user | [7] |
+| `loongarch64-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [4] | qemu-user | experimental |
+| `mips-unknown-linux-gnu` | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 [6] |
+| `mips64-unknown-linux-gnuabi64` | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
+| `mips64el-unknown-linux-gnuabi64` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
+| `mipsel-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 [6] |
+| `mipsisa32r6-unknown-linux-gnu` | Ubuntu               (22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
+| `mipsisa32r6el-unknown-linux-gnu` | Ubuntu        (20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
+| `mipsisa64r6-unknown-linux-gnuabi64` | Ubuntu               (22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
 | `mipsisa64r6el-unknown-linux-gnuabi64` | Ubuntu        (20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
-| `powerpc-unknown-linux-gnu`            | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
-| `powerpc64-unknown-linux-gnu`          | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
-| `powerpc64le-unknown-linux-gnu`        | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
-| `riscv32gc-unknown-linux-gnu`          | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [5] | qemu-user |       |
-| `riscv64gc-unknown-linux-gnu`          | ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
-| `s390x-unknown-linux-gnu`              | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
-| `sparc-unknown-linux-gnu`              | Ubuntu (18.04,        22.04, 24.04), Debian (10,     12) [1] | qemu-user | tier3, experimental |
-| `sparc64-unknown-linux-gnu`            | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user |       |
-| `thumbv7neon-unknown-linux-gnueabihf`  | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user |       |
-| `x86_64-unknown-linux-gnu`             | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, x86_64 host only), qemu-user  |       |
+| `powerpc-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
+| `powerpc64-unknown-linux-gnu` | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
+| `powerpc64le-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
+| `riscv32gc-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [5] | qemu-user | |
+| `riscv64gc-unknown-linux-gnu` | ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
+| `s390x-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
+| `sparc-unknown-linux-gnu` | Ubuntu (18.04,        22.04, 24.04), Debian (10,     12) [1] | qemu-user | tier3, experimental |
+| `sparc64-unknown-linux-gnu` | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
+| `thumbv7neon-unknown-linux-gnueabihf` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user | |
+| `x86_64-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, x86_64 host only), qemu-user | |
 
 [1] GCC 7, glibc 2.27 for Ubuntu 18.04. [GCC 9](https://packages.ubuntu.com/en/focal/gcc), [glibc 2.31](https://packages.ubuntu.com/en/focal/libc6-dev) for Ubuntu 20.04. [GCC 11](https://packages.ubuntu.com/en/jammy/gcc), [glibc 2.35](https://packages.ubuntu.com/en/jammy/libc6-dev) for Ubuntu 22.04. [GCC 13](https://packages.ubuntu.com/en/noble/gcc), [glibc 2.39](https://packages.ubuntu.com/en/noble/libc6-dev) for Ubuntu 24.04. [GCC 8](https://packages.debian.org/en/buster/gcc), [glibc 2.28](https://packages.debian.org/en/buster/libc6-dev) for Debian 10. [GCC 10](https://packages.debian.org/en/bullseye/gcc), [glibc 2.31](https://packages.debian.org/en/bullseye/libc6-dev) for Debian 11. [GCC 12](https://packages.debian.org/en/bookworm/gcc), [glibc 2.36](https://packages.debian.org/en/bookworm/libc6-dev) for Debian 12.<br>
 [2] GCC 14, glibc 2.40<br>
@@ -249,17 +249,17 @@ You can select/pin the version by using `qemu` input option, or `@` syntax in `r
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-unknown-linux-musl`       | x86_64/aarch64 Linux | native (default, aarch64 host only), qemu-user |       |
-| `arm-unknown-linux-musleabi`       | x86_64 Linux | qemu-user |       |
-| `arm-unknown-linux-musleabihf`     | x86_64 Linux | qemu-user |       |
-| `armv5te-unknown-linux-musleabi`   | x86_64 Linux | qemu-user |       |
-| `armv7-unknown-linux-musleabi`     | x86_64 Linux | qemu-user |       |
-| `armv7-unknown-linux-musleabihf`   | x86_64/aarch64 Linux | native (default, aarch64 host only), qemu-user |       |
-| `i586-unknown-linux-musl`          | x86_64 Linux | native (x86_64 host only), qemu-user (default) |       |
-| `i686-unknown-linux-musl`          | x86_64 Linux | native (default, x86_64 host only), qemu-user  |       |
-| `powerpc64le-unknown-linux-musl`   | x86_64 Linux | qemu-user |       |
-| `riscv64gc-unknown-linux-musl`     | x86_64 Linux | qemu-user |       |
-| `x86_64-unknown-linux-musl`        | x86_64 Linux | native (default, x86_64 host only), qemu-user |       |
+| `aarch64-unknown-linux-musl` | x86_64/aarch64 Linux | native (default, aarch64 host only), qemu-user | |
+| `arm-unknown-linux-musleabi` | x86_64 Linux | qemu-user | |
+| `arm-unknown-linux-musleabihf` | x86_64 Linux | qemu-user | |
+| `armv5te-unknown-linux-musleabi` | x86_64 Linux | qemu-user | |
+| `armv7-unknown-linux-musleabi` | x86_64 Linux | qemu-user | |
+| `armv7-unknown-linux-musleabihf` | x86_64/aarch64 Linux | native (default, aarch64 host only), qemu-user | |
+| `i586-unknown-linux-musl` | x86_64 Linux | native (x86_64 host only), qemu-user (default) | |
+| `i686-unknown-linux-musl` | x86_64 Linux | native (default, x86_64 host only), qemu-user | |
+| `powerpc64le-unknown-linux-musl` | x86_64 Linux | qemu-user | |
+| `riscv64gc-unknown-linux-musl` | x86_64 Linux | qemu-user | |
+| `x86_64-unknown-linux-musl` | x86_64 Linux | native (default, x86_64 host only), qemu-user | |
 
 (Other linux-musl targets supported by [rust-cross-toolchain](https://github.com/taiki-e/rust-cross-toolchain#linux-musl) may also work, although this action's CI has not tested them.)
 
@@ -276,10 +276,10 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
 | `armv5te-unknown-linux-uclibceabi` | x86_64 Linux | qemu-user | tier3 |
-| `armv7-unknown-linux-uclibceabi`   | x86_64 Linux | qemu-user | tier3 |
+| `armv7-unknown-linux-uclibceabi` | x86_64 Linux | qemu-user | tier3 |
 | `armv7-unknown-linux-uclibceabihf` | x86_64 Linux | qemu-user | tier3 |
-| `mips-unknown-linux-uclibc`        | x86_64 Linux | qemu-user | tier3 [1] |
-| `mipsel-unknown-linux-uclibc`      | x86_64 Linux | qemu-user | tier3 [1] |
+| `mips-unknown-linux-uclibc` | x86_64 Linux | qemu-user | tier3 [1] |
+| `mipsel-unknown-linux-uclibc` | x86_64 Linux | qemu-user | tier3 [1] |
 
 [1] mips{,el}-unknown-linux-uclibc requires release mode for building std.<br>
 
@@ -297,12 +297,12 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 | target | api level | host | runner | note |
 | ------ | --------- | ---- | ------ | ---- |
-| `aarch64-linux-android`         | 21 (default), 22-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
-| `arm-linux-androideabi`         | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
-| `armv7-linux-androideabi`       | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
-| `i686-linux-android`            | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | native (default), qemu-user |       |
-| `thumbv7neon-linux-androideabi` | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user                   |       |
-| `x86_64-linux-android`          | 21 (default), 22-24, 26-33 [1] | x86_64 Linux | native (default), qemu-user |       |
+| `aarch64-linux-android` | 21 (default), 22-24, 26-33 [1] | x86_64 Linux | qemu-user | |
+| `arm-linux-androideabi` | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user | |
+| `armv7-linux-androideabi` | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user | |
+| `i686-linux-android` | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | native (default), qemu-user | |
+| `thumbv7neon-linux-androideabi` | 21 / 19 [2] (default), 21-24, 26-33 [1] | x86_64 Linux | qemu-user | |
+| `x86_64-linux-android` | 21 (default), 22-24, 26-33 [1] | x86_64 Linux | native (default), qemu-user | |
 
 [1] This action currently uses the API level 24 system image, so `cargo test` and `cargo run` may not work on API level 26+.<br>
 [2] [21 on Rust 1.82+](https://github.com/rust-lang/rust/pull/120593), otherwise 19.<br>
@@ -330,8 +330,8 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
 | `aarch64-unknown-freebsd` | 12.4 (default), 13.5, 14.3 | Ubuntu, Debian [1] | tier3 |
-| `i686-unknown-freebsd`    | 12.4 (default), 13.5, 14.3 | Ubuntu, Debian [1] |       |
-| `x86_64-unknown-freebsd`  | 12.4 (default), 13.5, 14.3 | Ubuntu, Debian [1] |       |
+| `i686-unknown-freebsd` | 12.4 (default), 13.5, 14.3 | Ubuntu, Debian [1] | |
+| `x86_64-unknown-freebsd` | 12.4 (default), 13.5, 14.3 | Ubuntu, Debian [1] | |
 
 [1] Clang 13 for Ubuntu 18.04, otherwise Clang 15.<br>
 
@@ -357,8 +357,8 @@ Only specifying a major version is supported.
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-netbsd` | 9.4 (default), 10.1          | x86_64 Linux | tier3 |
-| `x86_64-unknown-netbsd`  | 9.4 (default [1]), 8.2, 10.1 | x86_64 Linux |       |
+| `aarch64-unknown-netbsd` | 9.4 (default), 10.1 | x86_64 Linux | tier3 |
+| `x86_64-unknown-netbsd` | 9.4 (default [1]), 8.2, 10.1 | x86_64 Linux | |
 
 [1] [9 on Rust 1.67+](https://github.com/rust-lang/rust/pull/103709), otherwise 8.<br>
 
@@ -396,10 +396,10 @@ Only specifying a major version is supported.
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `wasm32-wasip1`         | Linux | wasmtime |  |
-| `wasm32-wasip1-threads` | Linux | wasmtime |  |
-| `wasm32-wasip2`         | Linux | wasmtime | binfmt does not work due to `.wasm` file in this target is not marked as executable |
-| `wasm32-wasi`           | Linux | wasmtime | [Removed in Rust 1.84](https://blog.rust-lang.org/2024/04/09/updates-to-rusts-wasi-targets.html) |
+| `wasm32-wasip1` | Linux | wasmtime | |
+| `wasm32-wasip1-threads` | Linux | wasmtime | |
+| `wasm32-wasip2` | Linux | wasmtime | binfmt does not work due to `.wasm` file in this target is not marked as executable |
+| `wasm32-wasi` | Linux | wasmtime | [Removed in Rust 1.84](https://blog.rust-lang.org/2024/04/09/updates-to-rusts-wasi-targets.html) |
 
 ### Windows (MinGW)
 
@@ -411,7 +411,7 @@ Only specifying a major version is supported.
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `x86_64-pc-windows-gnu` | *Windows*, Ubuntu (22.04, 24.04), Debian (11, 12) [1] | native (Windows host) / wine (Linux host) |  |
+| `x86_64-pc-windows-gnu` | *Windows*, Ubuntu (22.04, 24.04), Debian (11, 12) [1] | native (Windows host) / wine (Linux host) | |
 
 [1] [GCC 10](https://packages.ubuntu.com/en/jammy/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.ubuntu.com/en/jammy/mingw-w64-x86-64-dev) for Ubuntu 22.04. [GCC 13](https://packages.ubuntu.com/en/noble/gcc-mingw-w64-base), [MinGW-w64 11](https://packages.ubuntu.com/en/noble/mingw-w64-x86-64-dev) for Ubuntu 24.04. [GCC 10](https://packages.debian.org/en/bullseye/gcc-mingw-w64-base), [MinGW-w64 8](https://packages.debian.org/en/bullseye/mingw-w64-x86-64-dev) for Debian 11. [GCC 12](https://packages.debian.org/en/bookworm/gcc-mingw-w64-base), [MinGW-w64 10](https://packages.debian.org/en/bookworm/mingw-w64-x86-64-dev) for Debian 12.<br>
 
@@ -452,9 +452,9 @@ You can select/pin the version by using `wine` input option, or `@` syntax in `r
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-pc-windows-gnullvm` | Ubuntu (22.04, 24.04) | wine |  |
-| `i686-pc-windows-gnullvm` | Ubuntu (22.04, 24.04) | wine |  |
-| `x86_64-pc-windows-gnullvm` | Ubuntu (22.04, 24.04) | wine |  |
+| `aarch64-pc-windows-gnullvm` | Ubuntu (22.04, 24.04) | wine | |
+| `i686-pc-windows-gnullvm` | Ubuntu (22.04, 24.04) | wine | |
+| `x86_64-pc-windows-gnullvm` | Ubuntu (22.04, 24.04) | wine | |
 
 For the `wine` runner for {i686,x86_64}-pc-windows-gnullvm, see ["wine runner" section for windows-gnu targets](#wine-runner).
 
@@ -472,10 +472,10 @@ The `wine` runner for aarch64-pc-windows-gnullvm is AArch64 Wine running on qemu
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-pc-windows-msvc` | *Windows* | native |  |
-| `i686-pc-windows-msvc`    | *Windows* | native |  |
-| `x86_64-pc-windows-msvc`  | *Windows* | native |  |
-| `i586-pc-windows-msvc`    | *Windows* | native | [Removed in Rust 1.87](https://github.com/rust-lang/rust/pull/137957) |
+| `aarch64-pc-windows-msvc` | *Windows* | native | |
+| `i686-pc-windows-msvc` | *Windows* | native | |
+| `x86_64-pc-windows-msvc` | *Windows* | native | |
+| `i586-pc-windows-msvc` | *Windows* | native | [Removed in Rust 1.87](https://github.com/rust-lang/rust/pull/137957) |
 
 GitHub-provided Windows runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
 
@@ -493,8 +493,8 @@ GitHub-provided Windows runners support cross-compile for other architectures or
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-apple-darwin` | *macOS* | native |       |
-| `x86_64-apple-darwin`  | *macOS* | native |       |
+| `aarch64-apple-darwin` | *macOS* | native | |
+| `x86_64-apple-darwin` | *macOS* | native | |
 | `x86_64h-apple-darwin` | *macOS* | native | tier3 |
 
 GitHub-provided macOS runners support cross-compile for other architectures or environments, so this action just runs `rustup target add` and/or sets some environment variables.
@@ -513,8 +513,8 @@ GitHub-provided macOS runners support cross-compile for other architectures or e
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-apple-ios-macabi` | *macOS* | native |       |
-| `x86_64-apple-ios-macabi`  | *macOS* | native |       |
+| `aarch64-apple-ios-macabi` | *macOS* | native | |
+| `x86_64-apple-ios-macabi` | *macOS* | native | |
 
 GitHub-provided macOS runners support cross-compile for other targets, so this action just runs `rustup target add` and/or sets some environment variables.
 
