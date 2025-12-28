@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.33.0] - 2025-12-28
+
 - Update the default QEMU version from 10.1 to 10.2.
 
 ## [1.32.1] - 2025-09-14
@@ -394,7 +396,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.32.1...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.33.0...HEAD
+[1.33.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.32.1...v1.33.0
 [1.32.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.32.0...v1.32.1
 [1.32.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.31.1...v1.32.0
 [1.31.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.31.0...v1.31.1
