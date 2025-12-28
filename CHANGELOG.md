@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Update the default QEMU version from 10.1 to 10.2.
+
 ## [1.32.1] - 2025-09-14
 
 - Performance Improvements.
