@@ -735,46 +735,58 @@ EOF
 
   if [[ -n "${use_qemu}" ]]; then
     # https://github.com/taiki-e/rust-cross-toolchain/blob/fcb7a7e6ca14333d93c528f34a1def5a38745b3a/docker/test/entrypoint.sh#L307
-    # We basically set the newer and more powerful CPU as the
-    # default QEMU_CPU so that we can test more CPU features.
-    # In some contexts, we want to test for a specific CPU,
-    # so respect user-set QEMU_CPU.
+    # We usually set QEMU CPU to `max` (or CPU newer than the default if
+    # `-cpu=max` is unavailable) to allow testing more CPU features.
+    # If you want to test for a specific CPU, you can override it by
+    # setting the `QEMU_CPU` environment variable.
     case "${target}" in
       aarch64* | arm64*)
         case "${target}" in
           aarch64_be-*) qemu_arch=aarch64_be ;;
           *) qemu_arch=aarch64 ;;
         esac
-        case "${qemu_version}" in
-          7.* | 8.0) default_qemu_cpu=a64fx ;; # Armv8.2-A + SVE
-          *) default_qemu_cpu=neoverse-v1 ;;   # Armv8.4-A + SVE + more features (https://developer.arm.com/Processors/Neoverse%20V1)
-        esac
+        default_qemu_cpu=max
         ;;
       arm* | thumb*)
         case "${target}" in
           armeb* | thumbeb*) qemu_arch=armeb ;;
           *) qemu_arch=arm ;;
         esac
+        default_qemu_cpu=max
         ;;
-      i?86-*) qemu_arch=i386 ;;
-      hexagon-*) qemu_arch=hexagon ;;
-      loongarch64-*) qemu_arch=loongarch64 ;;
-      m68k-*) qemu_arch=m68k ;;
-      mips-* | mipsel-*) qemu_arch="${target%%-*}" ;;
+      i?86-*)
+        qemu_arch=i386
+        ;;
+      hexagon-*)
+        qemu_arch=hexagon
+        # no -cpu=max
+        ;;
+      loongarch64-*)
+        qemu_arch=loongarch64
+        default_qemu_cpu=max
+        ;;
+      m68k-*)
+        qemu_arch=m68k
+        # no -cpu=max
+        ;;
+      mips-* | mipsel-*)
+        qemu_arch="${target%%-*}"
+        # no -cpu=max
+        ;;
       mips64-* | mips64el-*)
         qemu_arch="${target%%-*}"
         # As of QEMU 6.1, only Loongson-3A4000 supports MSA instructions with mips64r5.
-        default_qemu_cpu=Loongson-3A4000
+        default_qemu_cpu=Loongson-3A4000 # no -cpu=max
         ;;
       mipsisa32r6-* | mipsisa32r6el-*)
         qemu_arch="${target%%-*}"
         qemu_arch="${qemu_arch/isa32r6/}"
-        default_qemu_cpu=mips32r6-generic
+        default_qemu_cpu=mips32r6-generic # no -cpu=max
         ;;
       mipsisa64r6-* | mipsisa64r6el-*)
         qemu_arch="${target%%-*}"
         qemu_arch="${qemu_arch/isa64r6/64}"
-        default_qemu_cpu=I6400
+        default_qemu_cpu=I6400 # no -cpu=max
         ;;
       powerpc-*spe)
         qemu_arch=ppc
@@ -782,18 +794,33 @@ EOF
         ;;
       powerpc-*)
         qemu_arch=ppc
-        default_qemu_cpu=Vger
+        default_qemu_cpu=Vger # no -cpu=max
         ;;
       powerpc64-* | powerpc64le-*)
         qemu_arch="${target%%-*}"
         qemu_arch="${qemu_arch/powerpc/ppc}"
-        default_qemu_cpu=power10
+        default_qemu_cpu=power10 # no -cpu=max
         ;;
-      riscv32*) qemu_arch=riscv32 ;;
-      riscv64*) qemu_arch=riscv64 ;;
-      s390x*) qemu_arch=s390x ;;
-      sparc-*) qemu_arch=sparc32plus ;;
-      sparc64-* | sparcv9-*) qemu_arch=sparc64 ;;
+      riscv32*)
+        qemu_arch=riscv32
+        default_qemu_cpu=max
+        ;;
+      riscv64*)
+        qemu_arch=riscv64
+        default_qemu_cpu=max
+        ;;
+      s390x*)
+        qemu_arch=s390x
+        default_qemu_cpu=max
+        ;;
+      sparc-*)
+        qemu_arch=sparc32plus
+        # no -cpu=max
+        ;;
+      sparc64-* | sparcv9-*)
+        qemu_arch=sparc64
+        # no -cpu=max
+        ;;
       x86_64*)
         qemu_arch=x86_64
         # qemu does not seem to support emulating x86_64 CPU features on x86_64 hosts.
