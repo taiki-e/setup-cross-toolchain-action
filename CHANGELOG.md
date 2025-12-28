@@ -10,6 +10,12 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Set default qemu cpu to `max` on AArch64, Arm, LoongArch64, RISC-V, and s390x.
+
+- Document the QEMU default CPU policy. A similar policy had been in use previously, but now it is being strengthened and formally documented.
+
+  > We usually sets QEMU CPU to `max` (or CPU newer than the default if `-cpu=max` is unavailable) to allow testing more CPU features. If you want to test for a specific CPU, you can override it by setting the `QEMU_CPU` environment variable.
+
 ## [1.33.0] - 2025-12-28
 
 - Update the default QEMU version from 10.1 to 10.2.

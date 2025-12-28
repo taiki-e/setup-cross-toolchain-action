@@ -221,6 +221,8 @@ jobs:
 
 The current default QEMU version is 10.2.
 
+We usually sets QEMU CPU to `max` (or CPU newer than the default if `-cpu=max` is unavailable) to allow testing more CPU features. If you want to test for a specific CPU, you can override it by setting the `QEMU_CPU` environment variable.
+
 You can select/pin the version by using `qemu` input option, or `@` syntax in `runner` input option (if both are set, the latter is preferred). For example:
 
 ```yaml
