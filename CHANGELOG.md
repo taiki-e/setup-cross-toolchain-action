@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.34.0] - 2025-12-28
+
 - Set default qemu cpu to `max` on AArch64, Arm, LoongArch64, RISC-V, and s390x.
 
 - Document the QEMU default CPU policy. A similar policy had been in use previously, but now it is being strengthened and formally documented.
@@ -402,7 +404,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.33.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.34.0...HEAD
+[1.34.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.33.0...v1.34.0
 [1.33.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.32.1...v1.33.0
 [1.32.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.32.0...v1.32.1
 [1.32.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.31.1...v1.32.0
