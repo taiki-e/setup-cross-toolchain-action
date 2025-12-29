@@ -37,6 +37,9 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
 | ---- | :------: | ----------- | ---- | ------- |
 | target | **✓** | Target triple | String | |
 | runner | | Test runner (`none` or platform specific runner described in [Platform Support](#platform-support) section) | String | |
+| package | | Packages to install for target (whitespace or comma separated list) \[1] | String | |
+
+\[1]: This is currently only supported for some Linux (GNU) targets on Ubuntu/Debian hosts, and packages will be installed using the form: `<sudo as needed> apt-get install --no-install-recommends <each package>:<target's dpkg arch>...`
 
 ### Example workflow: Basic usage
 
