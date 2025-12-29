@@ -53,8 +53,8 @@ jobs:
           # rustc --print target-list | grep -F -e '-linux-gnu'
           - { target: aarch64-unknown-linux-gnu, os: ubuntu-22.04 }
           - { target: aarch64-unknown-linux-gnu, os: ubuntu-22.04-arm }
-          - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04 }
-          - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04-arm }
+          - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04, package: libc6-dbg } # arm64
+          - { target: aarch64-unknown-linux-gnu, os: ubuntu-24.04-arm, package: libc6-dbg } # arm64
           # - { target: aarch64-unknown-linux-gnu_ilp32, os: ubuntu-22.04 } # tier3
           # - { target: aarch64-unknown-linux-gnu_ilp32, os: ubuntu-24.04 } # tier3
           - { target: aarch64_be-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
@@ -75,16 +75,16 @@ jobs:
           - { target: armv7-unknown-linux-gnueabi, os: ubuntu-24.04 }
           - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-22.04 }
           - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-22.04-arm }
-          - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04 }
-          - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04-arm }
+          - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04, package: libc6-dbg } # armhf
+          - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-24.04-arm, package: libc6-dbg } # armhf
           # - { target: csky-unknown-linux-gnuabiv2, os: ubuntu-22.04 } # tier3
           # - { target: csky-unknown-linux-gnuabiv2, os: ubuntu-24.04 } # tier3
           # - { target: csky-unknown-linux-gnuabiv2hf, os: ubuntu-22.04 } # tier3
           # - { target: csky-unknown-linux-gnuabiv2hf, os: ubuntu-24.04 } # tier3
           - { target: i586-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: i586-unknown-linux-gnu, os: ubuntu-24.04 }
+          - { target: i586-unknown-linux-gnu, os: ubuntu-24.04, package: libc6-dbg } # i386
           - { target: i686-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: i686-unknown-linux-gnu, os: ubuntu-24.04 }
+          - { target: i686-unknown-linux-gnu, os: ubuntu-24.04, package: libc6-dbg } # i386
           - { target: loongarch64-unknown-linux-gnu, os: ubuntu-22.04 }
           - { target: loongarch64-unknown-linux-gnu, os: ubuntu-24.04 }
           # - { target: m68k-unknown-linux-gnu, os: ubuntu-22.04 } # tier3, build fail: https://github.com/rust-lang/rust/issues/89498
@@ -112,15 +112,15 @@ jobs:
           - { target: powerpc64-unknown-linux-gnu, os: ubuntu-22.04 }
           - { target: powerpc64-unknown-linux-gnu, os: ubuntu-24.04 }
           - { target: powerpc64le-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: powerpc64le-unknown-linux-gnu, os: ubuntu-24.04 }
+          - { target: powerpc64le-unknown-linux-gnu, os: ubuntu-24.04, package: libc6-dbg } # ppc64el
           - { target: riscv32gc-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
           - { target: riscv32gc-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
           # - { target: riscv64a23-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
           # - { target: riscv64a23-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
           - { target: riscv64gc-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: riscv64gc-unknown-linux-gnu, os: ubuntu-24.04 }
+          - { target: riscv64gc-unknown-linux-gnu, os: ubuntu-24.04, package: libc6-dbg } # riscv64
           - { target: s390x-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: s390x-unknown-linux-gnu, os: ubuntu-24.04 }
+          - { target: s390x-unknown-linux-gnu, os: ubuntu-24.04, package: libc6-dbg } # s390x
           # TODO: relocations in generic ELF (EM: 18)
           # - { target: sparc-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
           # - { target: sparc-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
@@ -131,7 +131,7 @@ jobs:
           - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-24.04 }
           - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-24.04-arm }
           - { target: x86_64-unknown-linux-gnu, os: ubuntu-22.04 }
-          - { target: x86_64-unknown-linux-gnu, os: ubuntu-24.04 }
+          - { target: x86_64-unknown-linux-gnu, os: ubuntu-24.04, package: libc6-dbg } # amd64
           # - { target: x86_64-unknown-linux-gnux32, os: ubuntu-22.04 }
           # - { target: x86_64-unknown-linux-gnux32, os: ubuntu-24.04 }
 
@@ -298,6 +298,7 @@ jobs:
           runner: ${{ matrix.runner }}
           qemu: ${{ matrix.qemu }}
           wine: ${{ matrix.wine }}
+          package: ${{ matrix.package }}
       - run: |
           retry() {
             for i in {1..10}; do
@@ -362,6 +363,11 @@ jobs:
           - wasm32-wasip1
           - x86_64-pc-windows-gnu
           - x86_64-pc-windows-gnullvm
+        # prettier-ignore
+        include:
+          - { container: debian:13-slim, target: armv5te-unknown-linux-gnueabi, package: libc6-dbg } # armel
+          - { container: debian:13-slim, target: arm-unknown-linux-gnueabi, package: libc6-dbg } # armel
+          - { container: debian:13-slim, target: armv7-unknown-linux-gnueabi, package: libc6-dbg } # armel
         # prettier-ignore
         exclude:
           # Toolchains not available on ubuntu 18.04

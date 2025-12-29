@@ -26,6 +26,19 @@ bail() {
 warn() {
   printf '::warning::%s\n' "$*"
 }
+normalize_comma_or_space_separated() {
+  # Normalize whitespace characters into space because it's hard to handle single input contains lines with POSIX sed alone.
+  local list="${1//[$'\r\n\t']/ }"
+  if [[ "${list}" == *","* ]]; then
+    # If a comma is contained, consider it is a comma-separated list.
+    # Drop leading and trailing whitespaces in each element.
+    sed -E 's/ *, */,/g; s/^.//' <<<",${list},"
+  else
+    # Otherwise, consider it is a whitespace-separated list.
+    # Convert whitespace characters into comma.
+    sed -E 's/ +/,/g; s/^.//' <<<" ${list} "
+  fi
+}
 _sudo() {
   if type -P sudo >/dev/null; then
     sudo "$@"
@@ -52,6 +65,13 @@ fi
 
 target="${INPUT_TARGET:?}"
 runner="${INPUT_RUNNER:-}"
+package="${INPUT_PACKAGE:-}"
+packages=()
+if [[ -n "${package}" ]]; then
+  while read -rd,; do
+    packages+=("${REPLY}")
+  done < <(normalize_comma_or_space_separated "${package}")
+fi
 
 host=$(rustc -vV | grep -E '^host:' | cut -d' ' -f2)
 rustc_version=$(rustc -vV | grep -E '^release:' | cut -d' ' -f2)
@@ -117,6 +137,23 @@ rustup_target_list=$(rustup target list | cut -d' ' -f1)
 
 install_apt_packages() {
   if [[ ${#apt_packages[@]} -gt 0 ]]; then
+    if [[ -n "${dpkg_add_architecture}" ]]; then
+      _sudo dpkg --add-architecture "${dpkg_add_architecture}"
+      case "${host}" in
+        x86_64*)
+          case "${dpkg_add_architecture}" in
+            amd64 | i386) ;;
+            *)
+              # Workaround for "Failed to fetch https://security.ubuntu.com/ubuntu/dists/*/main/binary-*/Packages" error
+              _sudo tee -a -- /etc/apt/apt-mirrors.txt <<EOF
+http://ports.ubuntu.com/ubuntu-ports/	priority:10
+EOF
+              ;;
+          esac
+          ;;
+      esac
+      dpkg_add_architecture=''
+    fi
     retry _sudo apt-get -o Acquire::Retries=10 -qq update
     if ! retry _sudo apt-get -o Acquire::Retries=10 -o Dpkg::Use-Pty=0 install -y --no-install-recommends "${apt_packages[@]}"; then
       # Workaround for https://github.com/taiki-e/setup-cross-toolchain-action/issues/15
@@ -391,11 +428,17 @@ register_binfmt() {
 
 setup_linux_host() {
   apt_packages=()
+  dpkg_add_architecture=''
   if [[ "${host}" == "${target}" ]]; then
     # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
     # TODO: other lang? https://packages.ubuntu.com/search?lang=en&suite=noble&arch=any&searchon=names&keywords=13-aarch64-linux-gnu
     if ! type -P g++ >/dev/null; then
       apt_packages+=(g++)
+    fi
+    if [[ ${#packages[@]} -gt 0 ]]; then
+      for package in "${packages[@]}"; do
+        apt_packages+=("${package}")
+      done
     fi
   else
     case "${target}" in
@@ -404,7 +447,12 @@ setup_linux_host() {
         case "${target}" in
           # (tier3) Toolchains for aarch64_be-linux-gnu/armeb-linux-gnueabi/riscv32-linux-gnu is not available in APT.
           # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.sh#L17
-          aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | riscv32gc-unknown-linux-gnu | loongarch64-unknown-linux-gnu) install_rust_cross_toolchain ;;
+          aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | riscv32gc-unknown-linux-gnu | loongarch64-unknown-linux-gnu)
+            if [[ ${#packages[@]} -gt 0 ]]; then
+              bail "'package' input option is not supported yet for ${target}"
+            fi
+            install_rust_cross_toolchain
+            ;;
           arm-unknown-linux-gnueabihf)
             # (tier2) Ubuntu's gcc-arm-linux-gnueabihf is v7
             # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/linux-gnu.sh#L55
@@ -445,13 +493,19 @@ setup_linux_host() {
               x86_64*x32) dpkg_arch=x32 ;;
               x86_64*) dpkg_arch=amd64 ;;
             esac
+            if [[ ${#packages[@]} -gt 0 ]]; then
+              dpkg_add_architecture="${dpkg_arch}"
+              for package in "${packages[@]}"; do
+                apt_packages+=("${package}:${dpkg_arch}")
+              done
+            fi
             if [[ -z "${use_qemu}" ]]; then
               case "${host}" in
                 aarch64-*)
                   case "${target}" in
                     armv7*hf | thumbv7*hf)
                       if [[ ! -f "/usr/lib/${apt_target}/libstdc++.so.6" ]]; then
-                        _sudo dpkg --add-architecture "${dpkg_arch}"
+                        dpkg_add_architecture="${dpkg_arch}"
                         # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
                         # TODO: other lang?
                         apt_packages+=("libstdc++6:${dpkg_arch}")
@@ -934,6 +988,12 @@ case "${host}" in
       *-windows-gnu*) ;; # Checked in setup_linux_host
       *) bail "target '${target}' is not supported yet on Linux host" ;;
     esac
+    if [[ ${#packages[@]} -gt 0 ]]; then
+      case "${target}" in
+        *-linux-gnu*) ;;
+        *) bail "'package' input option is not supported yet for ${target}" ;;
+      esac
+    fi
     setup_linux_host
     ;;
   # GitHub-provided macOS/Windows runners support cross-compile for other architectures or environments.
@@ -946,6 +1006,9 @@ case "${host}" in
       '' | native | none) ;;
       *) bail "unrecognized runner '${runner}'" ;;
     esac
+    if [[ ${#packages[@]} -gt 0 ]]; then
+      bail "'package' input option is not supported yet on macOS host"
+    fi
     ;;
   *-windows*)
     case "${target}" in
@@ -956,6 +1019,9 @@ case "${host}" in
       '' | native | none) ;;
       *) bail "unrecognized runner '${runner}'" ;;
     esac
+    if [[ ${#packages[@]} -gt 0 ]]; then
+      bail "'package' input option is not supported yet on Windows host"
+    fi
     ;;
   *) bail "unsupported host '${host}'" ;;
 esac
