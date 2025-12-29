@@ -3,6 +3,7 @@ binfmt
 CXXSTDLIB
 haswell
 libclang
+libexec
 libhello
 multilib
 objcopy

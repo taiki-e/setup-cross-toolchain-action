@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Add `runner: valgrind` input option to run tests with Valgrind. ([#35](https://github.com/taiki-e/setup-cross-toolchain-action/issues/35))
+
 - Add `package` input option to install packages for target. ([#34](https://github.com/taiki-e/setup-cross-toolchain-action/issues/34))
 
   This is currently only supported for some Linux (GNU) targets on Ubuntu/Debian hosts, and packages will be installed using the form: `<sudo as needed> apt-get install --no-install-recommends <each package>:<target's dpkg arch>...`

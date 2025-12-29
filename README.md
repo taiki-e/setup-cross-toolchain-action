@@ -182,15 +182,15 @@ jobs:
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user | |
+| `aarch64-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user, valgrind (aarch64 host only) | |
 | `aarch64_be-unknown-linux-gnu` | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [2] | qemu-user | tier3 |
 | `arm-unknown-linux-gnueabi` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
 | `armeb-unknown-linux-gnueabi` | Ubuntu (18.04,        22.04),        Debian (10, 11, 12) [3] | qemu-user | tier3 |
 | `armv5te-unknown-linux-gnueabi` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
 | `armv7-unknown-linux-gnueabi` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
-| `armv7-unknown-linux-gnueabihf` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user | |
+| `armv7-unknown-linux-gnueabihf` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user, valgrind (aarch64 host only) | |
 | `i586-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04) [1] | native (x86_64 host only), qemu-user (default) | [7] |
-| `i686-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04) [1] | native (default, x86_64 host only), qemu-user | [7] |
+| `i686-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04) [1] | native (default, x86_64 host only), qemu-user, valgrind (x86_64 host only) | [7] |
 | `loongarch64-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [4] | qemu-user | experimental |
 | `mips-unknown-linux-gnu` | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 [6] |
 | `mips64-unknown-linux-gnuabi64` | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | tier3 |
@@ -209,7 +209,7 @@ jobs:
 | `sparc-unknown-linux-gnu` | Ubuntu (18.04,        22.04, 24.04), Debian (10,     12) [1] | qemu-user | tier3, experimental |
 | `sparc64-unknown-linux-gnu` | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
 | `thumbv7neon-unknown-linux-gnueabihf` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, aarch64 host only), qemu-user | |
-| `x86_64-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, x86_64 host only), qemu-user | |
+| `x86_64-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | native (default, x86_64 host only), qemu-user, valgrind (x86_64 host only) | |
 
 [1] GCC 7, glibc 2.27 for Ubuntu 18.04. [GCC 9](https://packages.ubuntu.com/en/focal/gcc), [glibc 2.31](https://packages.ubuntu.com/en/focal/libc6-dev) for Ubuntu 20.04. [GCC 11](https://packages.ubuntu.com/en/jammy/gcc), [glibc 2.35](https://packages.ubuntu.com/en/jammy/libc6-dev) for Ubuntu 22.04. [GCC 13](https://packages.ubuntu.com/en/noble/gcc), [glibc 2.39](https://packages.ubuntu.com/en/noble/libc6-dev) for Ubuntu 24.04. [GCC 8](https://packages.debian.org/en/buster/gcc), [glibc 2.28](https://packages.debian.org/en/buster/libc6-dev) for Debian 10. [GCC 10](https://packages.debian.org/en/bullseye/gcc), [glibc 2.31](https://packages.debian.org/en/bullseye/libc6-dev) for Debian 11. [GCC 12](https://packages.debian.org/en/bookworm/gcc), [glibc 2.36](https://packages.debian.org/en/bookworm/libc6-dev) for Debian 12.<br>
 [2] GCC 14, glibc 2.40<br>
@@ -241,6 +241,18 @@ You can select/pin the version by using `qemu` input option, or `@` syntax in `r
     target: aarch64-unknown-linux-gnu
     runner: qemu@8.1
 ```
+
+<!-- omit in toc -->
+#### <a name="valgrind-runner"></a>valgrind runner
+
+**Note:** binfmt does not work with this runner.
+
+The current default Valgrind version is 3.26.0.
+
+The current default arguments passed to Valgrind is `-v --error-exitcode=1 --error-limit=no --leak-check=full --track-origins=yes --fair-sched=yes --gen-suppressions=all`. You can override it by setting the `CARGO_TARGET_<target name in upper underscore format>_RUNNER` environment variable.
+
+See "test-valgrind" job in [our CI config](https://github.com/taiki-e/setup-cross-toolchain-action/blob/HEAD/.github/workflows/ci.yml) for basic usage with x86_64/i686/aarch64/armv7hf.
+See "valgrind-cross" job in [atomic-maybe-uninit's CI config](https://github.com/taiki-e/atomic-maybe-uninit/blob/HEAD/.github/workflows/ci.yml) for how to run tests with valgrind on powerpc64le/s390x/riscv64.
 
 ### Linux (musl)
 
