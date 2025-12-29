@@ -56,6 +56,8 @@ export RUSTUP_MAX_RETRIES=10
 # NB: Sync with readme.
 # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
 default_qemu_version='10.2'
+# https://github.com/taiki-e/dockerfiles/pkgs/container/valgrind
+default_valgrind_version='3.26.0'
 # https://dl.winehq.org/wine-builds/ubuntu/pool/main/w/wine/
 default_wine_version='10.0.0.0'
 
@@ -213,17 +215,7 @@ install_rust_cross_toolchain() {
   rust_cross_toolchain_used=1
   toolchain_dir=/usr/local
   # TODO: distribute rust-cross-toolchain without docker
-  if ! type -P docker >/dev/null; then
-    apt_packages+=(docker.io)
-    if grep -Eq '^ID=debian$' /etc/os-release; then
-      version_id=$(grep -E '^VERSION_ID=' /etc/os-release | cut -d= -f2)
-      case "${version_id//\"/}" in
-        [0-9] | 1[0-2]) ;;
-        *) apt_packages+=(docker-cli) ;;
-      esac
-    fi
-    install_apt_packages
-  fi
+  install_docker
   # https://github.com/taiki-e/rust-cross-toolchain/pkgs/container/rust-cross-toolchain
   local arch
   case "${host}" in
@@ -364,18 +356,8 @@ install_qemu() {
       esac
       ;;
   esac
-  # TODO: distribute rust-cross-toolchain without docker
-  if ! type -P docker >/dev/null; then
-    apt_packages+=(docker.io)
-    if grep -Eq '^ID=debian$' /etc/os-release; then
-      version_id=$(grep -E '^VERSION_ID=' /etc/os-release | cut -d= -f2)
-      case "${version_id//\"/}" in
-        [0-9] | 1[0-2]) ;;
-        *) apt_packages+=(docker-cli) ;;
-      esac
-    fi
-    install_apt_packages
-  fi
+  # TODO: distribute the latest qemu-user without docker
+  install_docker
   retry docker create --name qemu-user "ghcr.io/taiki-e/qemu-user${qemu_user_tag}"
   mkdir -p -- .setup-cross-toolchain-action-tmp
   docker cp -- "qemu-user:/usr/bin/qemu-${qemu_arch}" ".setup-cross-toolchain-action-tmp/qemu-${qemu_arch}"
@@ -424,6 +406,35 @@ register_binfmt() {
   _sudo tee -- /proc/sys/fs/binfmt_misc/register >/dev/null \
     <<<":${target}:M::${magic}:${mask}:${runner_path}:F"
   printf '::endgroup::\n'
+}
+install_valgrind() {
+  if [[ ! "${valgrind_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    bail "unrecognized Valgrind version '${valgrind_version}'"
+  fi
+  printf '::group::Instal Valgrind\n'
+  # TODO: distribute the latest valgrind without docker
+  install_docker
+  # https://github.com/taiki-e/dockerfiles/pkgs/container/valgrind
+  retry docker create --name valgrind "ghcr.io/taiki-e/valgrind:${valgrind_version}-${valgrind_arch}-dist"
+  mkdir -p -- .setup-cross-toolchain-action-tmp
+  docker cp -- valgrind:/valgrind .setup-cross-toolchain-action-tmp/valgrind
+  docker rm -f -- valgrind >/dev/null
+  _sudo cp -r -- .setup-cross-toolchain-action-tmp/valgrind/. /usr/
+  rm -rf -- ./.setup-cross-toolchain-action-tmp
+  printf '::endgroup::\n'
+}
+install_docker() {
+  if ! type -P docker >/dev/null; then
+    apt_packages+=(docker.io)
+    if grep -Eq '^ID=debian$' /etc/os-release; then
+      version_id=$(grep -E '^VERSION_ID=' /etc/os-release | cut -d= -f2)
+      case "${version_id//\"/}" in
+        [0-9] | 1[0-2]) ;;
+        *) apt_packages+=(docker-cli) ;;
+      esac
+    fi
+    install_apt_packages
+  fi
 }
 
 setup_linux_host() {
@@ -906,7 +917,36 @@ EOF
     register_binfmt qemu-user
   fi
 
+  valgrind_arch=''
+  if [[ -n "${use_valgrind}" ]]; then
+    case "${target}" in
+      aarch64_be-*) ;;
+      aarch64* | arm64*) valgrind_arch=arm64 ;;
+      armv7*hf | thumbv7*hf) valgrind_arch=armhf ;;
+      i?86-*) valgrind_arch=i386 ;;
+      powerpc64le-*) valgrind_arch=ppc64el ;;
+      riscv64*) valgrind_arch=riscv64 ;;
+      s390x*) valgrind_arch=s390x ;;
+      x86_64*) valgrind_arch=amd64 ;;
+    esac
+    if [[ -z "${use_valgrind}" ]]; then
+      bail "valgrind runner is not supported for ${target}"
+    fi
+    printf '%s\n' "CARGO_TARGET_${target_upper}_RUNNER=valgrind -v --error-exitcode=1 --error-limit=no --leak-check=full --track-origins=yes --fair-sched=yes --gen-suppressions=all" >>"${GITHUB_ENV}"
+    printf 'CARGO_PROFILE_RELEASE_DEBUG=true\n' >>"${GITHUB_ENV}"
+    export VALGRIND_LIB=/usr/libexec/valgrind
+    printf 'VALGRIND_LIB=/usr/libexec/valgrind\n' >>"${GITHUB_ENV}"
+    install_valgrind
+  fi
+
   install_apt_packages
+
+  case "${valgrind_arch}" in
+    '') ;;                        # not installed
+    ppc64el | riscv64 | s390x) ;; # build-only
+    # Run after install_apt_packages because libc6-dbg is needed.
+    *) x valgrind --version ;;
+  esac
 
   case "${target}" in
     sparc-unknown-linux-gnu)
@@ -937,7 +977,9 @@ EOF2
 case "${host}" in
   *-linux-gnu*)
     use_qemu=''
+    use_valgrind=''
     qemu_version="${INPUT_QEMU:-"${default_qemu_version}"}"
+    valgrind_version="${default_valgrind_version}" # TODO: allow customization
     case "${target}" in
       *-linux-* | *-android*)
         case "${runner}" in
@@ -972,6 +1014,10 @@ case "${host}" in
             use_qemu=1
             qemu_version="${runner#*@}"
             ;;
+          valgrind)
+            use_valgrind=1
+            packages+=(libc6-dbg)
+            ;;
           *) bail "unrecognized runner '${runner}'" ;;
         esac
         ;;
@@ -994,6 +1040,7 @@ case "${host}" in
         *) bail "'package' input option is not supported yet for ${target}" ;;
       esac
     fi
+
     setup_linux_host
     ;;
   # GitHub-provided macOS/Windows runners support cross-compile for other architectures or environments.
