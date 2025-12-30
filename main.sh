@@ -1108,7 +1108,7 @@ if grep -Eq "^${target}$" <<<"${rustup_target_list}"; then
   if [[ "${target}" != "${host}" ]]; then
     retry rustup target add "${target}"
   fi
-  # Note: -Z doctest-xcompile doesn't compatible with -Z build-std yet.
+  # Note: -Z doctest-xcompile stabilized in Rust 1.89 wasn't compatible with -Z build-std.
   if [[ "${rustc_version}" =~ nightly|dev ]]; then
     if cargo -Z help | grep -Eq '\bZ doctest-xcompile\b'; then
       printf 'DOCTEST_XCOMPILE=-Zdoctest-xcompile\n' >>"${GITHUB_ENV}"
