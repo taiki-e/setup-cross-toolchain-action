@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.37.0] - 2025-12-30
+
 - Support `{x86_64,aarch64}-pc-windows-gnullvm` on Windows host.
 
 ## [1.36.0] - 2025-12-30
@@ -418,7 +420,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.36.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.37.0...HEAD
+[1.37.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.36.0...v1.37.0
 [1.36.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.35.0...v1.36.0
 [1.35.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.34.0...v1.35.0
 [1.34.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.33.0...v1.34.0
