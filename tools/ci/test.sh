@@ -16,6 +16,9 @@ set -x
 # We cannot use uname -m here because uname -m on windows-11-arm returns "x86_64".
 host=$(rustc -vV | grep -E '^host:' | cut -d' ' -f2)
 target="$1"
+if [[ "${target}" == "host-tuple" ]]; then
+  target="${host}"
+fi
 target="${target%@*}"
 target_lower="${target//-/_}"
 target_lower="${target_lower//./_}"

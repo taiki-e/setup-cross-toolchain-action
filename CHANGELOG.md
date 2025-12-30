@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Accept `target: host-tuple` input option (align to [Cargo 1.91+](https://doc.rust-lang.org/nightly/cargo/CHANGELOG.html#cargo-191-2025-10-30)).
+
 ## [1.35.0] - 2025-12-29
 
 - Add `runner: valgrind` input option to run tests with Valgrind. ([#35](https://github.com/taiki-e/setup-cross-toolchain-action/issues/35))

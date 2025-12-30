@@ -76,9 +76,15 @@ if [[ -n "${package}" ]]; then
 fi
 
 host=$(rustc -vV | grep -E '^host:' | cut -d' ' -f2)
+if [[ "${target}" == "host-tuple" ]]; then
+  target="${host}"
+fi
 rustc_version=$(rustc -vV | grep -E '^release:' | cut -d' ' -f2)
 rustc_minor_version="${rustc_version#*.}"
 rustc_minor_version="${rustc_minor_version%%.*}"
+printf 'target: %s\n' "${target}"
+printf 'host: %s\n' "${host}"
+printf 'rustc version: %s\n' "${rustc_version}"
 
 api_level=''
 sys_version=''
