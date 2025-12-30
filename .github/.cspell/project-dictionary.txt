@@ -1,6 +1,7 @@
 armeabi
 binfmt
 CXXSTDLIB
+cygdrive
 haswell
 libclang
 libexec
@@ -9,6 +10,7 @@ multilib
 objcopy
 powerpcspe
 trixie
+ucrt
 unikraft
 Vger
 wasmtime

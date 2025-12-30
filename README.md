@@ -469,9 +469,9 @@ You can select/pin the version by using `wine` input option, or `@` syntax in `r
 
 | target | host | runner | note |
 | ------ | ---- | ------ | ---- |
-| `aarch64-pc-windows-gnullvm` | Ubuntu (22.04, 24.04) | wine | |
+| `aarch64-pc-windows-gnullvm` | *Windows (arm64 only)*, Ubuntu (22.04, 24.04) | wine | |
 | `i686-pc-windows-gnullvm` | Ubuntu (22.04, 24.04) | wine | |
-| `x86_64-pc-windows-gnullvm` | Ubuntu (22.04, 24.04) | wine | |
+| `x86_64-pc-windows-gnullvm` | *Windows (x86_64 only)*, Ubuntu (22.04, 24.04) | wine | |
 
 For the `wine` runner for {i686,x86_64}-pc-windows-gnullvm, see ["wine runner" section for windows-gnu targets](#wine-runner).
 

@@ -1075,6 +1075,31 @@ case "${host}" in
     if [[ ${#packages[@]} -gt 0 ]]; then
       bail "'package' input option is not supported yet on Windows host"
     fi
+    case "${target}" in
+      *-windows*-gnullvm)
+        # https://github.com/taiki-e/rust-cross-toolchain/blob/HEAD/docker/windows-gnullvm.Dockerfile
+        toolchain_version=20240619
+        case "${host}" in
+          aarch64* | arm64*) host_arch=aarch64 ;;
+          arm* | thumb*) host_arch=armv7 ;;
+          x86_64*) host_arch=x86_64 ;;
+          i?86*) host_arch=i686 ;;
+          *) bail "unrecognized host '${host}'" ;;
+        esac
+        canonicalize_windows_path() {
+          sed -E 's/^\/cygdrive\//\//; s/^\/c\//C:\\/; s/\//\\/g' <<<"$1"
+        }
+        mkdir -p -- "${HOME}/.setup-cross-toolchain-action"
+        (
+          cd -- "${HOME}/.setup-cross-toolchain-action"
+          curl --proto '=https' --tlsv1.2 -fsSL --retry 10 --retry-connrefused -o tmp "https://github.com/mstorsjo/llvm-mingw/releases/download/${toolchain_version}/llvm-mingw-${toolchain_version}-ucrt-${host_arch}.zip"
+          unzip tmp
+          rm -- tmp
+        )
+        bin_dir=$(canonicalize_windows_path "${HOME}/.setup-cross-toolchain-action/llvm-mingw-${toolchain_version}-ucrt-${host_arch}/bin")
+        printf '%s\n' "${bin_dir}" >>"${GITHUB_PATH}"
+        ;;
+    esac
     ;;
   *) bail "unsupported host '${host}'" ;;
 esac

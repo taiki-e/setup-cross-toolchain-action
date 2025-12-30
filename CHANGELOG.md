@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Support `{x86_64,aarch64}-pc-windows-gnullvm` on Windows host.
+
 ## [1.36.0] - 2025-12-30
 
 - Accept `target: host-tuple` input option (align to [Cargo 1.91+](https://doc.rust-lang.org/nightly/cargo/CHANGELOG.html#cargo-191-2025-10-30)).
