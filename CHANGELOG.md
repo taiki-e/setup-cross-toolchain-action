@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Enable [release immutability](https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/immutable-releases).
+
 ## [1.37.0] - 2025-12-30
 
 - Support `{x86_64,aarch64}-pc-windows-gnullvm` on Windows host.
