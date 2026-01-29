@@ -116,8 +116,8 @@ jobs:
           - { target: powerpc64le-unknown-linux-gnu, os: ubuntu-24.04, package: libc6-dbg } # ppc64el
           - { target: riscv32gc-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
           - { target: riscv32gc-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
-          # - { target: riscv64a23-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
-          # - { target: riscv64a23-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
+          - { target: riscv64a23-unknown-linux-gnu, os: ubuntu-22.04 }
+          - { target: riscv64a23-unknown-linux-gnu, os: ubuntu-24.04 }
           - { target: riscv64gc-unknown-linux-gnu, os: ubuntu-22.04 }
           - { target: riscv64gc-unknown-linux-gnu, os: ubuntu-24.04, package: libc6-dbg } # riscv64
           - { target: s390x-unknown-linux-gnu, os: ubuntu-22.04 }

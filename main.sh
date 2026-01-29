@@ -478,7 +478,10 @@ setup_linux_host() {
             case "${target}" in
               arm*hf | thumb*hf) cc_target=arm-linux-gnueabihf ;;
               arm* | thumb*) cc_target=arm-linux-gnueabi ;;
-              riscv??gc-*) cc_target="${target/gc-unknown/}" ;;
+              riscv*)
+                cc_target="${target/gc-unknown/}"
+                cc_target="${cc_target/a23-unknown/}"
+                ;;
               sparc-*)
                 # Toolchain for sparc-linux-gnu is not available in APT,
                 # but we can use -m32 with sparc64-linux-gnu multilib.

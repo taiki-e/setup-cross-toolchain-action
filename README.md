@@ -204,6 +204,7 @@ jobs:
 | `powerpc64-unknown-linux-gnu` | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
 | `powerpc64le-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
 | `riscv32gc-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [5] | qemu-user | |
+| `riscv64a23-unknown-linux-gnu` | ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
 | `riscv64gc-unknown-linux-gnu` | ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
 | `s390x-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12) [1] | qemu-user | |
 | `sparc-unknown-linux-gnu` | Ubuntu (18.04,        22.04, 24.04), Debian (10,     12) [1] | qemu-user | tier3, experimental |
