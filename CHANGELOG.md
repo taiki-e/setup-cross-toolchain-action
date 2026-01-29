@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Fix an [issue when cross-compiling crabgrind](https://github.com/2dav/crabgrind/issues/8).
+
 ## [1.37.1] - 2026-01-11
 
 - Enable [release immutability](https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/immutable-releases).

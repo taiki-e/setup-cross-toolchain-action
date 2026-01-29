@@ -942,6 +942,7 @@ EOF
     printf 'CARGO_PROFILE_RELEASE_DEBUG=true\n' >>"${GITHUB_ENV}"
     export VALGRIND_LIB=/usr/libexec/valgrind
     printf 'VALGRIND_LIB=/usr/libexec/valgrind\n' >>"${GITHUB_ENV}"
+    printf 'VALGRIND_INCLUDE=/usr/include\n' >>"${GITHUB_ENV}"
     install_valgrind
   fi
 
