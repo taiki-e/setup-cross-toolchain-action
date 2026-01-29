@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.38.0] - 2026-01-29
+
 - Support `riscv64a23-unknown-linux-gnu`.
 
 - Fix an [issue when cross-compiling crabgrind](https://github.com/2dav/crabgrind/issues/8).
@@ -428,7 +430,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.37.1...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.38.0...HEAD
+[1.38.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.37.1...v1.38.0
 [1.37.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.37.0...v1.37.1
 [1.37.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.36.0...v1.37.0
 [1.36.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.35.0...v1.36.0
