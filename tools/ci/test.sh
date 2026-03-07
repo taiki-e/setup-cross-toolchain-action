@@ -51,6 +51,11 @@ skip_run() {
     aarch64* | arm64*)
       case "${target}" in
         aarch64* | arm64* | arm*hf | thumb*hf | *-darwin* | *-windows*) return 1 ;;
+        arm* | thumb*)
+          if [[ -f /etc/os-release ]] && grep -Eq '^ID=debian$' /etc/os-release; then
+            return 1
+          fi
+          ;;
       esac
       ;;
     *)

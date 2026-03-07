@@ -401,6 +401,9 @@ jobs:
           - { container: debian:13-slim, target: armv5te-unknown-linux-gnueabi, package: libc6-dbg } # armel
           - { container: debian:13-slim, target: arm-unknown-linux-gnueabi, package: libc6-dbg } # armel
           - { container: debian:13-slim, target: armv7-unknown-linux-gnueabi, package: libc6-dbg } # armel
+          - { container: debian:13-slim, target: armv5te-unknown-linux-gnueabi, os: ubuntu-24.04-arm, runner: native, package: libc6-dbg } # armel
+          - { container: debian:13-slim, target: arm-unknown-linux-gnueabi, os: ubuntu-24.04-arm, runner: native, package: libc6-dbg } # armel
+          - { container: debian:13-slim, target: armv7-unknown-linux-gnueabi, os: ubuntu-24.04-arm, runner: native, package: libc6-dbg } # armel
         # prettier-ignore
         exclude:
           # Toolchains not available on ubuntu 18.04
@@ -423,7 +426,7 @@ jobs:
           # precompiled binary of latest wasmtime requires glibc 2.29+
           - { target: wasm32-wasip1, container: 'ubuntu:18.04' }
           - { target: wasm32-wasip1, container: 'debian:10-slim' }
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
     timeout-minutes: 60
     container:
       image: ${{ matrix.container }}
@@ -449,6 +452,7 @@ jobs:
       - uses: ./
         with:
           target: ${{ matrix.target }}
+          runner: ${{ matrix.runner }}
       # Workaround for "unknown architecture of input file `*/symbols.o' is incompatible with sparc:v8plus output"
       - run: |
           printf '%s\n' "RUSTFLAGS=${RUSTFLAGS} -C target-feature=-v8plus" >>"${GITHUB_ENV}"

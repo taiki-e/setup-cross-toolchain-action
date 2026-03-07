@@ -522,13 +522,20 @@ setup_linux_host() {
               case "${host}" in
                 aarch64-*)
                   case "${target}" in
-                    armv7*hf | thumbv7*hf)
+                    arm* | thumb*)
                       if [[ ! -f "/usr/lib/${apt_target}/libstdc++.so.6" ]]; then
                         dpkg_add_architecture="${dpkg_arch}"
                         # TODO: can we reduce the setup time by providing an option to skip installing packages for C++?
                         # TODO: other lang?
                         apt_packages+=("libstdc++6:${dpkg_arch}")
                       fi
+                      case "${target}" in
+                        arm-* | armv6*)
+                          # abi.cp15_barrier is set to 1 by default on AArch64 Linux.
+                          # https://github.com/rust-lang/rust/issues/60605
+                          _sudo tee -- /proc/sys/abi/cp15_barrier <<<"2"
+                          ;;
+                      esac
                       ;;
                   esac
                   ;;
@@ -1005,7 +1012,7 @@ case "${host}" in
                 aarch64-*)
                   case "${target}" in
                     aarch64-*) ;;
-                    armv7*hf | thumbv7*hf)
+                    arm* | thumb*)
                       if ! lscpu | grep -Eq 'CPU.*32-bit'; then
                         use_qemu=1
                       fi

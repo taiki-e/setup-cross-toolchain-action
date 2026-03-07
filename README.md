@@ -184,10 +184,10 @@ jobs:
 | ------ | ---- | ------ | ---- |
 | `aarch64-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12, 13) [1] | native (default, aarch64 host only), qemu-user, valgrind (aarch64 host only) | |
 | `aarch64_be-unknown-linux-gnu` | Ubuntu (18.04,        22.04, 24.04), Debian (10, 11, 12, 13) [2] | qemu-user | tier3 |
-| `arm-unknown-linux-gnueabi` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12, 13) [1] | qemu-user | |
+| `arm-unknown-linux-gnueabi` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12, 13) [1] | qemu-user, native (aarch64 Debian host only) | |
 | `armeb-unknown-linux-gnueabi` | Ubuntu (18.04,        22.04),        Debian (10, 11, 12, 13) [3] | qemu-user | tier3 |
-| `armv5te-unknown-linux-gnueabi` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12, 13) [1] | qemu-user | |
-| `armv7-unknown-linux-gnueabi` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12, 13) [1] | qemu-user | |
+| `armv5te-unknown-linux-gnueabi` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12, 13) [1] | qemu-user, native (aarch64 Debian host only) | |
+| `armv7-unknown-linux-gnueabi` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12, 13) [1] | qemu-user, native (aarch64 Debian host only) | |
 | `armv7-unknown-linux-gnueabihf` | Ubuntu (18.04, 20.04, 22.04, 24.04), Debian (10, 11, 12, 13) [1] | native (default, aarch64 host only), qemu-user, valgrind (aarch64 host only) | |
 | `i586-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04) [1] | native (x86_64 host only), qemu-user (default) | [7] |
 | `i686-unknown-linux-gnu` | Ubuntu (18.04, 20.04, 22.04, 24.04) [1] | native (default, x86_64 host only), qemu-user, valgrind (x86_64 host only) | [7] |
