@@ -103,10 +103,10 @@ jobs:
           # - { target: mipsisa32r6-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
           # - { target: mipsisa32r6el-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
           # - { target: mipsisa32r6el-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
-          # - { target: mipsisa64r6-unknown-linux-gnuabi64, os: ubuntu-22.04 } # tier3
-          # - { target: mipsisa64r6-unknown-linux-gnuabi64, os: ubuntu-24.04 } # tier3
-          # - { target: mipsisa64r6el-unknown-linux-gnuabi64, os: ubuntu-22.04 } # tier3
-          # - { target: mipsisa64r6el-unknown-linux-gnuabi64, os: ubuntu-24.04 } # tier3
+          - { target: mipsisa64r6-unknown-linux-gnuabi64, os: ubuntu-22.04 } # tier3
+          - { target: mipsisa64r6-unknown-linux-gnuabi64, os: ubuntu-24.04 } # tier3
+          - { target: mipsisa64r6el-unknown-linux-gnuabi64, os: ubuntu-22.04 } # tier3
+          - { target: mipsisa64r6el-unknown-linux-gnuabi64, os: ubuntu-24.04 } # tier3
           - { target: powerpc-unknown-linux-gnu, os: ubuntu-22.04 }
           - { target: powerpc-unknown-linux-gnu, os: ubuntu-24.04 }
           # - { target: powerpc-unknown-linux-gnuspe, os: ubuntu-22.04 } # tier3, fails to run test, and GCC 9 removed support for this target
@@ -123,9 +123,8 @@ jobs:
           - { target: riscv64gc-unknown-linux-gnu, os: ubuntu-24.04, package: libc6-dbg } # riscv64
           - { target: s390x-unknown-linux-gnu, os: ubuntu-22.04 }
           - { target: s390x-unknown-linux-gnu, os: ubuntu-24.04, package: libc6-dbg } # s390x
-          # TODO: relocations in generic ELF (EM: 18)
-          # - { target: sparc-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
-          # - { target: sparc-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
+          - { target: sparc-unknown-linux-gnu, os: ubuntu-22.04 } # tier3
+          - { target: sparc-unknown-linux-gnu, os: ubuntu-24.04 } # tier3
           - { target: sparc64-unknown-linux-gnu, os: ubuntu-22.04 }
           - { target: sparc64-unknown-linux-gnu, os: ubuntu-24.04 }
           - { target: thumbv7neon-unknown-linux-gnueabihf, os: ubuntu-22.04 }
@@ -324,6 +323,10 @@ jobs:
             in_place=(-i)
           fi
           sed -E "${in_place[@]}" 's/2\.0/3.5/g' rust-cross-toolchain/docker/test/fixtures/rust/libhello_cmake/CMakeLists.txt
+      # Workaround for "unknown architecture of input file `*/symbols.o' is incompatible with sparc:v8plus output"
+      - run: |
+          printf '%s\n' "RUSTFLAGS=${RUSTFLAGS} -C target-feature=-v8plus" >>"${GITHUB_ENV}"
+        if: startsWith(matrix.target, 'sparc-')
       - run: tools/ci/test.sh "${{ matrix.target }}" rust-cross-toolchain/docker/test/fixtures/rust
         id: test
       - run: /system/bin/sh -c set
@@ -355,8 +358,32 @@ jobs:
           - debian:12-slim # glibc 2.36
           - debian:13-slim # glibc 2.41
         target:
-          - x86_64-unknown-linux-gnu
           - aarch64-unknown-linux-gnu
+          # - aarch64_be-unknown-linux-gnu
+          # - arm-unknown-linux-gnueabi
+          # - armeb-unknown-linux-gnueabi
+          # - armv5te-unknown-linux-gnueabi
+          # - armv7-unknown-linux-gnueabi
+          # - armv7-unknown-linux-gnueabihf
+          # - loongarch64-unknown-linux-gnu
+          # - mips-unknown-linux-gnu
+          # - mips64-unknown-linux-gnuabi64
+          # - mips64el-unknown-linux-gnuabi64
+          # - mipsel-unknown-linux-gnu
+          # - mipsisa32r6-unknown-linux-gnu
+          # - mipsisa32r6el-unknown-linux-gnu
+          # - mipsisa64r6-unknown-linux-gnuabi64
+          # - mipsisa64r6el-unknown-linux-gnuabi64
+          # - powerpc-unknown-linux-gnu
+          # - powerpc64-unknown-linux-gnu
+          # - powerpc64le-unknown-linux-gnu
+          # - riscv32gc-unknown-linux-gnu
+          # - riscv64gc-unknown-linux-gnu
+          # - s390x-unknown-linux-gnu
+          # - sparc-unknown-linux-gnu
+          # - sparc64-unknown-linux-gnu
+          # - thumbv7neon-unknown-linux-gnueabihf
+          - x86_64-unknown-linux-gnu
           # TODO: No such file or directory
           # - i586-unknown-linux-gnu
           # - i686-unknown-linux-gnu
@@ -422,6 +449,10 @@ jobs:
       - uses: ./
         with:
           target: ${{ matrix.target }}
+      # Workaround for "unknown architecture of input file `*/symbols.o' is incompatible with sparc:v8plus output"
+      - run: |
+          printf '%s\n' "RUSTFLAGS=${RUSTFLAGS} -C target-feature=-v8plus" >>"${GITHUB_ENV}"
+        if: startsWith(matrix.target, 'sparc-')
       - name: Install requirements for test (ubuntu/debian)
         run: |
           apt-get -o Acquire::Retries=10 -qq update
