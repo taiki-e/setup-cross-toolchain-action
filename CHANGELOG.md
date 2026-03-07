@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.39.0] - 2026-03-07
+
 - Support `native` runner for soft-float little-endian Arm linux-gnu targets on GitHub-hosted AArch64 Linux runners (ubuntu-22.04-arm, ubuntu-24.04-arm) with Debian containers.
 
 ## [1.38.0] - 2026-01-29
@@ -432,7 +434,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.38.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.39.0...HEAD
+[1.39.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.38.0...v1.39.0
 [1.38.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.37.1...v1.38.0
 [1.37.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.37.0...v1.37.1
 [1.37.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.36.0...v1.37.0
