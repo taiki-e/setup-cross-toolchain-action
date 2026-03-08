@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Avoid triggering [zizmor ref-confusion](https://docs.zizmor.sh/audits/#ref-confusion) when using this action in form of `uses: taiki-e/setup-cross-toolchain-action@v1`.
+
 ## [1.39.0] - 2026-03-07
 
 - Support `native` runner for soft-float little-endian Arm linux-gnu targets on GitHub-hosted AArch64 Linux runners (ubuntu-22.04-arm, ubuntu-24.04-arm) with Debian containers.
