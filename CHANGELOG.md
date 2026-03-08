@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.39.1] - 2026-03-08
+
 - Avoid triggering [zizmor ref-confusion](https://docs.zizmor.sh/audits/#ref-confusion) when using this action in form of `uses: taiki-e/setup-cross-toolchain-action@v1`.
 
 ## [1.39.0] - 2026-03-07
@@ -436,7 +438,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.39.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.39.1...HEAD
+[1.39.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.39.0...v1.39.1
 [1.39.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.38.0...v1.39.0
 [1.38.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.37.1...v1.38.0
 [1.37.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.37.0...v1.37.1
