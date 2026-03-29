@@ -494,20 +494,37 @@ setup_linux_host() {
             esac
             apt_target="${apt_target:-"${cc_target/i586/i686}"}"
             case "${target}" in
+              aarch64*ilp32 | arm64*ilp32) dpkg_arch=arm64ilp32 ;;
               aarch64* | arm64*) dpkg_arch=arm64 ;;
+              alpha-*) dpkg_arch=alpha ;;
+              arc-*) dpkg_arch=arc ;;
               arm*hf | thumb*hf) dpkg_arch=armhf ;;
               arm* | thumb*) dpkg_arch=armel ;;
               i?86-*) dpkg_arch=i386 ;;
+              ia64-*) dpkg_arch=ia64 ;;
+              hppa-*) dpkg_arch=hppa ;;
+              loongarch64*) dpkg_arch=loong64 ;;
               m68k-*) dpkg_arch=m68k ;;
               mips-*) dpkg_arch=mips ;;
+              mips64-*n32) dpkg_arch=mipsn32 ;;
+              mips64-*) dpkg_arch=mips64 ;;
+              mips64el-*n32) dpkg_arch=mipsn32el ;;
               mips64el-*) dpkg_arch=mips64el ;;
               mipsel-*) dpkg_arch=mipsel ;;
+              mipsisa32r6-*) dpkg_arch=mipsr6 ;;
+              mipsisa32r6el-*) dpkg_arch=mipsr6el ;;
+              mipsisa64r6-*n32) dpkg_arch=mipsn32r6 ;;
+              mipsisa64r6-*) dpkg_arch=mips64r6 ;;
+              mipsisa64r6el-*n32) dpkg_arch=mipsn32r6el ;;
+              mipsisa64r6el-*) dpkg_arch=mips64r6el ;;
               powerpc-*spe) dpkg_arch=powerpcspe ;;
               powerpc-*) dpkg_arch=powerpc ;;
               powerpc64-*) dpkg_arch=ppc64 ;;
               powerpc64le-*) dpkg_arch=ppc64el ;;
+              riscv32*) dpkg_arch=riscv32 ;;
               riscv64*) dpkg_arch=riscv64 ;;
               s390x*) dpkg_arch=s390x ;;
+              sh*) dpkg_arch=sh4 ;;
               sparc-*) dpkg_arch=sparc ;;
               sparc64-*) dpkg_arch=sparc64 ;;
               x86_64*x32) dpkg_arch=x32 ;;

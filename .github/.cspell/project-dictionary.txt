@@ -4,8 +4,12 @@ crabgrind
 CXXSTDLIB
 cygdrive
 haswell
+hppa
 libclang
 libexec
+loong
+mipsn
+mipsr
 multilib
 objcopy
 powerpcspe
