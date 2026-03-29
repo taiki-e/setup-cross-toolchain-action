@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Improve support for Ubuntu 26.04.
+
 ## [1.39.1] - 2026-03-08
 
 - Avoid triggering [zizmor ref-confusion](https://docs.zizmor.sh/audits/#ref-confusion) when using this action in form of `uses: taiki-e/setup-cross-toolchain-action@v1`.
