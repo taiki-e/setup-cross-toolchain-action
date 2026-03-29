@@ -6,7 +6,6 @@ cygdrive
 haswell
 libclang
 libexec
-libhello
 multilib
 objcopy
 powerpcspe
