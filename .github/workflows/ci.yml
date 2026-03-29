@@ -38,7 +38,8 @@ jobs:
       contents: write # for creating branch for pr
       pull-requests: write # unused (used in `codegen-automerge: true` case)
       security-events: write # for github/codeql-action/*
-    secrets: inherit
+    secrets:
+      PR_TOKEN_APP_PRIVATE_KEY: ${{ secrets.PR_TOKEN_APP_PRIVATE_KEY }}
 
   test:
     needs: tidy
@@ -321,7 +322,9 @@ jobs:
       - run: |
           printf '%s\n' "RUSTFLAGS=${RUSTFLAGS} -C target-feature=-v8plus" >>"${GITHUB_ENV}"
         if: startsWith(matrix.target, 'sparc-')
-      - run: tools/ci/test.sh "${{ matrix.target }}" rust-cross-toolchain/docker/test/fixtures/rust
+      - run: tools/ci/test.sh "${TARGET}" rust-cross-toolchain/docker/test/fixtures/rust
+        env:
+          TARGET: ${{ matrix.target }}
         id: test
       - run: /system/bin/sh -c set
         if: contains(matrix.target, '-android')
@@ -471,7 +474,9 @@ jobs:
           retry git clone --depth 1 https://github.com/taiki-e/rust-cross-toolchain.git
           # TODO: workaround for error on the recent CMake.
           printf 'CMAKE_POLICY_VERSION_MINIMUM=3.5\n' >>"${GITHUB_ENV}"
-      - run: tools/ci/test.sh "${{ matrix.target }}" rust-cross-toolchain/docker/test/fixtures/rust
+      - run: tools/ci/test.sh "${TARGET}" rust-cross-toolchain/docker/test/fixtures/rust
+        env:
+          TARGET: ${{ matrix.target }}
         id: test
       # TODO: we should replace ':' from matrix.container: "Error: The artifact name is not valid"
       # # For debugging
@@ -515,4 +520,6 @@ jobs:
           retry git clone --depth 1 https://github.com/taiki-e/rust-cross-toolchain.git
           # TODO: workaround for error on the recent CMake.
           printf 'CMAKE_POLICY_VERSION_MINIMUM=3.5\n' >>"${GITHUB_ENV}"
-      - run: tools/ci/test.sh "${{ matrix.target }}" rust-cross-toolchain/docker/test/fixtures/rust
+      - run: tools/ci/test.sh "${TARGET}" rust-cross-toolchain/docker/test/fixtures/rust
+        env:
+          TARGET: ${{ matrix.target }}
