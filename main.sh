@@ -183,14 +183,15 @@ install_llvm() {
   install_apt_packages
   codename=$(grep -E '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2)
   case "${codename}" in
-    bionic) llvm_version=13 ;;
-    noble) llvm_version=18 ;;
-    trixie) llvm_version=19 ;;
+    bionic) llvm_version=13 ;;   # ubuntu 18.04
+    noble) llvm_version=18 ;;    # ubuntu 24.04
+    trixie) llvm_version=19 ;;   # debian 13
+    resolute) llvm_version=21 ;; # ubuntu 26.04
     # TODO: update to 21
     *) llvm_version=15 ;;
   esac
   case "${codename}" in
-    noble | trixie) ;;
+    noble | trixie | resolute) ;;
     *)
       _sudo mkdir -pm755 -- /etc/apt/keyrings
       retry curl --proto '=https' --tlsv1.2 -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key \
@@ -726,18 +727,23 @@ EOF
                 ;;
               i686-* | x86_64*)
                 wine_exe=wine
-                # https://wiki.winehq.org/Ubuntu
-                # https://wiki.winehq.org/Debian
-                # https://dl.winehq.org/wine-builds
-                # https://wiki.winehq.org/Wine_User%27s_Guide#Wine_from_WineHQ
+                # https://gitlab.winehq.org/wine/wine/-/wikis/Debian-Ubuntu
+                # https://gitlab.winehq.org/wine/wine/-/wikis/Wine-User's-Guide#wine-from-winehq
                 codename=$(grep -E '^VERSION_CODENAME=' /etc/os-release | cut -d= -f2)
+                id=$(grep -E '^ID=' /etc/os-release | cut -d= -f2)
+                version_id=$(grep -E '^VERSION_ID=' /etc/os-release | cut -d= -f2)
+                version_id="${version_id//\"/}"
                 case "${runner}" in
                   '' | wine) wine_version="${INPUT_WINE:-"${default_wine_version}"}" ;;
                   wine@*) wine_version="${runner#*@}" ;;
                   *) bail "unrecognized runner '${runner}'" ;;
                 esac
-                _sudo dpkg --add-architecture i386
-                if [[ "${codename}" == 'noble' ]] && [[ "${wine_version}" == '9.0.0.0' ]]; then
+                case "${id}:${version_id}" in
+                  ubuntu:1?.* | ubuntu:2[0-4].* | ubuntu:25.04 | debian:[0-9] | debian:1[0-3])
+                    _sudo dpkg --add-architecture i386
+                    ;;
+                esac
+                if { [[ "${codename}" =~ 'noble' ]] && [[ "${wine_version}" == '9.0.0.0' ]]; } || { [[ "${codename}" == 'resolute' ]] && [[ "${wine_version}" == '10.0.0.0' ]]; }; then
                   # winehq supports Ubuntu 24.04 but Wine 9.0.0 is not available in it
                   # https://dl.winehq.org/wine-builds/ubuntu/dists/noble/main/binary-amd64
                   apt_packages+=(wine wine32 wine64)
