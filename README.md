@@ -25,6 +25,7 @@ GitHub Action for setup toolchains for cross compilation and cross testing for R
   - [Windows (MSVC)](#windows-msvc)
   - [macOS](#macos)
   - [Mac Catalyst](#mac-catalyst)
+- [Security](#security)
 - [Compatibility](#compatibility)
 - [Related Projects](#related-projects)
 - [License](#license)
@@ -535,6 +536,10 @@ GitHub-provided macOS runners support cross-compile for other architectures or e
 | `x86_64-apple-ios-macabi` | *macOS* | native | |
 
 GitHub-provided macOS runners support cross-compile for other targets, so this action just runs `rustup target add` and/or sets some environment variables.
+
+## Security
+
+The `@v<major>` tags are updated with each release. To enhance workflow stability and security against supply chain attacks, use the `@v<major>.<minor>.<patch>` tag or their hash to pin the version. Since all releases are immutable, pinning the version in either way should have the same effect.
 
 ## Compatibility
 
