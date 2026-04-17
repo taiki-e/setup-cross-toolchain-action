@@ -197,7 +197,7 @@ install_llvm() {
       retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 https://apt.llvm.org/llvm-snapshot.gpg.key \
         | _sudo gpg --dearmor -o /etc/apt/keyrings/llvm-snapshot.gpg
       _sudo tee -- "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${llvm_version}.list" >/dev/null \
-        <<<"deb [signed-by=/etc/apt/keyrings/llvm-snapshot.gpg] http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${llvm_version} main"
+        <<<"deb [signed-by=/etc/apt/keyrings/llvm-snapshot.gpg] https://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${llvm_version} main"
       ;;
   esac
   apt_packages+=(
