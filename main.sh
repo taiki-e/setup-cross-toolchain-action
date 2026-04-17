@@ -194,7 +194,7 @@ install_llvm() {
     noble | trixie | resolute) ;;
     *)
       _sudo mkdir -pm755 -- /etc/apt/keyrings
-      retry curl --proto '=https' --tlsv1.2 -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key \
+      retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 https://apt.llvm.org/llvm-snapshot.gpg.key \
         | _sudo gpg --dearmor -o /etc/apt/keyrings/llvm-snapshot.gpg
       _sudo tee -- "/etc/apt/sources.list.d/llvm-toolchain-${codename}-${llvm_version}.list" >/dev/null \
         <<<"deb [signed-by=/etc/apt/keyrings/llvm-snapshot.gpg] http://apt.llvm.org/${codename}/ llvm-toolchain-${codename}-${llvm_version} main"
@@ -390,7 +390,7 @@ register_binfmt() {
         apt_packages+=(ca-certificates curl)
         install_apt_packages
       fi
-      retry curl --proto '=https' --tlsv1.2 -fsSL -o __qemu-binfmt-conf.sh "${url}"
+      retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 -o __qemu-binfmt-conf.sh "${url}"
       sed -Ei "s/i386_magic/qemu_target_list=\"${qemu_arch}\"\\ni386_magic/" ./__qemu-binfmt-conf.sh
       chmod +x ./__qemu-binfmt-conf.sh
       _sudo ./__qemu-binfmt-conf.sh --qemu-path "${qemu_bin_dir}" --persistent yes
@@ -658,7 +658,7 @@ EOF
               x86_64* | aarch64* | arm64*) prefix='64' ;;
             esac
             # Note that due to the Android SDK license, rust-cross-toolchain cannot redistribute sys-img distributed by Google.
-            retry curl --proto '=https' --tlsv1.2 -fsSL -O "https://dl.google.com/android/repository/sys-img/android/${file}"
+            retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 -O "https://dl.google.com/android/repository/sys-img/android/${file}"
             unzip -q "${file}" "${arch}/system.img"
             for bin in "linker${prefix}" sh; do
               _sudo e2cp -p "${arch}/system.img:/bin/${bin}" "/system/bin/"
@@ -773,9 +773,9 @@ EOF
                     apt_packages+=(ca-certificates curl)
                     install_apt_packages
                   fi
-                  retry curl --proto '=https' --tlsv1.2 -fsSL https://dl.winehq.org/wine-builds/winehq.key \
+                  retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 https://dl.winehq.org/wine-builds/winehq.key \
                     | _sudo tee -- /etc/apt/keyrings/winehq-archive.key >/dev/null
-                  retry curl --proto '=https' --tlsv1.2 -fsSLR "https://dl.winehq.org/wine-builds/${distro}/dists/${codename}/winehq-${codename}.sources" \
+                  retry curl --proto '=https' --tlsv1.2 -fsSLR --retry 10 "https://dl.winehq.org/wine-builds/${distro}/dists/${codename}/winehq-${codename}.sources" \
                     | _sudo tee -- "/etc/apt/sources.list.d/winehq-${codename}.sources" >/dev/null
                   if [[ "${wine_version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
                     wine_branch=stable
@@ -1127,7 +1127,7 @@ case "${host}" in
         mkdir -p -- "${HOME}/.setup-cross-toolchain-action"
         (
           cd -- "${HOME}/.setup-cross-toolchain-action"
-          retry curl --proto '=https' --tlsv1.2 -fsSL -o tmp "https://github.com/mstorsjo/llvm-mingw/releases/download/${toolchain_version}/llvm-mingw-${toolchain_version}-ucrt-${host_arch}.zip"
+          retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 -o tmp "https://github.com/mstorsjo/llvm-mingw/releases/download/${toolchain_version}/llvm-mingw-${toolchain_version}-ucrt-${host_arch}.zip"
           unzip tmp
           rm -- tmp
         )

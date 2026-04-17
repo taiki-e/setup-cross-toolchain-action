@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 - Support trailing comma in `package` input option.
 
+- Improve robustness for network failure.
+
 ## [1.39.2] - 2026-03-29
 
 - Improve support for Ubuntu 26.04.
