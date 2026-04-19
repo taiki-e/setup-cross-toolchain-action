@@ -907,7 +907,7 @@ export WINEPREFIX=/tmp/wine
 mkdir -p -- "\${WINEPREFIX}"
 if [ ! -e /tmp/WINEBOOT ]; then
     ${wineboot} &>/dev/null
-    touch -- /tmp/WINEBOOT
+    printf '' >/tmp/WINEBOOT
 fi
 export WINEPATH="${winepath};\${WINEPATH:-}"
 exec ${wine_exe} "\$@"
