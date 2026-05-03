@@ -319,10 +319,6 @@ jobs:
           retry git clone --depth 1 https://github.com/taiki-e/rust-cross-toolchain.git
           # TODO: workaround for error on the recent CMake.
           printf 'CMAKE_POLICY_VERSION_MINIMUM=3.5\n' >>"${GITHUB_ENV}"
-      # Workaround for "unknown architecture of input file `*/symbols.o' is incompatible with sparc:v8plus output"
-      - run: |
-          printf 'RUSTFLAGS=%s\n' "${RUSTFLAGS} -C target-feature=-v8plus" >>"${GITHUB_ENV}"
-        if: startsWith(matrix.target, 'sparc-')
       - run: tools/ci/test.sh "${TARGET}" rust-cross-toolchain/docker/test/fixtures/rust
         env:
           TARGET: ${{ matrix.target }}
@@ -454,10 +450,6 @@ jobs:
         with:
           target: ${{ matrix.target }}
           runner: ${{ matrix.runner }}
-      # Workaround for "unknown architecture of input file `*/symbols.o' is incompatible with sparc:v8plus output"
-      - run: |
-          printf 'RUSTFLAGS=%s\n' "${RUSTFLAGS} -C target-feature=-v8plus" >>"${GITHUB_ENV}"
-        if: startsWith(matrix.target, 'sparc-')
       - name: Install requirements for test (ubuntu/debian)
         run: |
           apt-get -o Acquire::Retries=10 -qq update
