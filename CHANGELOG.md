@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 - Support trailing comma in `package` input option.
 
+- Update the default QEMU version from 10.2 to 11.0.
+
 - Improve robustness for network failure.
 
 ## [1.39.2] - 2026-03-29

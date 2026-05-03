@@ -224,7 +224,7 @@ jobs:
 <!-- omit in toc -->
 #### <a name="qemu-user-runner"></a>qemu-user runner
 
-The current default QEMU version is 10.2.
+The current default QEMU version is 11.0.
 
 We usually set QEMU CPU to `max` (or CPU newer than the default if `-cpu=max` is unavailable) to allow testing more CPU features. If you want to test for a specific CPU, you can override it by setting the `QEMU_CPU` environment variable.
 
