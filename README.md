@@ -249,7 +249,7 @@ You can select/pin the version by using `qemu` input option, or `@` syntax in `r
 
 **Note:** binfmt does not work with this runner.
 
-The current default Valgrind version is 3.26.0.
+The current default Valgrind version is 3.27.0.
 
 The current default arguments passed to Valgrind is `-v --error-exitcode=1 --error-limit=no --leak-check=full --track-origins=yes --fair-sched=yes --gen-suppressions=all`. You can override it by setting the `CARGO_TARGET_<target name in upper underscore format>_RUNNER` environment variable.
 

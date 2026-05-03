@@ -12,7 +12,11 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 - Support trailing comma in `package` input option.
 
+- Support specifying Valgrind version via `valgrind` input option and `runner` input option (`valgrind@<version>` syntax).
+
 - Update the default QEMU version from 10.2 to 11.0.
+
+- Update the default Valgrind version from 3.26.0 to 3.27.0.
 
 - Improve robustness for network failure.
 

@@ -11,6 +11,9 @@ inputs:
   qemu:
     description: QEMU version
     required: false
+  valgrind:
+    description: Valgrind version
+    required: false
   wine:
     description: Wine version
     required: false
@@ -20,7 +23,7 @@ inputs:
 
 # Note:
 # - inputs.* should be manually mapped to INPUT_* due to https://github.com/actions/runner/issues/665
-# - Use GITHUB_*/RUNNER_* instead of github.*/runner.* due to https://github.com/actions/runner/issues/2185
+# - For context containing path, use GITHUB_*/RUNNER_* instead of github.*/runner.* due to https://github.com/actions/runner/issues/2185
 runs:
   using: composite
   steps:
@@ -30,5 +33,6 @@ runs:
         INPUT_TARGET: ${{ inputs.target }}
         INPUT_RUNNER: ${{ inputs.runner }}
         INPUT_QEMU: ${{ inputs.qemu }}
+        INPUT_VALGRIND: ${{ inputs.valgrind }}
         INPUT_WINE: ${{ inputs.wine }}
         INPUT_PACKAGE: ${{ inputs.package }}

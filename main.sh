@@ -57,7 +57,7 @@ export RUSTUP_MAX_RETRIES=10
 # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
 default_qemu_version='11.0'
 # https://github.com/taiki-e/dockerfiles/pkgs/container/valgrind
-default_valgrind_version='3.26.0'
+default_valgrind_version='3.27.0'
 # https://dl.winehq.org/wine-builds/ubuntu/pool/main/w/wine/
 default_wine_version='10.0.0.0'
 
@@ -337,7 +337,7 @@ EOF
 }
 install_qemu() {
   if [[ ! "${qemu_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
-    bail "unrecognized QEMU version '${qemu_version}'"
+    bail "unrecognized QEMU version '${qemu_version}'; supported format is <major>.<minor>"
   fi
   if [[ -z "${rust_cross_toolchain_used:-}" ]]; then
     qemu_bin_dir=/usr/bin
@@ -1108,7 +1108,7 @@ case "${host}" in
     use_qemu=''
     use_valgrind=''
     qemu_version="${INPUT_QEMU:-"${default_qemu_version}"}"
-    valgrind_version="${default_valgrind_version}" # TODO: allow customization
+    valgrind_version="${INPUT_VALGRIND:-"${default_valgrind_version}"}"
     case "${target}" in
       *-linux-* | *-android*)
         case "${runner}" in
@@ -1145,6 +1145,11 @@ case "${host}" in
             ;;
           valgrind)
             use_valgrind=1
+            packages+=(libc6-dbg)
+            ;;
+          valgrind@*)
+            use_valgrind=1
+            valgrind_version="${runner#*@}"
             packages+=(libc6-dbg)
             ;;
           *) bail "unrecognized runner '${runner}'" ;;
