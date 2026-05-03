@@ -1,7 +1,6 @@
 name: CI
 
-permissions:
-  contents: read
+permissions: {}
 
 on:
   pull_request:
@@ -33,7 +32,7 @@ concurrency:
 
 jobs:
   tidy:
-    uses: taiki-e/github-actions/.github/workflows/tidy.yml@3c1cac16ef654d1febb66f21f328fa167f0d2fef # main
+    uses: taiki-e/github-actions/.github/workflows/tidy.yml@68753a4331ec78cb842512fd16ae32da0c066e31 # main
     permissions:
       contents: write # for creating branch for pr
       pull-requests: write # unused (used in `codegen-automerge: true` case)
@@ -290,11 +289,11 @@ jobs:
           # - { target: aarch64-pc-windows-gnullvm, os: ubuntu-22.04-arm } # TODO: docker pull hang
           - { target: aarch64-pc-windows-gnullvm, os: ubuntu-24.04 }
           # - { target: aarch64-pc-windows-gnullvm, os: ubuntu-24.04-arm } # TODO: docker pull hang
-    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.os || 'ubuntu-24.04' }}
     timeout-minutes: 60
     steps:
       - uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1.4.2
-      - uses: taiki-e/github-actions/install-rust@3c1cac16ef654d1febb66f21f328fa167f0d2fef # main # zizmor: ignore[stale-action-refs]
+      - uses: taiki-e/github-actions/install-rust@68753a4331ec78cb842512fd16ae32da0c066e31 # main # zizmor: ignore[stale-action-refs]
         with:
           toolchain: nightly
       - run: printf 'QEMU_STRACE=1\n' >>"${GITHUB_ENV}"
@@ -322,7 +321,7 @@ jobs:
           printf 'CMAKE_POLICY_VERSION_MINIMUM=3.5\n' >>"${GITHUB_ENV}"
       # Workaround for "unknown architecture of input file `*/symbols.o' is incompatible with sparc:v8plus output"
       - run: |
-          printf '%s\n' "RUSTFLAGS=${RUSTFLAGS} -C target-feature=-v8plus" >>"${GITHUB_ENV}"
+          printf 'RUSTFLAGS=%s\n' "${RUSTFLAGS} -C target-feature=-v8plus" >>"${GITHUB_ENV}"
         if: startsWith(matrix.target, 'sparc-')
       - run: tools/ci/test.sh "${TARGET}" rust-cross-toolchain/docker/test/fixtures/rust
         env:
@@ -426,7 +425,7 @@ jobs:
           # precompiled binary of latest wasmtime requires glibc 2.29+
           - { target: wasm32-wasip1, container: 'ubuntu:18.04' }
           - { target: wasm32-wasip1, container: 'debian:10-slim' }
-    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.os || 'ubuntu-24.04' }}
     timeout-minutes: 60
     container:
       image: ${{ matrix.container }}
@@ -446,7 +445,7 @@ jobs:
           apt-get -o Acquire::Retries=10 -qq -o Dpkg::Use-Pty=0 install -y --no-install-recommends ca-certificates curl
         if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
       - uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1.4.2
-      - uses: taiki-e/github-actions/install-rust@3c1cac16ef654d1febb66f21f328fa167f0d2fef # main # zizmor: ignore[stale-action-refs]
+      - uses: taiki-e/github-actions/install-rust@68753a4331ec78cb842512fd16ae32da0c066e31 # main # zizmor: ignore[stale-action-refs]
         with:
           toolchain: nightly
       - run: apt-get -qq -o Dpkg::Use-Pty=0 purge -y curl
@@ -457,7 +456,7 @@ jobs:
           runner: ${{ matrix.runner }}
       # Workaround for "unknown architecture of input file `*/symbols.o' is incompatible with sparc:v8plus output"
       - run: |
-          printf '%s\n' "RUSTFLAGS=${RUSTFLAGS} -C target-feature=-v8plus" >>"${GITHUB_ENV}"
+          printf 'RUSTFLAGS=%s\n' "${RUSTFLAGS} -C target-feature=-v8plus" >>"${GITHUB_ENV}"
         if: startsWith(matrix.target, 'sparc-')
       - name: Install requirements for test (ubuntu/debian)
         run: |
@@ -501,11 +500,11 @@ jobs:
             os: ubuntu-24.04-arm
           - target: armv7-unknown-linux-gnueabihf
             os: ubuntu-24.04-arm
-    runs-on: ${{ matrix.os || 'ubuntu-latest' }}
+    runs-on: ${{ matrix.os || 'ubuntu-24.04' }}
     timeout-minutes: 60
     steps:
       - uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1.4.2
-      - uses: taiki-e/github-actions/install-rust@3c1cac16ef654d1febb66f21f328fa167f0d2fef # main # zizmor: ignore[stale-action-refs]
+      - uses: taiki-e/github-actions/install-rust@68753a4331ec78cb842512fd16ae32da0c066e31 # main # zizmor: ignore[stale-action-refs]
         with:
           toolchain: nightly
       - uses: ./

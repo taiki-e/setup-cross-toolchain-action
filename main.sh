@@ -247,7 +247,7 @@ install_rust_cross_toolchain() {
     riscv32gc-unknown-linux-gnu) sysroot_dir="${toolchain_dir}/sysroot" ;;
     loongarch64-unknown-linux-gnu)
       sysroot_dir="${toolchain_dir}/target/usr"
-      printf '%s\n' "LD_LIBRARY_PATH=${toolchain_dir}/target/usr/lib64:${toolchain_dir}/${target}/lib:${LD_LIBRARY_PATH:-}" >>"${GITHUB_ENV}"
+      printf 'LD_LIBRARY_PATH=%s\n' "${toolchain_dir}/target/usr/lib64:${toolchain_dir}/${target}/lib${LD_LIBRARY_PATH:+":${LD_LIBRARY_PATH:-}"}" >>"${GITHUB_ENV}"
       ;;
     *) sysroot_dir="${toolchain_dir}/${target}" ;;
   esac
