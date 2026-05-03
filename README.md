@@ -251,7 +251,7 @@ You can select/pin the version by using `qemu` input option, or `@` syntax in `r
 
 The current default Valgrind version is 3.27.0.
 
-The current default arguments passed to Valgrind is `-v --error-exitcode=1 --error-limit=no --leak-check=full --track-origins=yes --fair-sched=yes --gen-suppressions=all`. You can override it by setting the `CARGO_TARGET_<target name in upper underscore format>_RUNNER` environment variable.
+The current default arguments passed to Valgrind is `-v --error-exitcode=1 --error-limit=no --leak-check=full --track-origins=yes --fair-sched=try --gen-suppressions=all`. You can override it by setting the `CARGO_TARGET_<target name in upper underscore format>_RUNNER` environment variable.
 
 See "test-valgrind" job in [our CI config](https://github.com/taiki-e/setup-cross-toolchain-action/blob/HEAD/.github/workflows/ci.yml) for basic usage with x86_64/i686/aarch64/armv7hf.
 See "valgrind-cross" job in [atomic-maybe-uninit's CI config](https://github.com/taiki-e/atomic-maybe-uninit/blob/HEAD/.github/workflows/ci.yml) for how to run tests with valgrind on powerpc64le/s390x/riscv64.

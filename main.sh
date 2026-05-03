@@ -1060,7 +1060,7 @@ EOF
     if [[ -z "${use_valgrind}" ]]; then
       bail "valgrind runner is not supported for ${target}"
     fi
-    printf '%s\n' "CARGO_TARGET_${target_upper}_RUNNER=valgrind -v --error-exitcode=1 --error-limit=no --leak-check=full --track-origins=yes --fair-sched=yes --gen-suppressions=all" >>"${GITHUB_ENV}"
+    printf '%s\n' "CARGO_TARGET_${target_upper}_RUNNER=valgrind -v --error-exitcode=1 --error-limit=no --leak-check=full --track-origins=yes --fair-sched=try --gen-suppressions=all" >>"${GITHUB_ENV}"
     printf 'CARGO_PROFILE_RELEASE_DEBUG=true\n' >>"${GITHUB_ENV}"
     export VALGRIND_LIB=/usr/libexec/valgrind
     printf 'VALGRIND_LIB=/usr/libexec/valgrind\n' >>"${GITHUB_ENV}"

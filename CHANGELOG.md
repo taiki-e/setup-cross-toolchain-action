@@ -14,6 +14,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 - Support specifying Valgrind version via `valgrind` input option and `runner` input option (`valgrind@<version>` syntax).
 
+- Use `--fair-sched=try` instead of `--fair-sched=yes` in default arguments passed to Valgrind.
+
 - Update the default QEMU version from 10.2 to 11.0.
 
 - Update the default Valgrind version from 3.26.0 to 3.27.0.
