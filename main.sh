@@ -57,7 +57,7 @@ export RUSTUP_MAX_RETRIES=10
 # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
 default_qemu_version='11.0'
 # https://github.com/taiki-e/dockerfiles/pkgs/container/valgrind
-default_valgrind_version='3.27.0'
+default_valgrind_version='3.26.0'
 # https://dl.winehq.org/wine-builds/ubuntu/pool/main/w/wine/
 default_wine_version='10.0.0.0'
 
