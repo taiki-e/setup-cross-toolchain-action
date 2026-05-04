@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Revert update of default Valgrind version and default Valgrind arguments change in 1.40.0 due to Valgrind 3.27.0 bug.
+
 ## [1.40.0] - 2026-05-03
 
 - Support trailing comma in `package` input option.
