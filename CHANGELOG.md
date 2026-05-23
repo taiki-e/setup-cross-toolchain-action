@@ -10,9 +10,11 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Update the default Valgrind version from 3.26.0 to 3.27.1.
+
 ## [1.40.1] - 2026-05-04
 
-- Revert update of default Valgrind version and default Valgrind arguments change in 1.40.0 due to Valgrind 3.27.0 bug.
+- Revert update of default Valgrind version and default Valgrind arguments change in 1.40.0 due to [Valgrind 3.27.0 bug](https://sourceware.org/git/?p=valgrind.git;a=commit;h=f742af1dff1ce09cb4d9a3dd449201a244886eb3).
 
 ## [1.40.0] - 2026-05-03
 
