@@ -32,13 +32,9 @@ concurrency:
 
 jobs:
   tidy:
-    uses: taiki-e/github-actions/.github/workflows/tidy.yml@68753a4331ec78cb842512fd16ae32da0c066e31 # main
+    uses: taiki-e/github-actions/.github/workflows/tidy.yml@931686d4e4cf88b13e790040727ccde2dba8ec62 # main
     permissions:
-      contents: write # for creating branch for pr
-      pull-requests: write # unused (used in `codegen-automerge: true` case)
       security-events: write # for github/codeql-action/*
-    secrets:
-      PR_TOKEN_APP_PRIVATE_KEY: ${{ secrets.PR_TOKEN_APP_PRIVATE_KEY }}
 
   test:
     needs: tidy
@@ -293,9 +289,10 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1.4.2
-      - uses: taiki-e/github-actions/install-rust@68753a4331ec78cb842512fd16ae32da0c066e31 # main # zizmor: ignore[stale-action-refs]
+      - uses: taiki-e/install-action@7ea35f098a7369cd23488403f58be9c491a6c55f # v2.77.0
         with:
-          toolchain: nightly
+          tool: rust@nightly
+          fallback: none
       - run: printf 'QEMU_STRACE=1\n' >>"${GITHUB_ENV}"
         if: matrix.target != 'aarch64-pc-windows-gnullvm'
       - uses: ./
@@ -441,9 +438,10 @@ jobs:
           apt-get -o Acquire::Retries=10 -qq -o Dpkg::Use-Pty=0 install -y --no-install-recommends ca-certificates curl
         if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
       - uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1.4.2
-      - uses: taiki-e/github-actions/install-rust@68753a4331ec78cb842512fd16ae32da0c066e31 # main # zizmor: ignore[stale-action-refs]
+      - uses: taiki-e/install-action@7ea35f098a7369cd23488403f58be9c491a6c55f # v2.77.0
         with:
-          toolchain: nightly
+          tool: rust@nightly
+          fallback: none
       - run: apt-get -qq -o Dpkg::Use-Pty=0 purge -y curl
         if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
       - uses: ./
@@ -496,9 +494,10 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: taiki-e/checkout-action@7d1e50e93dc4fb3bba58f85018fadf77898aee8b # v1.4.2
-      - uses: taiki-e/github-actions/install-rust@68753a4331ec78cb842512fd16ae32da0c066e31 # main # zizmor: ignore[stale-action-refs]
+      - uses: taiki-e/install-action@7ea35f098a7369cd23488403f58be9c491a6c55f # v2.77.0
         with:
-          toolchain: nightly
+          tool: rust@nightly
+          fallback: none
       - uses: ./
         with:
           target: ${{ matrix.target }}

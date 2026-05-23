@@ -70,7 +70,7 @@ runner="${INPUT_RUNNER:-}"
 package="${INPUT_PACKAGE:-}"
 packages=()
 if [[ -n "${package}" ]]; then
-  while read -rd,; do
+  while IFS= read -rd,; do
     packages+=("${REPLY}")
   done < <(normalize_comma_or_space_separated "${package}")
 fi
@@ -1215,7 +1215,14 @@ case "${host}" in
           *) bail "unrecognized host '${host}'" ;;
         esac
         canonicalize_windows_path() {
-          sed -E 's/^\/cygdrive\//\//; s/^\/c\//C:\\/; s/\//\\/g' <<<"$1"
+          local t="$1"
+          if [[ "${t}" == '/cygdrive/'* ]]; then
+            t="${t#/cygdrive}"
+          fi
+          if [[ "${t}" == '/c/'* ]]; then
+            t="${t/\/c\//C:\\}"
+          fi
+          printf '%s\n' "${t//\//\\}"
         }
         mkdir -p -- "${HOME}/.setup-cross-toolchain-action"
         (
