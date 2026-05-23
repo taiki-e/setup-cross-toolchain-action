@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.41.0] - 2026-05-23
+
 - Update the default Valgrind version from 3.26.0 to 3.27.1.
 
 ## [1.40.1] - 2026-05-04
@@ -462,7 +464,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.40.1...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.41.0...HEAD
+[1.41.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.40.1...v1.41.0
 [1.40.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.40.0...v1.40.1
 [1.40.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.39.2...v1.40.0
 [1.39.2]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.39.1...v1.39.2
