@@ -10,6 +10,10 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+TODO: tee: /proc/sys/abi/cp15_barrier: Read-only file system
+
+- Add `binfmt: false` input option to use this action in containers without `--privileged` option.
+
 ## [1.41.0] - 2026-05-23
 
 - Update the default Valgrind version from 3.26.0 to 3.27.1.

@@ -67,6 +67,12 @@ fi
 
 target="${INPUT_TARGET:?}"
 runner="${INPUT_RUNNER:-}"
+binfmt="${INPUT_BINFMT:-}"
+case "${binfmt}" in
+  '') ;;
+  false) binfmt='' ;;
+  *) bail "'binfmt' input option must be '' or 'false': '${binfmt}'" ;;
+esac
 package="${INPUT_PACKAGE:-}"
 packages=()
 if [[ -n "${package}" ]]; then
@@ -375,6 +381,10 @@ install_qemu() {
 }
 # Refs: https://github.com/qemu/qemu/blob/v10.2.0/scripts/qemu-binfmt-conf.sh
 register_binfmt() {
+  if [[ -z "${binfmt}" ]]; then
+    printf '%s\n' "Skipped binfmt registration because 'binfmt' input option set to false"
+    return
+  fi
   printf '::group::Register binfmt\n'
   if [[ ! -d /proc/sys/fs/binfmt_misc ]]; then
     _sudo /sbin/modprobe binfmt_misc

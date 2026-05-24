@@ -91,6 +91,9 @@ run_native() {
   if skip_run; then
     return
   fi
+  if [[ "${BINFMT:-}" == 'false' ]]; then
+    return
+  fi
   "${target_dir}/${target}/${profile}/rust-test${exe}"
 }
 run_tests() {

@@ -550,12 +550,20 @@ To use this action in self-hosted runners or in containers, at least the followi
 - bash
 - rustup, cargo
 
-Currently, when using this action with containers, `--privileged` option is required (due to binfmt).
+By default, using this action with containers requires `--privileged` option due to binfmt.
 
 ```yaml
 container:
   image: '...'
   options: --privileged
+```
+
+When disabling binfmt, `--privileged` option is not required.
+
+```yaml
+- uses: taiki-e/setup-cross-toolchain-action@v1
+  with:
+    binfmt: false
 ```
 
 Note that what this action installs for its setup (such as above tools) is considered an implementation detail if they are installed by this action's side, and there is no guarantee that they will be available in subsequent steps, because this action is not an action for installing those tools.

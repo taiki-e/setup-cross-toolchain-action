@@ -17,6 +17,9 @@ inputs:
   wine:
     description: Wine version
     required: false
+  binfmt:
+    description: Whether to setup binfmt
+    required: false
   package:
     description: Packages to install for target (whitespace or comma separated list)
     required: false
@@ -35,4 +38,5 @@ runs:
         INPUT_QEMU: ${{ inputs.qemu }}
         INPUT_VALGRIND: ${{ inputs.valgrind }}
         INPUT_WINE: ${{ inputs.wine }}
+        INPUT_BINFMT: ${{ inputs.binfmt }}
         INPUT_PACKAGE: ${{ inputs.package }}
