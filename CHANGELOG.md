@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.42.0] - 2026-07-19
+
 - Remove `QEMU_CPU=max` for loongarch64 with QEMU 11.0 due to LL.D/SC.D instructions bug.
 
 ## [1.41.0] - 2026-05-23
@@ -466,7 +468,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.41.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.42.0...HEAD
+[1.42.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.41.0...v1.42.0
 [1.41.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.40.1...v1.41.0
 [1.40.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.40.0...v1.40.1
 [1.40.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.39.2...v1.40.0
