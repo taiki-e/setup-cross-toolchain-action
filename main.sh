@@ -955,7 +955,10 @@ EOF
         ;;
       loongarch64-*)
         qemu_arch=loongarch64
-        default_qemu_cpu=max
+        case "${qemu_version}" in
+          11.0) ;;
+          *) default_qemu_cpu=max ;;
+        esac
         ;;
       m68k-*)
         qemu_arch=m68k

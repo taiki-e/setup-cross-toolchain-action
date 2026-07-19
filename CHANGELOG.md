@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Remove `QEMU_CPU=max` for loongarch64 with QEMU 11.0 due to LL.D/SC.D instructions bug.
+
 ## [1.41.0] - 2026-05-23
 
 - Update the default Valgrind version from 3.26.0 to 3.27.1.
