@@ -296,7 +296,7 @@ jobs:
           fallback: none
       - run: printf 'QEMU_STRACE=1\n' >>"${GITHUB_ENV}"
         if: matrix.target != 'aarch64-pc-windows-gnullvm'
-      - uses: ./
+      - uses: $/
         with:
           target: ${{ matrix.target }}
           runner: ${{ matrix.runner }}
@@ -445,7 +445,7 @@ jobs:
           fallback: none
       - run: apt-get -qq -o Dpkg::Use-Pty=0 purge -y curl
         if: startsWith(matrix.container, 'ubuntu') || startsWith(matrix.container, 'debian')
-      - uses: ./
+      - uses: $/
         with:
           target: ${{ matrix.target }}
           runner: ${{ matrix.runner }}
@@ -499,7 +499,7 @@ jobs:
         with:
           tool: rust@nightly
           fallback: none
-      - uses: ./
+      - uses: $/
         with:
           target: ${{ matrix.target }}
           runner: valgrind
