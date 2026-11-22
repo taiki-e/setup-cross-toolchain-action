@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Update the default QEMU version from 11.0 to 11.1.
+
 ## [1.42.0] - 2026-07-19
 
 - Remove `QEMU_CPU=max` for loongarch64 with QEMU 11.0 due to LL.D/SC.D instructions bug.

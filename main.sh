@@ -55,7 +55,7 @@ export RUSTUP_MAX_RETRIES=10
 # version as the default runner version.
 # NB: Sync with readme.
 # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
-default_qemu_version='11.0'
+default_qemu_version='11.1'
 # https://github.com/taiki-e/dockerfiles/pkgs/container/valgrind
 default_valgrind_version='3.27.1'
 # https://dl.winehq.org/wine-builds/ubuntu/pool/main/w/wine/
@@ -956,7 +956,7 @@ EOF
       loongarch64-*)
         qemu_arch=loongarch64
         case "${qemu_version}" in
-          11.0) ;;
+          11.[0-1]) ;;
           *) default_qemu_cpu=max ;;
         esac
         ;;
