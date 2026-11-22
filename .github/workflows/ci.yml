@@ -230,7 +230,7 @@ jobs:
           # rustc --print target-list | grep -F -e '-wasi'
           - { target: wasm32-wasip1 }
           # - { target: wasm32-wasip1-threads } # TODO: memory allocation of 1664 bytes failed
-          - { target: wasm32-wasip2 }
+          # - { target: wasm32-wasip2 } # TODO: component imports instance `wasi:cli/exit@0.2.12`, but a matching implementation was not found in the linker
 
           # macOS
           # rustup target list | grep -F -e '-darwin'
