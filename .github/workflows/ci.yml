@@ -192,7 +192,7 @@ jobs:
           # FreeBSD
           # rustup target list | grep -F -e '-freebsd'
           # rustc --print target-list | grep -F -e '-freebsd'
-          - { target: aarch64-unknown-freebsd } # tier3
+          - { target: aarch64-unknown-freebsd }
           # - { target: armv6-unknown-freebsd } # tier3
           # - { target: armv7-unknown-freebsd } # tier3
           - { target: i686-unknown-freebsd }

@@ -348,7 +348,7 @@ For the `qemu-user` runner, see ["qemu-user runner" section for linux-gnu target
 
 | target | version | host | note |
 | ------ | ------- | ---- | ---- |
-| `aarch64-unknown-freebsd` | 12.4 (default), 13.5, 14.3 | Ubuntu, Debian [1] | tier3 |
+| `aarch64-unknown-freebsd` | 12.4 (default), 13.5, 14.3 | Ubuntu, Debian [1] | |
 | `i686-unknown-freebsd` | 12.4 (default), 13.5, 14.3 | Ubuntu, Debian [1] | |
 | `x86_64-unknown-freebsd` | 12.4 (default), 13.5, 14.3 | Ubuntu, Debian [1] | |
 
