@@ -1228,12 +1228,11 @@ case "${host}" in
           printf '%s\n' "${t//\//\\}"
         }
         mkdir -p -- "${HOME}/.setup-cross-toolchain-action"
-        (
-          cd -- "${HOME}/.setup-cross-toolchain-action"
-          retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 -o tmp "https://github.com/mstorsjo/llvm-mingw/releases/download/${toolchain_version}/llvm-mingw-${toolchain_version}-ucrt-${host_arch}.zip"
-          unzip tmp
-          rm -- tmp
-        )
+        pushd -- "${HOME}/.setup-cross-toolchain-action" >/dev/null
+        retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 -o tmp "https://github.com/mstorsjo/llvm-mingw/releases/download/${toolchain_version}/llvm-mingw-${toolchain_version}-ucrt-${host_arch}.zip"
+        unzip tmp
+        rm -- tmp
+        popd >/dev/null
         bin_dir=$(canonicalize_windows_path "${HOME}/.setup-cross-toolchain-action/llvm-mingw-${toolchain_version}-ucrt-${host_arch}/bin")
         printf '%s\n' "${bin_dir}" >>"${GITHUB_PATH}"
         ;;
