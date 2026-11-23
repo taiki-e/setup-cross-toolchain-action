@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+## [1.43.0] - 2026-11-23
+
 - Update the default QEMU version from 11.0 to 11.1.
 
 - setup-cross-toolchain-action no longer uses docker when installing recent versions of QEMU.
@@ -472,7 +474,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 Initial release
 
-[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.42.0...HEAD
+[Unreleased]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.43.0...HEAD
+[1.43.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.42.0...v1.43.0
 [1.42.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.41.0...v1.42.0
 [1.41.0]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.40.1...v1.41.0
 [1.40.1]: https://github.com/taiki-e/setup-cross-toolchain-action/compare/v1.40.0...v1.40.1
