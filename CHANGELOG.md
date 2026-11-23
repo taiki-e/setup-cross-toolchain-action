@@ -10,6 +10,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 ## [Unreleased]
 
+- Fix several QEMU 11.1/11.2 bugs.
+
 ## [1.43.0] - 2026-11-23
 
 - Update the default QEMU version from 11.0 to 11.1.

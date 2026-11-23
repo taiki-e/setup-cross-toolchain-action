@@ -353,17 +353,17 @@ install_qemu() {
   case "${qemu_version}" in
     # https://github.com/taiki-e/qemu/releases
     11.2)
-      qemu_full_version=11.2.0-rc1
+      qemu_full_version=11.2.0-rc1-patched.0
       case "${host_arch}" in
-        aarch64) qemu_hash='ba71f9522425ded683f8577988027b96986271363423e801143ba377567ff041' ;;
-        x86_64) qemu_hash='49c354d7cd8a87f56d99d70236b068896bf37e927bc225c53b2ce4e111b5d375' ;;
+        aarch64) qemu_hash='aa052c39fc02c878c59d4879b16528827b98621ce5f4956f2c3c7778cc569d5b' ;;
+        x86_64) qemu_hash='fb3cf0ea7dada1b4586c34e80fc03e62907beedd25764c920fbe5ec913aaf041' ;;
       esac
       ;;
     11.1)
-      qemu_full_version=11.1.3
+      qemu_full_version=11.1.3-patched.0
       case "${host_arch}" in
-        aarch64) qemu_hash='3d7088e700fb058b89a879e46dea8665c79bf7c2b7a1968084897cc8e002c226' ;;
-        x86_64) qemu_hash='927040bba20c4ecd962bcde32d7ef99fece49b9e735d6a58ad15366a8aed5118' ;;
+        aarch64) qemu_hash='0821f7f4bbd734915ab6da3f4650c1ce885174ed666b85d097745c3b1297b5b3' ;;
+        x86_64) qemu_hash='e00ffbdf774fb85ef275377ccdd661a638de5fa4e5b872ee6f1afb0a2cad7d02' ;;
       esac
       ;;
     # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user/versions?filters%5Bversion_type%5D=tagged
@@ -402,7 +402,7 @@ install_qemu() {
       apt_packages+=(ca-certificates curl tar zstd)
       install_apt_packages
     fi
-    retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 -o "${tmp}/qemu-user.tar.zst" "https://github.com/taiki-e/qemu/releases/download/patched-${qemu_full_version}/qemu-user-${host_arch}-linux.tar.zst"
+    retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 -o "${tmp}/qemu-user.tar.zst" "https://github.com/taiki-e/qemu/releases/download/v${qemu_full_version}/qemu-user-${host_arch}-linux.tar.zst"
     sha256sum -c - >/dev/null <<<"${qemu_hash:?} *${tmp}/qemu-user.tar.zst"
     # tar xf on ubuntu 18.04 doesn't recognize tar.zstd.
     zstd -dc "${tmp}/qemu-user.tar.zst" | tar xf - -C "${tmp}"
