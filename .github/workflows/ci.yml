@@ -138,7 +138,7 @@ jobs:
           # rustc --print target-list | grep -F -e '-linux-musl'
           - { target: aarch64-unknown-linux-musl }
           - { target: aarch64-unknown-linux-musl, os: ubuntu-24.04-arm }
-          - { target: aarch64-unknown-linux-musl, runner: qemu-user@7.2 }
+          - { target: aarch64-unknown-linux-musl, runner: qemu-user@11.2 }
           - { target: aarch64-unknown-linux-musl, qemu: '7.2' }
           # - { target: aarch64_be-unknown-linux-musl } # tier3
           - { target: arm-unknown-linux-musleabi }

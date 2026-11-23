@@ -12,6 +12,8 @@ Note: In this file, do not use the hard wrap in the middle of a sentence for com
 
 - Update the default QEMU version from 11.0 to 11.1.
 
+- setup-cross-toolchain-action no longer uses docker when installing recent versions of QEMU.
+
 ## [1.42.0] - 2026-07-19
 
 - Remove `QEMU_CPU=max` for loongarch64 with QEMU 11.0 due to LL.D/SC.D instructions bug.

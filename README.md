@@ -241,8 +241,10 @@ You can select/pin the version by using `qemu` input option, or `@` syntax in `r
 - uses: taiki-e/setup-cross-toolchain-action@v1
   with:
     target: aarch64-unknown-linux-gnu
-    runner: qemu@8.1
+    runner: qemu@11.2
 ```
+
+Available QEMU versions: 7.2 - 11.2
 
 <!-- omit in toc -->
 #### <a name="valgrind-runner"></a>valgrind runner

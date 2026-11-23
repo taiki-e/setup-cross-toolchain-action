@@ -36,3 +36,4 @@ runs:
         INPUT_VALGRIND: ${{ inputs.valgrind }}
         INPUT_WINE: ${{ inputs.wine }}
         INPUT_PACKAGE: ${{ inputs.package }}
+        RUNNER_ARCH: ${{ runner.arch }}

@@ -142,6 +142,8 @@ target_lower="${target//-/_}"
 target_lower="${target_lower//./_}"
 target_upper=$(tr '[:lower:]' '[:upper:]' <<<"${target_lower}")
 rustup_target_list=$(rustup target list | cut -d' ' -f1)
+tmp=$(mktemp -d)
+trap -- 'rm -rf -- "${tmp:?}"' EXIT
 
 install_apt_packages() {
   if [[ ${#apt_packages[@]} -gt 0 ]]; then
@@ -230,17 +232,15 @@ install_rust_cross_toolchain() {
     *) bail "unrecognized host '${host}'" ;;
   esac
   retry docker create --name rust-cross-toolchain "ghcr.io/taiki-e/rust-cross-toolchain:${target}${sys_version}-dev-${arch}"
-  mkdir -p -- .setup-cross-toolchain-action-tmp
-  docker cp -- "rust-cross-toolchain:/${target}" .setup-cross-toolchain-action-tmp/toolchain
+  docker cp -- "rust-cross-toolchain:/${target}" "${tmp}"/toolchain
   case "${target}" in
     aarch64-pc-windows-gnullvm)
-      docker cp -- "rust-cross-toolchain:/opt/wine-arm64" .setup-cross-toolchain-action-tmp/wine-arm64
-      _sudo cp -r -- .setup-cross-toolchain-action-tmp/wine-arm64 /opt/wine-arm64
+      docker cp -- "rust-cross-toolchain:/opt/wine-arm64" "${tmp}"/wine-arm64
+      _sudo cp -r -- "${tmp}"/wine-arm64 /opt/wine-arm64
       ;;
   esac
   docker rm -f -- rust-cross-toolchain >/dev/null
-  _sudo cp -r -- .setup-cross-toolchain-action-tmp/toolchain/. "${toolchain_dir}"/
-  rm -rf -- ./.setup-cross-toolchain-action-tmp
+  _sudo cp -r -- "${tmp}"/toolchain/. "${toolchain_dir}"/
   # https://github.com/taiki-e/rust-cross-toolchain/blob/a92f4cc85408460235b024933451f0350e08b726/docker/test/entrypoint.sh#L47
   case "${target}" in
     aarch64_be-unknown-linux-gnu | armeb-unknown-linux-gnueabi* | arm-unknown-linux-gnueabihf) sysroot_dir="/usr/local/${target}/libc" ;;
@@ -336,42 +336,87 @@ EOF
   printf '::endgroup::\n'
 }
 install_qemu() {
-  if [[ ! "${qemu_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
-    bail "unrecognized QEMU version '${qemu_version}'; supported format is <major>.<minor>"
-  fi
+  printf '::group::Instal QEMU\n'
+  case "${RUNNER_ARCH}" in
+    X64) host_arch=x86_64 ;;
+    ARM64) host_arch=aarch64 ;;
+    *) bail "unsupported runner.arch '${RUNNER_ARCH}'" ;;
+  esac
   if [[ -z "${rust_cross_toolchain_used:-}" ]]; then
     qemu_bin_dir=/usr/bin
   else
     qemu_bin_dir="${toolchain_dir}/bin"
     rm -f -- "${qemu_bin_dir}/qemu-${qemu_arch}"
   fi
-  printf '::group::Instal QEMU\n'
-  # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user
-  qemu_user_tag=":${qemu_version}"
+  local qemu_full_version=''
+  local qemu_hash=''
   case "${qemu_version}" in
-    8.0)
-      case "${qemu_arch}" in
-        # Use 8.0.2 instead of 8.0.3 for ppc64{,le}. 8.0.3 is broken for them due to incomplete backport of 8.1 patches.
-        ppc64*) qemu_user_tag=@sha256:552a32adda13312fe6a33cf09855ebe46c8de52df927c86f14f727cbe574c7c9 ;;
+    # https://github.com/taiki-e/qemu/releases
+    11.2)
+      qemu_full_version=11.2.0-rc1
+      case "${host_arch}" in
+        aarch64) qemu_hash='ba71f9522425ded683f8577988027b96986271363423e801143ba377567ff041' ;;
+        x86_64) qemu_hash='49c354d7cd8a87f56d99d70236b068896bf37e927bc225c53b2ce4e111b5d375' ;;
       esac
       ;;
-    9.0)
-      case "${qemu_arch}" in
-        # Use 9.0.2+ds-1 instead of 9.0.2+ds-2 for armeb. 9.0.2+ds-2 is broken for them.
-        armeb) qemu_user_tag=@sha256:5f5b065ca1db760f33def2602f4f8468f91fd9b11c48393c5d6cd0553800df82 ;;
+    11.1)
+      qemu_full_version=11.1.3
+      case "${host_arch}" in
+        aarch64) qemu_hash='3d7088e700fb058b89a879e46dea8665c79bf7c2b7a1968084897cc8e002c226' ;;
+        x86_64) qemu_hash='927040bba20c4ecd962bcde32d7ef99fece49b9e735d6a58ad15366a8aed5118' ;;
       esac
+      ;;
+    # https://github.com/taiki-e/dockerfiles/pkgs/container/qemu-user/versions?filters%5Bversion_type%5D=tagged
+    11.0) qemu_hash='d87d30c9b45199cc23eaa2250eff0e367a17eec30810452fb88393855d283a1e' ;;
+    10.2) qemu_hash='89dd407559782f8b6f3f215947ab85602ecce13fb307e973750f1c62056b571d' ;;
+    10.1) qemu_hash='22e4382a45e0df99c27712c9fae301efcc0ffccff28b7277c718c2c87e654d25' ;;
+    10.0) qemu_hash='767e2847a2b4fa28afe3b6d29eb7e6bea11c44235198d9adb0b2dd8cff208bdb' ;;
+    9.2) qemu_hash='e176fafe81302a925c93426737002df75e1f2f3304d511b75ccde5b54aeb65f2' ;;
+    9.1) qemu_hash='9193b953d61d79a9845ccfaba5c277e97f06be938f579b3808aacb98d24ad718' ;;
+    9.0)
+      qemu_hash='60a817dfcbede362e791b125ff03e2ca404af7fc9ea28340ca6a3a0c86bfa529'
+      if [[ "${qemu_arch}" == 'armeb' ]]; then
+        # Use 9.0.2+ds-1 instead of 9.0.2+ds-2 for armeb. 9.0.2+ds-2 is broken for them.
+        qemu_hash=5f5b065ca1db760f33def2602f4f8468f91fd9b11c48393c5d6cd0553800df82
+      fi
+      ;;
+    8.2) qemu_hash='fe33e36ded2b4feff11b393398a2f7b2b010d8689447d8da298da7a9fe41bf96' ;;
+    8.1) qemu_hash='9df64a1e67dbf84239e63e4795e47fe44ee0902fe914f1c7e1fbb45ffbba793b' ;;
+    8.0)
+      qemu_hash='e5f83b2cb863229f1f1ecfec352a8d3f8550760e235f58c6beb2cb74d62d856d'
+      if [[ "${qemu_arch}" == 'ppc64'* ]]; then
+        # Use 8.0.2 instead of 8.0.3 for ppc64{,le}. 8.0.3 is broken for them due to incomplete backport of 8.1 patches.
+        qemu_hash='552a32adda13312fe6a33cf09855ebe46c8de52df927c86f14f727cbe574c7c9'
+      fi
+      ;;
+    7.2) qemu_hash='82aaeb97da6df622679540bb386b6cf7444605f58b55bdbb9326712f2aba8187' ;;
+    *)
+      if [[ ! "${qemu_version}" =~ ^[0-9]+\.[0-9]+$ ]]; then
+        bail "unrecognized QEMU version '${qemu_version}'; supported format is <major>.<minor>"
+      fi
+      bail "unsupported QEMU version '${qemu_version}'"
       ;;
   esac
-  # TODO: distribute the latest qemu-user without docker
-  install_docker
-  retry docker create --name qemu-user "ghcr.io/taiki-e/qemu-user${qemu_user_tag}"
-  mkdir -p -- .setup-cross-toolchain-action-tmp
-  docker cp -- "qemu-user:/usr/bin/qemu-${qemu_arch}" ".setup-cross-toolchain-action-tmp/qemu-${qemu_arch}"
-  docker rm -f -- qemu-user >/dev/null
-  _sudo mv -- ".setup-cross-toolchain-action-tmp/qemu-${qemu_arch}" "${qemu_bin_dir}"/
-  rm -rf -- ./.setup-cross-toolchain-action-tmp
-  printf '::endgroup::\n'
+  if [[ -n "${qemu_full_version}" ]]; then
+    if ! type -P curl >/dev/null || ! type -P tar >/dev/null || ! type -P zstd >/dev/null; then
+      apt_packages+=(ca-certificates curl tar zstd)
+      install_apt_packages
+    fi
+    retry curl --proto '=https' --tlsv1.2 -fsSL --retry 10 -o "${tmp}/qemu-user.tar.zst" "https://github.com/taiki-e/qemu/releases/download/patched-${qemu_full_version}/qemu-user-${host_arch}-linux.tar.zst"
+    sha256sum -c - >/dev/null <<<"${qemu_hash:?} *${tmp}/qemu-user.tar.zst"
+    # tar xf on ubuntu 18.04 doesn't recognize tar.zstd.
+    zstd -dc "${tmp}/qemu-user.tar.zst" | tar xf - -C "${tmp}"
+    _sudo mv -- "${tmp}/qemu-user/bin/qemu-${qemu_arch}" "${qemu_bin_dir}"/
+  else
+    # TODO: move old versions to https://github.com/taiki-e/qemu?
+    install_docker
+    retry docker create --name qemu-user "ghcr.io/taiki-e/qemu-user@sha256:${qemu_hash:?}"
+    docker cp -- "qemu-user:/usr/bin/qemu-${qemu_arch}" "${tmp}/qemu-${qemu_arch}"
+    docker rm -f -- qemu-user >/dev/null
+    _sudo mv -- "${tmp}/qemu-${qemu_arch}" "${qemu_bin_dir}"/
+  fi
   x "qemu-${qemu_arch}" --version
+  printf '::endgroup::\n'
 }
 # Refs: https://github.com/qemu/qemu/blob/v10.2.0/scripts/qemu-binfmt-conf.sh
 register_binfmt() {
@@ -509,11 +554,9 @@ install_valgrind() {
   install_docker
   # https://github.com/taiki-e/dockerfiles/pkgs/container/valgrind
   retry docker create --name valgrind "ghcr.io/taiki-e/valgrind:${valgrind_version}-${valgrind_arch}-dist"
-  mkdir -p -- .setup-cross-toolchain-action-tmp
-  docker cp -- valgrind:/valgrind .setup-cross-toolchain-action-tmp/valgrind
+  docker cp -- valgrind:/valgrind "${tmp}"/valgrind
   docker rm -f -- valgrind >/dev/null
-  _sudo cp -r -- .setup-cross-toolchain-action-tmp/valgrind/. /usr/
-  rm -rf -- ./.setup-cross-toolchain-action-tmp
+  _sudo cp -r -- "${tmp}"/valgrind/. /usr/
   printf '::endgroup::\n'
 }
 install_docker() {
